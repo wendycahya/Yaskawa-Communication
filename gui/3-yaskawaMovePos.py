@@ -30,6 +30,8 @@ stop_sign = threading.Semaphore()
 pos_info = {}
 robot_no = 1
 
+x, y, z, rx, ry, rz, re = 0, 0, 0, 0, 0, 0, 0
+
 if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
     x, y, z, rx, ry, rz, re = pos_info['pos']
     str = "CURRENT POSITION\n" + \
@@ -51,27 +53,26 @@ MAX_R_XYZE = 180000
 SPEED_XYZ = (10, 100, 500)
 SPEED_R_XYZE = (10, 50, 100)
 
-dx = 0
-dy = 0
-dz = 50000
+z = z + 50000
 
-if dx != 0 or dy != 0 or dz != 0:
+if x != 0 or y != 0 or z != 0:
     speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
     speed = SPEED_XYZ[1]
 else:
     speed_class = FS100.MOVE_SPEED_CLASS_DEGREE
     speed = SPEED_R_XYZE[1]
 
-pos_move = (dx, dy, dz, 0, 0, 0, 0)
+pos_move = (x, y, z, rx, ry, rz, re)
 
 status = {}
+cb_status = {}
 
 if FS100.ERROR_SUCCESS == robot.get_status(status):
     if not status['servo_on']:
         robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
 
 pos_updater = threading.Thread(target=update_pos)
-if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, pos_move):
+if FS100.ERROR_SUCCESS == robot.move(cb_status, FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, pos_move):
     time.sleep(0.1)  # robot may not update the status
     if not is_alarmed():
         pos_updater.start()
