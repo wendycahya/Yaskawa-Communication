@@ -62,8 +62,8 @@ else:
     speed_class = FS100.MOVE_SPEED_CLASS_DEGREE
     speed = SPEED_R_XYZE[1]
 
-pos_move = (dx, dy, dz, 0, 0, 0, 0)
-
+pos1_move = (dx, dy, dz, 0, 0, 0, 0)
+pos2_move = (dx, dy, dz, 0, 0, 0, 0)
 status = {}
 
 if FS100.ERROR_SUCCESS == robot.get_status(status):
@@ -71,7 +71,7 @@ if FS100.ERROR_SUCCESS == robot.get_status(status):
         robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
 
 pos_updater = threading.Thread(target=update_pos)
-if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, pos_move):
+if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, pos1_move):
     time.sleep(0.1)  # robot may not update the status
     if not is_alarmed():
         pos_updater.start()
