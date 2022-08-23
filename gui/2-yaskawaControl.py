@@ -4,24 +4,24 @@ import threading
 import time
 
 
-def update_pos(self):
+def update_pos():
     while stop_sign.acquire(blocking=False):
         stop_sign.release()
         # let button up take effect
         time.sleep(0.02)
 
-def is_alarmed(self):
+def is_alarmed():
     alarmed = False
     status = {}
-    if FS100.ERROR_SUCCESS == self.robot.get_status(status):
+    if FS100.ERROR_SUCCESS == robot.get_status(status):
         alarmed = status['alarming']
     return alarmed
 
 def on_reset_alarm(self):
-    self.robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
+    robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
     time.sleep(0.1)
     # reflect the ui
-    self.is_alarmed()
+    is_alarmed()
 
 # robot connection
 robot = FS100('192.168.255.1')
