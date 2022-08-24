@@ -76,14 +76,17 @@ if FS100.ERROR_SUCCESS == robot.get_status(status):
 
 pos_updater = threading.Thread(target=update_pos)
 index = 0
+TredON = False
+
 for x in list_move:
     if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS,FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, x):
         time.sleep(30)  # robot may not update the status
-        if not is_alarmed():
+        if not is_alarmed() and TredON == False:
             pos_updater.start()
+            TredON = True
+
     index = index + 1
     print("Selesai step ", index)
-    pos_updater.join()
 
 if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
     x, y, z, rx, ry, rz, re = pos_info['pos']
