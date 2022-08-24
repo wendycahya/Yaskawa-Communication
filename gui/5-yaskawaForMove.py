@@ -1,8 +1,10 @@
+import numpy as np
+
 from fs100 import FS100
 import os
 import threading
 import time
-
+from decimal import Decimal
 
 def update_pos():
     while stop_sign.acquire(blocking=False):
@@ -17,11 +19,45 @@ def is_alarmed():
         alarmed = status['alarming']
     return alarmed
 
-def on_reset_alarm(self):
-    self.robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
+def on_reset_alarm():
+    robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
     time.sleep(0.1)
     # reflect the ui
     is_alarmed()
+
+def convert_mm(x, y, z, rx, ry, rz, re):
+    str_x = "{:4d}.{:03d}".format(x // 1000, x % 1000)
+    str_y = "{:4d}.{:03d}".format(y // 1000, y % 1000)
+    str_z = "{:4d}.{:03d}".format(z // 1000, z % 1000)
+    str_rx = "{:4d}.{:04d}".format(rx // 10000, rx % 10000)
+    str_ry = "{:4d}.{:04d}".format(ry // 10000, ry % 10000)
+    str_rz = "{:4d}.{:04d}".format(rz // 10000, rz % 10000)
+    str_re = "{:4d}.{:04d}".format(re // 10000, re % 10000)
+
+    x = float(str_x)
+    y = float(str_y)
+    z = float(str_z)
+    rx = float(str_rx)
+    ry = float(str_ry)
+    rz = float(str_rz)
+    re = float(str_re)
+
+    input = [x, y, z, rx, ry, rz, re]
+
+    return input
+
+
+def move_distance(post1, post2):
+    x_coor = post2[0] - post1[0]
+    y_coor = post2[1] - post1[1]
+    z_coor = post2[2] - post1[2]
+    rx_coor = post2[3] - post1[3]
+    ry_coor = post2[4] - post1[4]
+    rz_coor = post2[5] - post1[5]
+    re_coor = post2[6] - post1[6]
+
+    move_coor = [x_coor, y_coor, z_coor, rx_coor, ry_coor, rz_coor, re_coor]
+    return move_coor
 
 # robot connection
 robot = FS100('192.168.255.1')
@@ -69,7 +105,6 @@ status = {}
 
 list_move = [pos1_move, pos2_move, pos3_move]
 
-
 if FS100.ERROR_SUCCESS == robot.get_status(status):
     if not status['servo_on']:
         robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
@@ -86,7 +121,7 @@ for x in list_move:
             TredON = True
 
     index = index + 1
-    print("Selesai step ", index)
+    print("robot step ", index)
 
 if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
     x, y, z, rx, ry, rz, re = pos_info['pos']
