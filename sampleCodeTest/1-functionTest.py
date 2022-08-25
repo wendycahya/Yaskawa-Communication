@@ -38,8 +38,20 @@ def move_distance(post1, post2):
 def time_robot(speed, distance):
     distance = distance / 1000
     speed = speed / 10
-    time = (distance / speed) + 0.5
+    time = round((distance / speed) + 0.8, 2)
     return time
+
+def rob_command(post1):
+    x_coor = post1[0] * 1000
+    y_coor = post1[1] * 1000
+    z_coor = post1[2] * 1000
+    rx_coor = post1[3] * 1000
+    ry_coor = post1[4] * 1000
+    rz_coor = post1[5] * 1000
+    re_coor = post1[6] * 1000
+
+    robot_command = [int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor)]
+    return robot_command
 
 post1 = convert_mm(4550033, 302201, -678008, 12453, 12122, 12434, 1214345)
 post2 = convert_mm(4550033, 352201, -678008, 12453, 12122, 12434, 1214345)
@@ -51,6 +63,8 @@ post1_move, distance = move_distance(post1, post2)
 print(post1_move)
 print(distance)
 print("==========================\n")
-speed = 500
+post_robot = rob_command(post1)
+print(post_robot)
+speed = 150
 time = time_robot(speed, distance)
 print("time estimation: ", time)
