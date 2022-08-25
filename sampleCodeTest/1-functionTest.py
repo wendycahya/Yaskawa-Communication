@@ -18,7 +18,6 @@ def convert_mm(x, y, z, rx, ry, rz, re):
     re = float(str_re)
 
     input = [x, y, z, rx, ry, rz, re]
-
     return input
 
 def move_distance(post1, post2):
@@ -68,3 +67,4 @@ print(post_robot)
 speed = 150
 time = time_robot(speed, distance)
 print("time estimation: ", time)
+print("==========================\n")
