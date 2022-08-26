@@ -17,7 +17,7 @@ def convert_mm(x, y, z, rx, ry, rz, re):
     rz = float(str_rz)
     re = float(str_re)
 
-    input = [x, y, z, rx, ry, rz, re]
+    input = (x, y, z, rx, ry, rz, re)
     return input
 
 def move_distance(post1, post2):
@@ -29,9 +29,9 @@ def move_distance(post1, post2):
     rz_coor = (post2[5] - post1[5]) * 1000
     re_coor = (post2[6] - post1[6]) * 1000
 
-    dist = (math.sqrt(math.pow((post2[0] - post1[0]), 2) + math.pow((post2[1] - post1[1]), 2) + math.pow((post2[2] - post1[2]), 2)))*1000
+    dist = (math.sqrt(math.pow((post2[0] - post1[0]), 2) + math.pow((post2[1] - post1[1]), 2) + math.pow((post2[2] - post1[2]), 2))) * 1000
 
-    move_coor = [int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor)]
+    move_coor = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
     return move_coor, int(dist)
 
 def time_robot(speed, distance):
@@ -49,10 +49,11 @@ def rob_command(post1):
     rz_coor = post1[5] * 1000
     re_coor = post1[6] * 1000
 
-    robot_command = [int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor)]
+    robot_command = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
     return robot_command
 
 post1 = convert_mm(4550033, 302201, -678008, 12453, 12122, 12434, 1214345)
+post1[2] = post1[2] + 50
 post2 = convert_mm(4550033, 352201, -678008, 12453, 12122, 12434, 1214345)
 
 print(post1)
