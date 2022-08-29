@@ -52,7 +52,7 @@ def move_distance(post1, post2):
 
     dist = math.sqrt(math.pow((post2[0] - post1[0]), 2) + math.pow((post2[1] - post1[1]), 2) + math.pow((post2[2] - post1[2]), 2))
 
-    move_coor = tuple(int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
+    move_coor = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
     return move_coor, int(dist)
 
 def time_robot(speed, distance):
@@ -156,61 +156,70 @@ rob4 = rob_command(point4)
 rob5 = rob_command(point5)
 
 # ===== move and distance =========
-
+post1_move, distance1 = move_distance(robHome, rob1)
+post2_move, distance2 = move_distance(rob1, rob2)
+post3_move, distance3 = move_distance(rob2, rob1)
+post4_move, distance4 = move_distance(rob1, rob4)
+post5_move, distance5 = move_distance(rob4, rob5)
+post6_move, distance6 = move_distance(rob5, rob4)
+post7_move, distance7 = move_distance(rob4, robHome)
 
 # ===== list movement task ========
 
-post_1 = post_ori
-print("Post 1: ", post_1)
-post_2 = post_1
-print("Post 2[2]: ", post_2[2])
-lst = list(post_2)
-lst[2] = lst[2] + 50000
-post_2 = tuple(lst)
-print("Post new post 2: ", post_2)
-# post_2[2] = post_2[2] + 10000
-print("Post 2: ", post_2)
+# post_1 = post_ori
+# print("Post 1: ", post_1)
+# post_2 = post_1
+# print("Post 2[2]: ", post_2[2])
+# lst = list(post_2)
+# lst[2] = lst[2] + 50000
+# post_2 = tuple(lst)
+# print("Post new post 2: ", post_2)
+# # post_2[2] = post_2[2] + 10000
+# print("Post 2: ", post_2)
+#
+# post_3 = post_2
+# lst = list(post_3)
+# lst[2] = lst[2] + 50000
+# post_3 = tuple(lst)
+#
+# post_4 = post_3
+# lst = list(post_4)
+# lst[1] = lst[1] + 50000
+# post_4 = tuple(lst)
+#
+# print("Post ori before move: ", post_ori)
+# print("Post 1 before move: ", post_1)
+# print("Post 2 before move: ", post_2)
+# print("Post 2 before move: ", post_3)
+# print("Post 2 before move: ", post_4)
+#
+# #list_move = [pos1_move, pos2_move, pos3_move]
+#
+# if FS100.ERROR_SUCCESS == robot.get_status(status):
+#     if not status['servo_on']:
+#         robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
+#
+# pos_updater = threading.Thread(target=update_pos)
+# index = 0
+# tredON = False
+#
+# move1, distance1 = move_distance(post_1, post_2)
+# move2, distance2 = move_distance(post_2, post_3)
+# move3, distance3 = move_distance(post_3, post_4)
+# print("list move 1: ", move1)
+# print("========================")
+# print("list move 2: ", move2)
+# print("=========================")
+# print("list move 2: ", move3)
+# print("=========================")
+# list_move = [move1, move2, move3]
+# dist = [distance1, distance2, distance3]
+# print(dist)
 
-post_3 = post_2
-lst = list(post_3)
-lst[2] = lst[2] + 50000
-post_3 = tuple(lst)
+postMove = [post1_move, post2_move, post3_move, post4_move, post5_move, post6_move, post7_move]
+dist = [distance1, distance2, distance3, distance4, distance5, distance6, distance7]
 
-post_4 = post_3
-lst = list(post_4)
-lst[1] = lst[1] + 50000
-post_4 = tuple(lst)
-
-print("Post ori before move: ", post_ori)
-print("Post 1 before move: ", post_1)
-print("Post 2 before move: ", post_2)
-print("Post 2 before move: ", post_3)
-print("Post 2 before move: ", post_4)
-
-#list_move = [pos1_move, pos2_move, pos3_move]
-
-if FS100.ERROR_SUCCESS == robot.get_status(status):
-    if not status['servo_on']:
-        robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
-
-pos_updater = threading.Thread(target=update_pos)
-index = 0
-tredON = False
-
-move1, distance1 = move_distance(post_1, post_2)
-move2, distance2 = move_distance(post_2, post_3)
-move3, distance3 = move_distance(post_3, post_4)
-print("list move 1: ", move1)
-print("========================")
-print("list move 2: ", move2)
-print("=========================")
-print("list move 2: ", move3)
-print("=========================")
-list_move = [move1, move2, move3]
-dist = [distance1, distance2, distance3]
-print(dist)
-
-for x in list_move:
+for x in postMove:
 #declare the post
 
 #function movement and distance

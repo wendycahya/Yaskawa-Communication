@@ -47,8 +47,7 @@ def move_distance(post1, post2):
     rz_coor = (post2[5] - post1[5])
     re_coor = (post2[6] - post1[6])
 
-    dist = math.sqrt(
-        math.pow((post2[0] - post1[0]), 2) + math.pow((post2[1] - post1[1]), 2) + math.pow((post2[2] - post1[2]), 2))
+    dist = math.sqrt(math.pow((post2[0] - post1[0]), 2) + math.pow((post2[1] - post1[1]), 2) + math.pow((post2[2] - post1[2]), 2))
 
     move_coor = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
     return move_coor, int(dist)
@@ -84,15 +83,12 @@ def rob_command(post1):
 # time = time_robot(speed, distance)
 # print("time estimation: ", time)
 # print("==========================\n")
-
-
 #===== point movement mm =====
 pointHome = [457.413, -5.049, 293.318, 178.6969, -0.0019, -0.0283, 0]
 point1 = [405.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
 point2 = [405.929, -387.592, -201.391, 178.7000, 0.0002, -0.0261, 0]
 point4 = [405.919, 253.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
 point5 = [405.932, 253.783, -201.391, 178.6961, -0.0045, -0.0303, 0]
-
 
 
 # ===== convert robot command =====
