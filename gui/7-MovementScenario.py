@@ -199,9 +199,9 @@ post7_move, distance7 = move_distance(rob4, robHome)
 #     if not status['servo_on']:
 #         robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
 #
-# pos_updater = threading.Thread(target=update_pos)
-# index = 0
-# tredON = False
+pos_updater = threading.Thread(target=update_pos)
+index = 0
+tredON = False
 #
 # move1, distance1 = move_distance(post_1, post_2)
 # move2, distance2 = move_distance(post_2, post_3)
