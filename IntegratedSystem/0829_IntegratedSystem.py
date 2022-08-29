@@ -363,9 +363,33 @@ speed = 0
 x, y, z, rx, ry, rz, re = 0, 0, 0, 0, 0, 0, 0
 # Movement Position List
 pointHome = 0
+pointHomeA = [445.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+pointHomeB = [435.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+pointHomeC = [425.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+pointHomeD = [415.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+
 point1 = [405.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1A = [405.929, -387.592, 335.821, 178.7000, 0.0002, -0.0261, 0]
+point1B = [405.929, -387.592, 325.821, 178.7000, 0.0002, -0.0261, 0]
+point1C = [405.929, -387.592, 315.821, 178.7000, 0.0002, -0.0261, 0]
+point1D = [405.929, -387.592, 305.821, 178.7000, 0.0002, -0.0261, 0]
+point1E = [405.929, -387.592, 295.821, 178.7000, 0.0002, -0.0261, 0]
+point1F = [405.929, -387.592, 285.821, 178.7000, 0.0002, -0.0261, 0]
+point1G = [405.929, -387.592, 275.821, 178.7000, 0.0002, -0.0261, 0]
+point1H = [405.929, -387.592, 265.821, 178.7000, 0.0002, -0.0261, 0]
+point1I = [405.929, -387.592, 255.821, 178.7000, 0.0002, -0.0261, 0]
+point1J = [405.929, -387.592, 245.821, 178.7000, 0.0002, -0.0261, 0]
+point1K = [405.929, -387.592, 235.821, 178.7000, 0.0002, -0.0261, 0]
+point1L = [405.929, -387.592, 225.821, 178.7000, 0.0002, -0.0261, 0]
+point1M = [405.929, -387.592, 215.821, 178.7000, 0.0002, -0.0261, 0]
+point1N = [405.929, -387.592, 195.821, 178.7000, 0.0002, -0.0261, 0]
+point1O = [405.929, -387.592, 185.821, 178.7000, 0.0002, -0.0261, 0]
+point1P = [405.929, -387.592, 175.821, 178.7000, 0.0002, -0.0261, 0]
+
 point2 = [405.929, -387.592, -201.391, 178.7000, 0.0002, -0.0261, 0]
+
 point4 = [405.919, 253.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+
 point5 = [405.932, 253.783, -201.391, 178.6961, -0.0045, -0.0303, 0]
 
 progress = [0, 0, 0, 0]
@@ -418,13 +442,60 @@ class Job(threading.Thread):
             print(str)
             # ===== convert robot command =====
             robHome = pointHome
+            robHome1 = rob_command(pointHomeA)
+            robHome2 = rob_command(pointHomeB)
+            robHome3 = rob_command(pointHomeC)
+            robHome4 = rob_command(pointHomeD)
+
             rob1 = rob_command(point1)
+            rob1A = rob_command(point1A)
+            rob1B = rob_command(point1B)
+            rob1C = rob_command(point1C)
+            rob1D = rob_command(point1D)
+            rob1E = rob_command(point1E)
+            rob1F = rob_command(point1F)
+            rob1G = rob_command(point1G)
+            rob1H = rob_command(point1H)
+            rob1I = rob_command(point1I)
+            rob1J = rob_command(point1J)
+            rob1K = rob_command(point1K)
+            rob1L = rob_command(point1L)
+            rob1M = rob_command(point1M)
+            rob1N = rob_command(point1N)
+            rob1O = rob_command(point1O)
+            rob1P = rob_command(point1P)
+
             rob2 = rob_command(point2)
             rob4 = rob_command(point4)
             rob5 = rob_command(point5)
             # ===== move and distance =========
-            post1_move, distance1 = move_distance(robHome, rob1)
-            post2_move, distance2 = move_distance(rob1, rob2)
+            #post1_move, distance1 = move_distance(robHome, rob1)
+            #post2_move, distance2 = move_distance(rob1, rob2)
+
+            post1_move, distance1 = move_distance(robHome, robHome1)
+            post1A_move, distance1A = move_distance(robHome1, robHome2)
+            post1B_move, distance1B = move_distance(robHome2, robHome3)
+            post1C_move, distance1C = move_distance(robHome3, robHome4)
+
+            post2_move, distance2 = move_distance(rob1, rob1A)
+            post2A_move, distance2A = move_distance(rob1B, rob1C)
+            post2B_move, distance2B = move_distance(rob1C, rob1D)
+            post2C_move, distance2C = move_distance(rob1D, rob1E)
+            post2D_move, distance2D = move_distance(rob1E, rob1F)
+            post2E_move, distance2E = move_distance(rob1F, rob1G)
+            post2F_move, distance2F = move_distance(rob1G, rob1H)
+            post2G_move, distance2G = move_distance(rob1H, rob1I)
+            post2H_move, distance2H = move_distance(rob1I, rob1J)
+            post2I_move, distance2I = move_distance(rob1J, rob1K)
+            post2J_move, distance2J = move_distance(rob1K, rob1L)
+            post2K_move, distance2K = move_distance(rob1L, rob1M)
+            post2L_move, distance2L = move_distance(rob1M, rob1N)
+            post2M_move, distance2M = move_distance(rob1N, rob1O)
+            post2N_move, distance2N = move_distance(rob1O, rob1P)
+            post2O_move, distance2O = move_distance(rob1P, rob2)
+
+
+
             post3_move, distance3 = move_distance(rob2, rob1)
             post4_move, distance4 = move_distance(rob1, rob4)
             post5_move, distance5 = move_distance(rob4, rob5)
@@ -441,8 +512,8 @@ class Job(threading.Thread):
             index = 0
             tredON = False
 
-            postMove = [post1_move, post2_move, post3_move, post4_move, post5_move, post6_move, post7_move]
-            dist = [distance1, distance2, distance3, distance4, distance5, distance6, distance7]
+            postMove = [post1_move, post1A_move, post1B_move, post1C_move, post2_move, post2A_move, post2B_move, post2C_move, post2D_move, post2E_move, post2F_move, post2G_move, post2H_move, post2I_move, post2J_move, post2K_move, post2L_move, post2M_move, post2N_move, post2O_move, post3_move, post4_move, post5_move, post6_move, post7_move]
+            dist = [distance1, distance1A, distance1B, distance1C, distance2, distance2A, distance2B, distance2C, distance2D, distance2E, distance2F, distance2G, distance2H, distance2I, distance2J, distance2K, distance2L, distance2M, distance2N, distance2O, distance3, distance4, distance5, distance6, distance7]
 
 
             for i in postMove:
@@ -756,7 +827,7 @@ if __name__ == '__main__':
                                 window.blit(imgchest, (1134, 445))
                                 Vr = vrchest
                                 speed = 250
-                                print("change value speed", speed)
+                                print("change value speed 250: ", speed)
                                 #jacoRobot.setSpeed(Vr, vrot)
                                 #jacoRobot.message("Jaco Speed Vrchest")
                                 print("Succes send speed VrChest")
@@ -766,7 +837,7 @@ if __name__ == '__main__':
                                 if Vr_max_command <= vrface:
                                     Vr = 50
                                     speed = 100
-                                    print("change value speed", speed)
+                                    print("change value speed 100: ", speed)
                                     #jacoRobot.setSpeed(Vr, vrot)
                                     #jacoRobot.message("Jaco Speed Vr warning")
                                     #print("Succes send speed Vr Command")
@@ -782,7 +853,7 @@ if __name__ == '__main__':
                             # Vr = Vr_max_command
                             Vr = 100
                             speed = 250
-                            print("change value speed", speed)
+                            print("change value speed 250: ", speed)
                             #jacoRobot.setSpeed(Vr, vrot)
 
                             #mode SSM ori reduce speed = 2
@@ -802,7 +873,7 @@ if __name__ == '__main__':
                             mode_collab = 1
                             Vr = vrmax
                             speed = 100
-                            print("change value speed", speed)
+                            print("change value speed 100: ", speed)
                             #jacoRobot.setSpeed(Vr, vrot)
 
                             #mode SSM ori full speed = 1
@@ -845,8 +916,8 @@ if __name__ == '__main__':
                             #print("Robot bekerja maximal")
                             mode_collab = 1
                             Vr = vrmax
-                            speed = 500
-                            print("change value speed max 500: ", speed)
+                            speed = 250
+                            print("change value speed max 250: ", speed)
                             #jacoRobot.setSpeed(Vr, vrot)
                             #mode SSM ori full speed = 1
                             mode_SSMori = 1
