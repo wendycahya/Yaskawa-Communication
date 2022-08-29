@@ -1,3 +1,6 @@
+#1. copy assets folder
+#2. Test the speed control the movement
+#3.
 #Robot library
 import math
 import time as t
@@ -205,13 +208,13 @@ def move_convert(post_original):
 def move_distance(post1, post2):
     print("nilai post akhir", post2[2])
     print("nilai post awal", post1[2])
-    x_coor = (post2[0] - post1[0])
-    y_coor = (post2[1] - post1[1])
-    z_coor = (post2[2] - post1[2])
-    rx_coor = (post2[3] - post1[3])
-    ry_coor = (post2[4] - post1[4])
-    rz_coor = (post2[5] - post1[5])
-    re_coor = (post2[6] - post1[6])
+    x_coor = post2[0] - post1[0]
+    y_coor = post2[1] - post1[1]
+    z_coor = post2[2] - post1[2]
+    rx_coor = post2[3] - post1[3]
+    ry_coor = post2[4] - post1[4]
+    rz_coor = post2[5] - post1[5]
+    re_coor = post2[6] - post1[6]
 
     dist = math.sqrt(math.pow((post2[0] - post1[0]), 2) + math.pow((post2[1] - post1[1]), 2) + math.pow((post2[2] - post1[2]), 2))
 
@@ -228,12 +231,13 @@ def rob_command(post1):
     x_coor = post1[0] * 1000
     y_coor = post1[1] * 1000
     z_coor = post1[2] * 1000
-    rx_coor = post1[3] * 1000
-    ry_coor = post1[4] * 1000
-    rz_coor = post1[5] * 1000
-    re_coor = post1[6] * 1000
+    #rx_coor = post1[3] * 1000
+    #ry_coor = post1[4] * 1000
+    #rz_coor = post1[5] * 1000
+    #re_coor = post1[6] * 1000
 
-    robot_command = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
+    #robot_command = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
+    robot_command = (int(x_coor), int(y_coor), int(z_coor), 0, 0, 0, 0)
     return robot_command
 
 def update_pos():
@@ -379,7 +383,7 @@ class Job(threading.Thread):
     def run(self):
 
         # set speed
-        SPEED_XYZ = (10, 150, 500)
+        SPEED_XYZ = (10, 150, 200)
         SPEED_R_XYZE = (10, 50, 100)
 
         speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
@@ -397,7 +401,7 @@ class Job(threading.Thread):
             # Read initial position
             if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
                 x, y, z, rx, ry, rz, re = pos_info['pos']
-                pointHome = (x, y, z, rx, ry, rz, re)
+                pointHome = (x, y, z, 0, 0, 0, 0)
                 str = "CURRENT POSITION\n" + \
                       "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
                       "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
@@ -413,7 +417,7 @@ class Job(threading.Thread):
 
             print(str)
             # ===== convert robot command =====
-            robHome = rob_command(pointHome)
+            robHome = pointHome
             rob1 = rob_command(point1)
             rob2 = rob_command(point2)
             rob4 = rob_command(point4)
@@ -445,9 +449,8 @@ class Job(threading.Thread):
                 self.__flag.wait()
                 time_d = time_robot(speed, dist[index])
                 print(time_d)
-                print("nilai x yang masuk ", index, "sebesar ", x)
-                if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS,
-                                                         FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, x):
+                print("nilai x yang masuk ", index, "sebesar ", i)
+                if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, i):
                     t.sleep(time_d)  # robot may not update the status
                     if not is_alarmed() and tredON == False:
                         pos_updater.start()
