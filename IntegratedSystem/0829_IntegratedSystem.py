@@ -426,18 +426,6 @@ class Job(threading.Thread):
             if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
                 x, y, z, rx, ry, rz, re = pos_info['pos']
                 pointHome = (x, y, z, 0, 0, 0, 0)
-                str = "CURRENT POSITION\n" + \
-                      "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-                      "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-                                                                                         x // 1000, x % 1000,
-                                                                                         rx // 10000,
-                                                                                         rx % 10000) + \
-                      "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-                          y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-                      "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-                          z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-                      "                            Re   {:4d}.{:04d} deg.\n".format(
-                          re // 10000, re % 10000)
 
             print(str)
             # ===== convert robot command =====
@@ -576,18 +564,6 @@ if __name__ == '__main__':
             # === Robot analysis Velocity ===
             if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
                 x, y, z, rx, ry, rz, re = pos_info['pos']
-                str = "CURRENT POSITION\n" + \
-                      "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-                      "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-                                                                                         x // 1000, x % 1000,
-                                                                                         rx // 10000,
-                                                                                         rx % 10000) + \
-                      "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-                          y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-                      "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-                          z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-                      "                            Re   {:4d}.{:04d} deg.\n".format(
-                          re // 10000, re % 10000)
 
             curRobotPos = convert_mm(x, y, z, rx, ry, rz, re)
             #print("robot position ", curRobotPos[0], curRobotPos[1], curRobotPos[2])
