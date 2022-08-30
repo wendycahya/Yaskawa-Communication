@@ -191,7 +191,7 @@ def convert_mm(x, y, z, rx, ry, rz, re):
     rz = float(str_rz)
     re = float(str_re)
 
-    input = (x, y, z, rx, ry, rz, re)
+    input = [x, y, z, rx, ry, rz, re]
     return input
 
 def move_convert(post_original):
@@ -574,7 +574,22 @@ if __name__ == '__main__':
             imgFace, bboxs = detectFace.findFaces(img)
 
             # === Robot analysis Velocity ===
-            curRobotPos = convert_mm(x,y, z, rx, ry, rz, re)
+            if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                x, y, z, rx, ry, rz, re = pos_info['pos']
+                str = "CURRENT POSITION\n" + \
+                      "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
+                      "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
+                                                                                         x // 1000, x % 1000,
+                                                                                         rx // 10000,
+                                                                                         rx % 10000) + \
+                      "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
+                          y // 1000, y % 1000, ry // 10000, ry % 10000) + \
+                      "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
+                          z // 1000, z % 1000, rz // 10000, rz % 10000) + \
+                      "                            Re   {:4d}.{:04d} deg.\n".format(
+                          re // 10000, re % 10000)
+
+            curRobotPos = convert_mm(x, y, z, rx, ry, rz, re)
             #print("robot position ", curRobotPos[0], curRobotPos[1], curRobotPos[2])
             xRob = round(curRobotPos[0], 2)
             yRob = round(curRobotPos[1], 2)
