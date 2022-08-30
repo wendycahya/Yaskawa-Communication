@@ -221,10 +221,10 @@ def move_distance(post1, post2):
     move_coor = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
     return move_coor, int(dist)
 
-def time_robot(speed, distance):
+def time_robot(speed, distance, delay_rob):
     distance = distance / 1000
     speed = speed / 10
-    time_move = (distance / speed) + 0.5
+    time_move = (distance / speed) + delay_rob
     return time_move
 
 def rob_command(post1):
@@ -361,6 +361,7 @@ robot_no = 1
 status = {}
 speed = 0
 x, y, z, rx, ry, rz, re = 0, 0, 0, 0, 0, 0, 0
+delay_rob = 0.1
 # Movement Position List
 pointHome = 0
 pointHomeA = [445.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
@@ -385,6 +386,47 @@ point1M = [405.929, -387.592, 215.821, 178.7000, 0.0002, -0.0261, 0]
 point1N = [405.929, -387.592, 195.821, 178.7000, 0.0002, -0.0261, 0]
 point1O = [405.929, -387.592, 185.821, 178.7000, 0.0002, -0.0261, 0]
 point1P = [405.929, -387.592, 175.821, 178.7000, 0.0002, -0.0261, 0]
+
+point1Q = [405.929, -387.592, 165.821, 178.7000, 0.0002, -0.0261, 0]
+point1R = [405.929, -387.592, 155.821, 178.7000, 0.0002, -0.0261, 0]
+point1S = [405.929, -387.592, 145.821, 178.7000, 0.0002, -0.0261, 0]
+point1T = [405.929, -387.592, 135.821, 178.7000, 0.0002, -0.0261, 0]
+point1U = [405.929, -387.592, 125.821, 178.7000, 0.0002, -0.0261, 0]
+point1V = [405.929, -387.592, 115.821, 178.7000, 0.0002, -0.0261, 0]
+point1W = [405.929, -387.592, 105.821, 178.7000, 0.0002, -0.0261, 0]
+point1X = [405.929, -387.592, 95.821, 178.7000, 0.0002, -0.0261, 0]
+point1Y = [405.929, -387.592, 85.821, 178.7000, 0.0002, -0.0261, 0]
+point1Z = [405.929, -387.592, 75.821, 178.7000, 0.0002, -0.0261, 0]
+point1AA = [405.929, -387.592, 65.821, 178.7000, 0.0002, -0.0261, 0]
+point1AB = [405.929, -387.592, 55.821, 178.7000, 0.0002, -0.0261, 0]
+point1AC = [405.929, -387.592, 45.821, 178.7000, 0.0002, -0.0261, 0]
+point1AD = [405.929, -387.592, 35.821, 178.7000, 0.0002, -0.0261, 0]
+point1AE = [405.929, -387.592, 25.821, 178.7000, 0.0002, -0.0261, 0]
+point1AF = [405.929, -387.592, 15.821, 178.7000, 0.0002, -0.0261, 0]
+point1AG = [405.929, -387.592, 5.821, 178.7000, 0.0002, -0.0261, 0]
+point1AH = [405.929, -387.592, -5.821, 178.7000, 0.0002, -0.0261, 0]
+
+point1AI = [405.929, -387.592, -15.821, 178.7000, 0.0002, -0.0261, 0]
+point1AJ = [405.929, -387.592, -25.821, 178.7000, 0.0002, -0.0261, 0]
+point1AK = [405.929, -387.592, -35.821, 178.7000, 0.0002, -0.0261, 0]
+point1AL = [405.929, -387.592, -45.821, 178.7000, 0.0002, -0.0261, 0]
+point1AM = [405.929, -387.592, -55.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -65.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -75.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -85.821, 178.7000, 0.0002, -0.0261, 0]
+#
+# point1P = [405.929, -387.592, -95.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -105.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -115.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -125.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -135.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -145.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -155.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -165.821, 178.7000, 0.0002, -0.0261, 0]
+#
+# point1P = [405.929, -387.592, -175.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -185.821, 178.7000, 0.0002, -0.0261, 0]
+# point1P = [405.929, -387.592, -195.821, 178.7000, 0.0002, -0.0261, 0]
 
 point2 = [405.929, -387.592, -201.391, 178.7000, 0.0002, -0.0261, 0]
 
@@ -426,6 +468,18 @@ class Job(threading.Thread):
             if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
                 x, y, z, rx, ry, rz, re = pos_info['pos']
                 pointHome = (x, y, z, 0, 0, 0, 0)
+                str = "CURRENT POSITION\n" + \
+                      "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
+                      "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
+                                                                                         x // 1000, x % 1000,
+                                                                                         rx // 10000,
+                                                                                         rx % 10000) + \
+                      "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
+                          y // 1000, y % 1000, ry // 10000, ry % 10000) + \
+                      "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
+                          z // 1000, z % 1000, rz // 10000, rz % 10000) + \
+                      "                            Re   {:4d}.{:04d} deg.\n".format(
+                          re // 10000, re % 10000)
 
             print(str)
             # ===== convert robot command =====
@@ -506,7 +560,7 @@ class Job(threading.Thread):
 
             for i in postMove:
                 self.__flag.wait()
-                time_d = time_robot(speed, dist[index])
+                time_d = time_robot(speed, dist[index], delay_rob)
                 print(time_d)
                 print("nilai x yang masuk ", index, "sebesar ", i)
                 if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, i):
@@ -562,8 +616,10 @@ if __name__ == '__main__':
             imgFace, bboxs = detectFace.findFaces(img)
 
             # === Robot analysis Velocity ===
+            # Read initial position
             if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
                 x, y, z, rx, ry, rz, re = pos_info['pos']
+                #pointHome = (x, y, z, 0, 0, 0, 0)
 
             curRobotPos = convert_mm(x, y, z, rx, ry, rz, re)
             #print("robot position ", curRobotPos[0], curRobotPos[1], curRobotPos[2])
