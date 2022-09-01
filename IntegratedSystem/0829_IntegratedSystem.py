@@ -362,77 +362,125 @@ status = {}
 speed = 0
 x, y, z, rx, ry, rz, re = 0, 0, 0, 0, 0, 0, 0
 delay_rob = 0.1
-# Movement Position List
+# ===== Movement Position List =====
 pointHome = 0
+# point 1 <-- home
 pointHomeA = [445.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
 pointHomeB = [435.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
 pointHomeC = [425.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
 pointHomeD = [415.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
-
+# point 1 down to point 2
 point1 = [405.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
-point1A = [405.929, -387.592, 335.821, 178.7000, 0.0002, -0.0261, 0]
-point1B = [405.929, -387.592, 325.821, 178.7000, 0.0002, -0.0261, 0]
-point1C = [405.929, -387.592, 315.821, 178.7000, 0.0002, -0.0261, 0]
-point1D = [405.929, -387.592, 305.821, 178.7000, 0.0002, -0.0261, 0]
-point1E = [405.929, -387.592, 295.821, 178.7000, 0.0002, -0.0261, 0]
-point1F = [405.929, -387.592, 285.821, 178.7000, 0.0002, -0.0261, 0]
-point1G = [405.929, -387.592, 275.821, 178.7000, 0.0002, -0.0261, 0]
-point1H = [405.929, -387.592, 265.821, 178.7000, 0.0002, -0.0261, 0]
-point1I = [405.929, -387.592, 255.821, 178.7000, 0.0002, -0.0261, 0]
-point1J = [405.929, -387.592, 245.821, 178.7000, 0.0002, -0.0261, 0]
-point1K = [405.929, -387.592, 235.821, 178.7000, 0.0002, -0.0261, 0]
-point1L = [405.929, -387.592, 225.821, 178.7000, 0.0002, -0.0261, 0]
-point1M = [405.929, -387.592, 215.821, 178.7000, 0.0002, -0.0261, 0]
-point1N = [405.929, -387.592, 195.821, 178.7000, 0.0002, -0.0261, 0]
-point1O = [405.929, -387.592, 185.821, 178.7000, 0.0002, -0.0261, 0]
-point1P = [405.929, -387.592, 175.821, 178.7000, 0.0002, -0.0261, 0]
 
-point1Q = [405.929, -387.592, 165.821, 178.7000, 0.0002, -0.0261, 0]
-point1R = [405.929, -387.592, 155.821, 178.7000, 0.0002, -0.0261, 0]
-point1S = [405.929, -387.592, 145.821, 178.7000, 0.0002, -0.0261, 0]
-point1T = [405.929, -387.592, 135.821, 178.7000, 0.0002, -0.0261, 0]
-point1U = [405.929, -387.592, 125.821, 178.7000, 0.0002, -0.0261, 0]
-point1V = [405.929, -387.592, 115.821, 178.7000, 0.0002, -0.0261, 0]
-point1W = [405.929, -387.592, 105.821, 178.7000, 0.0002, -0.0261, 0]
-point1X = [405.929, -387.592, 95.821, 178.7000, 0.0002, -0.0261, 0]
-point1Y = [405.929, -387.592, 85.821, 178.7000, 0.0002, -0.0261, 0]
-point1Z = [405.929, -387.592, 75.821, 178.7000, 0.0002, -0.0261, 0]
-point1AA = [405.929, -387.592, 65.821, 178.7000, 0.0002, -0.0261, 0]
-point1AB = [405.929, -387.592, 55.821, 178.7000, 0.0002, -0.0261, 0]
-point1AC = [405.929, -387.592, 45.821, 178.7000, 0.0002, -0.0261, 0]
-point1AD = [405.929, -387.592, 35.821, 178.7000, 0.0002, -0.0261, 0]
-point1AE = [405.929, -387.592, 25.821, 178.7000, 0.0002, -0.0261, 0]
-point1AF = [405.929, -387.592, 15.821, 178.7000, 0.0002, -0.0261, 0]
-point1AG = [405.929, -387.592, 5.821, 178.7000, 0.0002, -0.0261, 0]
-point1AH = [405.929, -387.592, -5.821, 178.7000, 0.0002, -0.0261, 0]
-
-point1AI = [405.929, -387.592, -15.821, 178.7000, 0.0002, -0.0261, 0]
-point1AJ = [405.929, -387.592, -25.821, 178.7000, 0.0002, -0.0261, 0]
-point1AK = [405.929, -387.592, -35.821, 178.7000, 0.0002, -0.0261, 0]
-point1AL = [405.929, -387.592, -45.821, 178.7000, 0.0002, -0.0261, 0]
-point1AM = [405.929, -387.592, -55.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -65.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -75.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -85.821, 178.7000, 0.0002, -0.0261, 0]
-#
-# point1P = [405.929, -387.592, -95.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -105.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -115.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -125.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -135.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -145.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -155.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -165.821, 178.7000, 0.0002, -0.0261, 0]
-#
-# point1P = [405.929, -387.592, -175.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -185.821, 178.7000, 0.0002, -0.0261, 0]
-# point1P = [405.929, -387.592, -195.821, 178.7000, 0.0002, -0.0261, 0]
+point121 = [405.916, -387.580, 320.821, 178.6969, -0.0029, -0.0306, 0]
+point122 = [405.916, -387.580, 295.821, 178.6969, -0.0029, -0.0306, 0]
+point123 = [405.916, -387.580, 270.821, 178.6969, -0.0029, -0.0306, 0]
+point124 = [405.916, -387.580, 245.821, 178.6969, -0.0029, -0.0306, 0]
+point125 = [405.916, -387.580, 220.821, 178.6969, -0.0029, -0.0306, 0]
+point126 = [405.916, -387.580, 195.821, 178.6969, -0.0029, -0.0306, 0]
+point127 = [405.916, -387.580, 170.821, 178.6969, -0.0029, -0.0306, 0]
+point128 = [405.916, -387.580, 145.821, 178.6969, -0.0029, -0.0306, 0]
+point129 = [405.916, -387.580, 120.821, 178.6969, -0.0029, -0.0306, 0]
+point1210 = [405.916, -387.580, 95.821, 178.6969, -0.0029, -0.0306, 0]
+point1211 = [405.916, -387.580, 70.821, 178.6969, -0.0029, -0.0306, 0]
+point1212 = [405.916, -387.580, 45.821, 178.6969, -0.0029, -0.0306, 0]
+point1213 = [405.916, -387.580, 20.821, 178.6969, -0.0029, -0.0306, 0]
+point1214 = [405.916, -387.580, -4.179, 178.6969, -0.0029, -0.0306, 0]
+point1215 = [405.916, -387.580, -29.179, 178.6969, -0.0029, -0.0306, 0]
+point1216 = [405.916, -387.580, -54.179, 178.6969, -0.0029, -0.0306, 0]
+point1217 = [405.916, -387.580, -79.179, 178.6969, -0.0029, -0.0306, 0]
+point1218 = [405.916, -387.580, -104.179, 178.6969, -0.0029, -0.0306, 0]
+point1219 = [405.916, -387.580, -129.179, 178.6969, -0.0029, -0.0306, 0]
+point1220 = [405.916, -387.580, -154.179, 178.6969, -0.0029, -0.0306, 0]
+point1221 = [405.916, -387.580, -179.179, 178.6969, -0.0029, -0.0306, 0]
 
 point2 = [405.929, -387.592, -201.391, 178.7000, 0.0002, -0.0261, 0]
+#point 2 up to point 3 same as point 1 backfrom down to up
+
+#point 1 goes to point 4 --> change y
+point141 = [405.916, -362.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point142 = [405.916, -337.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point143 = [405.916, -312.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point144 = [405.916, -287.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point145 = [405.916, -262.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point146 = [405.916, -237.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point147 = [405.916, -212.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point148 = [405.916, -187.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point149 = [405.916, -162.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1410 = [405.916, -137.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1411 = [405.916, -112.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1412 = [405.916, -87.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1413 = [405.916, -62.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1414 = [405.916, -37.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1415 = [405.916, -12.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1416 = [405.916, 12.420, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1417 = [405.916, 37.420, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1418 = [405.916, 62.420, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1419 = [405.916, 87.420, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1420 = [405.916, 112.420, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1421 = [405.916, 137.420, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1422 = [405.916, 162.420, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1423 = [405.916, 187.420, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1424 = [405.916, 212.420, 345.821, 178.6969, -0.0029, -0.0306, 0]
+point1425 = [405.916, 237.420, 345.821, 178.6969, -0.0029, -0.0306, 0]
 
 point4 = [405.919, 253.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
 
+point451 = [405.919, 253.778, 320.819, 178.6967, -0.0031, -0.0308, 0]
+point452 = [405.919, 253.778, 295.819, 178.6967, -0.0031, -0.0308, 0]
+point453 = [405.919, 253.778, 270.819, 178.6967, -0.0031, -0.0308, 0]
+point454 = [405.919, 253.778, 245.819, 178.6967, -0.0031, -0.0308, 0]
+point455 = [405.919, 253.778, 220.819, 178.6967, -0.0031, -0.0308, 0]
+point456 = [405.919, 253.778, 195.819, 178.6967, -0.0031, -0.0308, 0]
+point457 = [405.919, 253.778, 170.819, 178.6967, -0.0031, -0.0308, 0]
+point458 = [405.919, 253.778, 145.819, 178.6967, -0.0031, -0.0308, 0]
+point459 = [405.919, 253.778, 120.819, 178.6967, -0.0031, -0.0308, 0]
+point4510 = [405.919, 253.778, 95.819, 178.6967, -0.0031, -0.0308, 0]
+point4511 = [405.919, 253.778, 70.819, 178.6967, -0.0031, -0.0308, 0]
+point4512 = [405.919, 253.778, 45.819, 178.6967, -0.0031, -0.0308, 0]
+point4513 = [405.919, 253.778, 20.819, 178.6967, -0.0031, -0.0308, 0]
+point4514 = [405.919, 253.778, -4.819, 178.6967, -0.0031, -0.0308, 0]
+point4515 = [405.919, 253.778, -29.819, 178.6967, -0.0031, -0.0308, 0]
+point4516 = [405.919, 253.778, -54.819, 178.6967, -0.0031, -0.0308, 0]
+point4517 = [405.919, 253.778, -79.819, 178.6967, -0.0031, -0.0308, 0]
+point4518 = [405.919, 253.778, -104.819, 178.6967, -0.0031, -0.0308, 0]
+point4519 = [405.919, 253.778, -129.819, 178.6967, -0.0031, -0.0308, 0]
+point4520 = [405.919, 253.778, -154.819, 178.6967, -0.0031, -0.0308, 0]
+point4521 = [405.919, 253.778, -179.819, 178.6967, -0.0031, -0.0308, 0]
+#point 4 goes to point 5 --> change z
 point5 = [405.932, 253.783, -201.391, 178.6961, -0.0045, -0.0303, 0]
+
+#point 5 goes to point 6 (point 4) --> up chage z
+
+#point6 goes to point 7 pointHomeA --> left change y
+#point4 = [405.919, 253.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H1 = [425.919, 228.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H2 = [430.919, 203.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H3 = [425.919, 178.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H4 = [430.919, 153.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H5 = [435.919, 128.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H6 = [440.919, 103.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H7 = [445.919, 78.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H8 = [445.919, 53.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H9 = [445.919, 28.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H10 = [445.919, 3.778, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H11 = [445.919, -21.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H12 = [445.919, -46.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H13 = [445.919, -71.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H14 = [445.919, -96.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H15 = [445.919, -121.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H16 = [445.919, -146.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H17 = [445.919, -171.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H18 = [445.919, -196.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H19 = [445.919, -221.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H20 = [445.919, -246.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H21 = [445.919, -271.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H22 = [445.919, -296.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H23 = [445.919, -321.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H24 = [445.919, -346.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+point4H25 = [445.919, -371.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
+
+#pointHomeA = [445.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
 
 progress = [0, 0, 0, 0]
 finish = [1, 1, 1, 1]
@@ -490,59 +538,271 @@ class Job(threading.Thread):
             robHome4 = rob_command(pointHomeD)
 
             rob1 = rob_command(point1)
-            rob1A = rob_command(point1A)
-            rob1B = rob_command(point1B)
-            rob1C = rob_command(point1C)
-            rob1D = rob_command(point1D)
-            rob1E = rob_command(point1E)
-            rob1F = rob_command(point1F)
-            rob1G = rob_command(point1G)
-            rob1H = rob_command(point1H)
-            rob1I = rob_command(point1I)
-            rob1J = rob_command(point1J)
-            rob1K = rob_command(point1K)
-            rob1L = rob_command(point1L)
-            rob1M = rob_command(point1M)
-            rob1N = rob_command(point1N)
-            rob1O = rob_command(point1O)
-            rob1P = rob_command(point1P)
+
+            rob121 = rob_command(point121)
+            rob122 = rob_command(point122)
+            rob123 = rob_command(point123)
+            rob124 = rob_command(point124)
+            rob125 = rob_command(point125)
+            rob126 = rob_command(point126)
+            rob127 = rob_command(point127)
+            rob128 = rob_command(point128)
+            rob129 = rob_command(point129)
+            rob1210 = rob_command(point1210)
+            rob1211 = rob_command(point1211)
+            rob1212 = rob_command(point1212)
+            rob1213 = rob_command(point1213)
+            rob1214 = rob_command(point1214)
+            rob1215 = rob_command(point1215)
+            rob1216 = rob_command(point1216)
+            rob1217 = rob_command(point1217)
+            rob1218 = rob_command(point1218)
+            rob1219 = rob_command(point1219)
+            rob1220 = rob_command(point1220)
+            rob1221 = rob_command(point1221)
 
             rob2 = rob_command(point2)
+
+            rob141 = rob_command(point141)
+            rob142 = rob_command(point142)
+            rob143 = rob_command(point143)
+            rob144 = rob_command(point144)
+            rob145 = rob_command(point145)
+            rob146 = rob_command(point146)
+            rob147 = rob_command(point147)
+            rob148 = rob_command(point148)
+            rob149 = rob_command(point149)
+            rob1410 = rob_command(point1410)
+            rob1411 = rob_command(point1411)
+            rob1412 = rob_command(point1412)
+            rob1413 = rob_command(point1413)
+            rob1414 = rob_command(point1414)
+            rob1415 = rob_command(point1415)
+            rob1416 = rob_command(point1416)
+            rob1417 = rob_command(point1417)
+            rob1418 = rob_command(point1418)
+            rob1419 = rob_command(point1419)
+            rob1420 = rob_command(point1420)
+            rob1421 = rob_command(point1421)
+            rob1422 = rob_command(point1422)
+            rob1423 = rob_command(point1423)
+            rob1424 = rob_command(point1424)
+            rob1425 = rob_command(point1425)
+
+
             rob4 = rob_command(point4)
+
+            rob451 = rob_command(point451)
+            rob452 = rob_command(point452)
+            rob453 = rob_command(point453)
+            rob454 = rob_command(point454)
+            rob455 = rob_command(point455)
+            rob456 = rob_command(point456)
+            rob457 = rob_command(point457)
+            rob458 = rob_command(point458)
+            rob459 = rob_command(point459)
+            rob4510 = rob_command(point4510)
+            rob4511 = rob_command(point4511)
+            rob4512 = rob_command(point4512)
+            rob4513 = rob_command(point4513)
+            rob4514 = rob_command(point4514)
+            rob4515 = rob_command(point4515)
+            rob4516 = rob_command(point4516)
+            rob4517 = rob_command(point4517)
+            rob4518 = rob_command(point4518)
+            rob4519 = rob_command(point4519)
+            rob4520 = rob_command(point4520)
+            rob4521 = rob_command(point4521)
+
             rob5 = rob_command(point5)
+
+            rob4H1 = rob_command(point4H1)
+            rob4H2 = rob_command(point4H2)
+            rob4H3 = rob_command(point4H3)
+            rob4H4 = rob_command(point4H4)
+            rob4H5 = rob_command(point4H5)
+            rob4H6 = rob_command(point4H6)
+            rob4H7 = rob_command(point4H7)
+            rob4H8 = rob_command(point4H8)
+            rob4H9 = rob_command(point4H9)
+            rob4H10 = rob_command(point4H10)
+            rob4H11 = rob_command(point4H11)
+            rob4H12 = rob_command(point4H12)
+            rob4H13 = rob_command(point4H13)
+            rob4H14 = rob_command(point4H14)
+            rob4H15 = rob_command(point4H15)
+            rob4H16 = rob_command(point4H16)
+            rob4H17 = rob_command(point4H17)
+            rob4H18 = rob_command(point4H18)
+            rob4H19 = rob_command(point4H19)
+            rob4H20 = rob_command(point4H20)
+            rob4H21 = rob_command(point4H21)
+            rob4H22 = rob_command(point4H22)
+            rob4H23 = rob_command(point4H23)
+            rob4H24 = rob_command(point4H24)
+            rob4H25 = rob_command(point4H25)
+
             # ===== move and distance =========
+            # move from home to point 1
             #post1_move, distance1 = move_distance(robHome, rob1)
             #post2_move, distance2 = move_distance(rob1, rob2)
 
-            post1_move, distance1 = move_distance(robHome, robHome1)
-            post1A_move, distance1A = move_distance(robHome1, robHome2)
-            post1B_move, distance1B = move_distance(robHome2, robHome3)
-            post1C_move, distance1C = move_distance(robHome3, robHome4)
+            postH1_move, distanceH1 = move_distance(robHome, robHome1)
+            postH2_move, distanceH2 = move_distance(robHome2, robHome3)
+            postH3_move, distanceH3 = move_distance(robHome3, robHome4)
 
-            post2_move, distance2 = move_distance(rob1, rob1A)
-            post2A_move, distance2A = move_distance(rob1B, rob1C)
-            post2B_move, distance2B = move_distance(rob1C, rob1D)
-            post2C_move, distance2C = move_distance(rob1D, rob1E)
-            post2D_move, distance2D = move_distance(rob1E, rob1F)
-            post2E_move, distance2E = move_distance(rob1F, rob1G)
-            post2F_move, distance2F = move_distance(rob1G, rob1H)
-            post2G_move, distance2G = move_distance(rob1H, rob1I)
-            post2H_move, distance2H = move_distance(rob1I, rob1J)
-            post2I_move, distance2I = move_distance(rob1J, rob1K)
-            post2J_move, distance2J = move_distance(rob1K, rob1L)
-            post2K_move, distance2K = move_distance(rob1L, rob1M)
-            post2L_move, distance2L = move_distance(rob1M, rob1N)
-            post2M_move, distance2M = move_distance(rob1N, rob1O)
-            post2N_move, distance2N = move_distance(rob1O, rob1P)
-            post2O_move, distance2O = move_distance(rob1P, rob2)
+            post1_move, distance1 = move_distance(robHome4, rob1)
+
+            # move from point 1 to point 2 -> move down
+
+            post121_move, distance121 = move_distance(rob1, rob121)
+            post122_move, distance122 = move_distance(rob121, rob122)
+            post123_move, distance123 = move_distance(rob122, rob123)
+            post124_move, distance124 = move_distance(rob123, rob124)
+            post125_move, distance125 = move_distance(rob124, rob125)
+            post126_move, distance126 = move_distance(rob125, rob126)
+            post127_move, distance127 = move_distance(rob126, rob127)
+            post128_move, distance128 = move_distance(rob127, rob128)
+            post129_move, distance129 = move_distance(rob128, rob129)
+            post1210_move, distance1210 = move_distance(rob129, rob1210)
+            post1211_move, distance1211 = move_distance(rob1210, rob1211)
+            post1212_move, distance1212= move_distance(rob1211, rob1212)
+            post1213_move, distance1213 = move_distance(rob1212, rob1213)
+            post1214_move, distance1214 = move_distance(rob1213, rob1214)
+            post1215_move, distance1215 = move_distance(rob1214, rob1215)
+            post1216_move, distance1216 = move_distance(rob1215, rob1216)
+            post1217_move, distance1217 = move_distance(rob1216, rob1217)
+            post1218_move, distance1218 = move_distance(rob1217, rob1218)
+            post1219_move, distance1219 = move_distance(rob1218, rob1219)
+            post1220_move, distance1220 = move_distance(rob1219, rob1220)
+            post1221_move, distance1221 = move_distance(rob1220, rob1221)
+
+            # move from point 2 to point 3(1) -> move up
+            post231_move, distance231 = move_distance(rob1221, rob1220)
+            post232_move, distance232 = move_distance(rob1220, rob1219)
+            post233_move, distance233 = move_distance(rob1219, rob1218)
+            post234_move, distance234 = move_distance(rob1218, rob1217)
+            post235_move, distance235 = move_distance(rob1217, rob1216)
+            post236_move, distance236 = move_distance(rob1216, rob1215)
+            post237_move, distance237 = move_distance(rob1215, rob1214)
+            post238_move, distance238 = move_distance(rob1214, rob1213)
+            post239_move, distance239 = move_distance(rob1213, rob1212)
+            post2310_move, distance2310 = move_distance(rob1212, rob1211)
+            post2311_move, distance2311 = move_distance(rob1211, rob1210)
+            post2312_move, distance2312 = move_distance(rob1210, rob129)
+            post2313_move, distance2313 = move_distance(rob129, rob128)
+            post2314_move, distance2314 = move_distance(rob128, rob127)
+            post2315_move, distance2315 = move_distance(rob127, rob126)
+            post2316_move, distance2316 = move_distance(rob126, rob125)
+            post2317_move, distance2317 = move_distance(rob125, rob124)
+            post2318_move, distance2318 = move_distance(rob124, rob123)
+            post2319_move, distance2319 = move_distance(rob123, rob122)
+            post2320_move, distance2320 = move_distance(rob122, rob121)
+            post2321_move, distance2321 = move_distance(rob121, rob1)
 
 
+            # move position 3(1) to pos 4 -> move right
+            post141_move, distance141 = move_distance(rob1, rob141)
+            post142_move, distance142 = move_distance(rob141, rob142)
+            post143_move, distance143 = move_distance(rob142, rob143)
+            post144_move, distance144 = move_distance(rob143, rob144)
+            post145_move, distance145 = move_distance(rob144, rob145)
+            post146_move, distance146 = move_distance(rob145, rob146)
+            post147_move, distance147 = move_distance(rob146, rob147)
+            post148_move, distance148 = move_distance(rob147, rob148)
+            post149_move, distance149 = move_distance(rob148, rob149)
+            post1410_move, distance1410 = move_distance(rob149, rob1410)
+            post1411_move, distance1411 = move_distance(rob1410, rob1411)
+            post1412_move, distance1412= move_distance(rob1411, rob1412)
+            post1413_move, distance1413 = move_distance(rob1412, rob1413)
+            post1414_move, distance1414 = move_distance(rob1413, rob1414)
+            post1415_move, distance1415 = move_distance(rob1414, rob1415)
+            post1416_move, distance1416 = move_distance(rob1415, rob1416)
+            post1417_move, distance1417 = move_distance(rob1416, rob1417)
+            post1418_move, distance1418 = move_distance(rob1417, rob1418)
+            post1419_move, distance1419 = move_distance(rob1418, rob1419)
+            post1420_move, distance1420 = move_distance(rob1419, rob1420)
+            post1421_move, distance1421 = move_distance(rob1420, rob1421)
+            post1422_move, distance1422 = move_distance(rob1421, rob1422)
+            post1423_move, distance1423 = move_distance(rob1422, rob1423)
+            post1424_move, distance1424 = move_distance(rob1423, rob1424)
+            post1425_move, distance1425 = move_distance(rob1424, rob1425)
 
-            post3_move, distance3 = move_distance(rob2, rob1)
-            post4_move, distance4 = move_distance(rob1, rob4)
-            post5_move, distance5 = move_distance(rob4, rob5)
-            post6_move, distance6 = move_distance(rob5, rob4)
-            post7_move, distance7 = move_distance(rob4, robHome)
+            post4_move, distance4 = move_distance(rob1425, rob4)
+
+            # move down from point 4 to point 5 -> move down
+            post451_move, distance451 = move_distance(rob4, rob451)
+            post452_move, distance452 = move_distance(rob451, rob452)
+            post453_move, distance453 = move_distance(rob452, rob453)
+            post454_move, distance454 = move_distance(rob453, rob454)
+            post455_move, distance455 = move_distance(rob454, rob455)
+            post456_move, distance456 = move_distance(rob455, rob456)
+            post457_move, distance457 = move_distance(rob456, rob457)
+            post458_move, distance458 = move_distance(rob457, rob458)
+            post459_move, distance459 = move_distance(rob458, rob459)
+            post4510_move, distance4510 = move_distance(rob459, rob4510)
+            post4511_move, distance4511 = move_distance(rob4510, rob4511)
+            post4512_move, distance4512= move_distance(rob4511, rob4512)
+            post4513_move, distance4513 = move_distance(rob4512, rob4513)
+            post4514_move, distance4514 = move_distance(rob4513, rob4514)
+            post4515_move, distance4515 = move_distance(rob4514, rob4515)
+            post4516_move, distance4516 = move_distance(rob4515, rob4516)
+            post4517_move, distance4517 = move_distance(rob4516, rob4517)
+            post4518_move, distance4518 = move_distance(rob4517, rob4518)
+            post4519_move, distance4519 = move_distance(rob4518, rob4519)
+            post4520_move, distance4520 = move_distance(rob4519, rob4520)
+            post4521_move, distance4521 = move_distance(rob4520, rob4521)
+
+
+            # move point 5 to point 6(4) -> move up
+            post561_move, distance561 = move_distance(rob4521, rob4520)
+            post562_move, distance562 = move_distance(rob4520, rob4519)
+            post563_move, distance563 = move_distance(rob4519, rob4518)
+            post564_move, distance564 = move_distance(rob4518, rob4517)
+            post565_move, distance565 = move_distance(rob4517, rob4516)
+            post566_move, distance566 = move_distance(rob4516, rob4515)
+            post567_move, distance567 = move_distance(rob4515, rob4514)
+            post568_move, distance568 = move_distance(rob4514, rob4513)
+            post569_move, distance569 = move_distance(rob4513, rob4512)
+            post5610_move, distance5610 = move_distance(rob4512, rob4511)
+            post5611_move, distance5611 = move_distance(rob4511, rob4510)
+            post5612_move, distance5612 = move_distance(rob4510, rob459)
+            post5613_move, distance5613 = move_distance(rob459, rob458)
+            post5614_move, distance5614 = move_distance(rob458, rob457)
+            post5615_move, distance5615 = move_distance(rob457, rob456)
+            post5616_move, distance5616 = move_distance(rob456, rob455)
+            post5617_move, distance5617 = move_distance(rob455, rob454)
+            post5618_move, distance5618 = move_distance(rob454, rob453)
+            post5619_move, distance5619 = move_distance(rob453, rob452)
+            post5620_move, distance5620 = move_distance(rob452, rob451)
+            post5621_move, distance5621 = move_distance(rob451, rob4)
+
+            # move point 6(4) to point 7(near home) -> move left
+            post7H1_move, distance7H1 = move_distance(rob4, rob4H1)
+            post7H2_move, distance7H2 = move_distance(rob4H1, rob4H2)
+            post7H3_move, distance7H3 = move_distance(rob4H2, rob4H3)
+            post7H4_move, distance7H4 = move_distance(rob4H3, rob4H4)
+            post7H5_move, distance7H5 = move_distance(rob4H4, rob4H5)
+            post7H6_move, distance7H6 = move_distance(rob4H5, rob4H6)
+            post7H7_move, distance7H7 = move_distance(rob4H6, rob4H7)
+            post7H8_move, distance7H8 = move_distance(rob4H7, rob4H8)
+            post7H9_move, distance7H9 = move_distance(rob4H8, rob4H9)
+            post7H10_move, distance7H10 = move_distance(rob4H9, rob4H10)
+            post7H11_move, distance7H11 = move_distance(rob4H10, rob4H11)
+            post7H12_move, distance7H12= move_distance(rob4H11, rob4H12)
+            post7H13_move, distance7H13 = move_distance(rob4H12, rob4H3)
+            post7H14_move, distance7H14 = move_distance(rob4H13, rob4H14)
+            post7H15_move, distance7H15 = move_distance(rob4H14, rob4H15)
+            post7H16_move, distance7H16 = move_distance(rob4H15, rob4H16)
+            post7H17_move, distance7H17 = move_distance(rob4H16, rob4H17)
+            post7H18_move, distance7H18 = move_distance(rob4H17, rob4H18)
+            post7H19_move, distance7H19 = move_distance(rob4H18, rob4H19)
+            post7H20_move, distance7H20 = move_distance(rob4H19, rob4H20)
+            post7H21_move, distance7H21 = move_distance(rob4H20, rob4H21)
+            post7H22_move, distance7H22 = move_distance(rob4H21, rob4H22)
+            post7H23_move, distance7H23 = move_distance(rob4H22, rob4H23)
+            post7H24_move, distance7H24 = move_distance(rob4H23, rob4H24)
+            post7H25_move, distance7H25 = move_distance(rob4H24, rob4H25)
 
             # servo on check
             if FS100.ERROR_SUCCESS == robot.get_status(status):
@@ -554,8 +814,59 @@ class Job(threading.Thread):
             index = 0
             tredON = False
 
-            postMove = [post1_move, post1A_move, post1B_move, post1C_move, post2_move, post2A_move, post2B_move, post2C_move, post2D_move, post2E_move, post2F_move, post2G_move, post2H_move, post2I_move, post2J_move, post2K_move, post2L_move, post2M_move, post2N_move, post2O_move, post3_move, post4_move, post5_move, post6_move, post7_move]
-            dist = [distance1, distance1A, distance1B, distance1C, distance2, distance2A, distance2B, distance2C, distance2D, distance2E, distance2F, distance2G, distance2H, distance2I, distance2J, distance2K, distance2L, distance2M, distance2N, distance2O, distance3, distance4, distance5, distance6, distance7]
+            postMove = [postH1_move, postH2_move, postH3_move, post1_move, post121_move, post122_move, post123_move, post124_move, post125_move, post126_move, post127_move, post128_move, post129_move, post1210_move,
+                        post1211_move, post1212_move, post1213_move, post1214_move, post1215_move, post1216_move, post1217_move, post1218_move, post1219_move, post1220_move, post1221_move,
+                        post231_move, post232_move, post233_move, post234_move, post235_move, post236_move,
+                        post237_move, post238_move, post239_move, post2310_move,
+                        post2311_move, post2312_move, post2313_move, post2314_move, post2315_move, post2316_move,
+                        post2317_move, post2318_move, post2319_move, post2320_move, post2321_move,
+                        post141_move, post142_move, post143_move, post144_move, post145_move, post146_move,
+                        post147_move, post148_move, post149_move, post1410_move,
+                        post1411_move, post1412_move, post1413_move, post1414_move, post1415_move, post1416_move,
+                        post1417_move, post1418_move, post1419_move, post1420_move, post1421_move, post1422_move, post1423_move, post1424_move, post1425_move, post4_move,
+                        post451_move, post452_move, post453_move, post454_move, post455_move, post456_move,
+                        post457_move, post458_move, post459_move, post4510_move,
+                        post4511_move, post4512_move, post4513_move, post4514_move, post4515_move, post4516_move,
+                        post4517_move, post4518_move, post4519_move, post4520_move, post4521_move,
+                        post561_move, post562_move, post563_move, post564_move, post565_move, post566_move,
+                        post567_move, post568_move, post569_move, post5610_move,
+                        post5611_move, post5612_move, post5613_move, post5614_move, post5615_move, post5616_move,
+                        post5617_move, post5618_move, post5619_move, post5620_move, post5621_move,
+                        post7H1_move, post7H2_move, post7H3_move, post7H4_move, post7H5_move, post7H6_move,
+                        post7H7_move, post7H8_move, post7H9_move, post7H10_move,
+                        post7H11_move, post7H12_move, post7H13_move, post7H14_move, post7H15_move, post7H16_move,
+                        post7H17_move, post7H18_move, post7H19_move, post7H20_move, post7H21_move, post7H22_move,
+                        post7H23_move, post7H24_move, post7H25_move
+                        ]
+            dist = [
+                    distanceH1, distanceH2, distanceH3, distance1, distance121, distance122, distance123, distance124,
+                    distance125, distance126, distance127, distance128, distance129, distance1210,
+                    distance1211, distance1212, distance1213, distance1214, distance1215, distance1216, distance1217,
+                    distance1218, distance1219, distance1220, distance1221,
+                    distance231, distance232, distance233, distance234, distance235, distance236,
+                    distance237, distance238, distance239, distance2310,
+                    distance2311, distance2312, distance2313, distance2314, distance2315, distance2316,
+                    distance2317, distance2318, distance2319, distance2320, distance2321,
+                    distance141, distance142, distance143, distance144, distance145, distance146,
+                    distance147, distance148, distance149, distance1410,
+                    distance1411, distance1412, distance1413, distance1414, distance1415, distance1416,
+                    distance1417, distance1418, distance1419, distance1420, distance1421, distance1422, distance1423,
+                    distance1424, distance1425, distance4,
+                    distance451, distance452, distance453, distance454, distance455, distance456,
+                    distance457, distance458, distance459, distance4510,
+                    distance4511, distance4512, distance4513, distance4514, distance4515, distance4516,
+                    distance4517, distance4518, distance4519, distance4520, distance4521,
+                    distance561, distance562, distance563, distance564, distance565, distance566,
+                    distance567, distance568, distance569, distance5610,
+                    distance5611, distance5612, distance5613, distance5614, distance5615, distance5616,
+                    distance5617, distance5618, distance5619, distance5620, distance5621,
+                    distance7H1, distance7H2, distance7H3, distance7H4, distance7H5, distance7H6,
+                    distance7H7, distance7H8, distance7H9, distance7H10,
+                    distance7H11, distance7H12, distance7H13, distance7H14, distance7H15, distance7H16,
+                    distance7H17, distance7H18, distance7H19, distance7H20, distance7H21, distance7H22,
+                    distance7H23, distance7H24, distance7H25
+
+                     ]
 
 
             for i in postMove:
