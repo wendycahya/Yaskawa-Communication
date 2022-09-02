@@ -961,6 +961,16 @@ if __name__ == '__main__':
             Sp = SSM_calculation(VelRnew, velHum, Tr, ac, C, Zd, Zr)
             #print("SSM Dynamic", Sp)
 
+            # skeleton mediapipe migrasion
+            # Recolor image to RGB
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img.flags.writeable = False
+            # Make detection
+            results = pose.process(img)
+            # Recolor back to BGR
+            img.flags.writeable = True
+            # img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
             if faces:
                 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
                     # skeleton detection
@@ -975,15 +985,6 @@ if __name__ == '__main__':
                     d = d * 10  # distance in mm
                     eye_dist = round(d, 3)
 
-                    # skeleton mediapipe migrasion
-                    # Recolor image to RGB
-                    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                    img.flags.writeable = False
-                    # Make detection
-                    results = pose.process(img)
-                    # Recolor back to BGR
-                    img.flags.writeable = True
-                    #img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
                     # Extract landmarks
                     try:
