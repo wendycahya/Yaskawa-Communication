@@ -1,3 +1,5 @@
+Powered by Anonymousemail → Join Us!
+
 #1. copy assets folder
 #2. Test the speed control the movement
 #3.
@@ -38,6 +40,7 @@ clock = pygame.time.Clock()
 
 #font and coloring
 font = pygame.font.Font('assets/Inter-SemiBold.otf', 24)
+font_big = pygame.font.Font('assets/Inter-SemiBold.otf', 48)
 font_reg = pygame.font.Font('assets/Inter-Regular.otf', 24)
 green, yellow, blue, red, purple, gray = (20, 128, 10), (236, 190, 35), (0, 103, 230), (197, 54, 55), (123, 97, 255), (229, 229, 229)
 window.fill((255, 255, 255))
@@ -128,13 +131,14 @@ window.blit(text_mode, (511, 526))
 pygame.draw.rect(window, purple, (913, 547, 339, 127), border_radius=5)
 pygame.draw.rect(window, gray, (1077, 557, 166, 110), border_radius=5)
 
-pygame.draw.rect(window, purple, (808, 549, 99, 125), border_radius=5)
-pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
-text_titcounter = font_reg.render("COUNTER", True, (242, 242, 247))
-window.blit(text_titcounter, (812, 553))
-
 text_Rtask = font.render("Robot Task", True, (242, 242, 247))
 window.blit(text_Rtask, (929, 557))
+
+pygame.draw.rect(window, purple, (808, 549, 99, 125), border_radius=5)
+pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
+text_titcounter = font_reg.render("COUNT", True, (242, 242, 247))
+window.blit(text_titcounter, (812, 553))
+
 
 
 # =================function SSM =============================
@@ -486,8 +490,10 @@ point4H24 = [445.919, -346.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
 point4H25 = [445.919, -371.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
 
 #pointHomeA = [445.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
+
+progress = [0, 0, 0, 0]
+finish = [1, 1, 1, 1]
 start_time = datetime.now()
-counter = 0
 
 class Job(threading.Thread):
     def __init__(self, *args, **kwargs):
@@ -506,11 +512,8 @@ class Job(threading.Thread):
         speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
         speed = SPEED_XYZ[2]
 
-        #==counter position==
-
-        pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
-        text_fillcounter = font_reg.render(str(counter), True, (242, 242, 247))
-        window.blit(text_fillcounter, (836,590))
+        # ==counter position==
+        counter = 0
 
         pygame.draw.rect(window, purple, (929, 602, 140, 29), border_radius=5)
         text_process = font_reg.render("PROCESS", True, (242, 242, 247))
@@ -519,13 +522,18 @@ class Job(threading.Thread):
         imgPro = pygame.image.load("assets/process.png").convert()
         imgPro = pygame.transform.scale(imgPro, (99, 99))
         window.blit(imgPro, (1119, 562))
+
+        pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
+        text_fillcounter = font_big.render("0", True, (50, 50, 50))
+        window.blit(text_fillcounter, (836, 590))
+
         while self.__running.is_set():
-            print("Robot counter: ", counter)
+
             # Read initial position
             if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
                 x, y, z, rx, ry, rz, re = pos_info['pos']
                 pointHome = (x, y, z, 0, 0, 0, 0)
-                str = "CURRENT POSITION\n" + \
+                straaa = "CURRENT POSITION\n" + \
                       "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
                       "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
                                                                                          x // 1000, x % 1000,
@@ -538,7 +546,7 @@ class Job(threading.Thread):
                       "                            Re   {:4d}.{:04d} deg.\n".format(
                           re // 10000, re % 10000)
 
-            print(str)
+            print(straaa)
             # ===== convert robot command =====
             robHome = pointHome
             robHome1 = rob_command(pointHomeA)
@@ -892,6 +900,11 @@ class Job(threading.Thread):
                 print("Finished step ", index)
 
             counter = counter + 1
+            ## counter information
+            print("Robot counter: ", counter)
+            pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
+            text_fillcounter = font_big.render(str(counter), True, (50, 50, 50))
+            window.blit(text_fillcounter, (836, 590))
 
             if counter == 2:
                 finish_task = datetime.now() - start_time
@@ -989,16 +1002,6 @@ if __name__ == '__main__':
             Sp = SSM_calculation(VelRnew, velHum, Tr, ac, C, Zd, Zr)
             #print("SSM Dynamic", Sp)
 
-            # skeleton mediapipe migrasion
-            # Recolor image to RGB
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            img.flags.writeable = False
-            # Make detection
-            results = pose.process(img)
-            # Recolor back to BGR
-            img.flags.writeable = True
-            # img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-
             if faces:
                 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
                     # skeleton detection
@@ -1013,6 +1016,15 @@ if __name__ == '__main__':
                     d = d * 10  # distance in mm
                     eye_dist = round(d, 3)
 
+                    # skeleton mediapipe migrasion
+                    # Recolor image to RGB
+                    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                    img.flags.writeable = False
+                    # Make detection
+                    results = pose.process(img)
+                    # Recolor back to BGR
+                    img.flags.writeable = True
+                    #img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
                     # Extract landmarks
                     try:
@@ -1223,8 +1235,8 @@ if __name__ == '__main__':
                                 Vr = Vr_max_command
                                 if Vr_max_command <= vrface:
                                     Vr = 50
-                                    speed = 100
-                                    print("change value speed 100: ", speed)
+                                    speed = 500
+                                    print("change value speed 500: ", speed)
                                     #jacoRobot.setSpeed(Vr, vrot)
                                     #jacoRobot.message("Jaco Speed Vr warning")
                                     #print("Succes send speed Vr Command")
@@ -1239,8 +1251,8 @@ if __name__ == '__main__':
                             #print("Vmax allowable in this workspace: ", Vr_max_command)
                             # Vr = Vr_max_command
                             Vr = 100
-                            speed = 250
-                            print("change value speed 250: ", speed)
+                            speed = 500
+                            print("change value speed 500: ", speed)
                             #jacoRobot.setSpeed(Vr, vrot)
 
                             #mode SSM ori reduce speed = 2
@@ -1259,8 +1271,8 @@ if __name__ == '__main__':
                             #print("Robot bekerja maximal")
                             mode_collab = 1
                             Vr = vrmax
-                            speed = 100
-                            print("change value speed 100: ", speed)
+                            speed = 750
+                            print("change value speed 750: ", speed)
                             #jacoRobot.setSpeed(Vr, vrot)
 
                             #mode SSM ori full speed = 1
@@ -1303,8 +1315,8 @@ if __name__ == '__main__':
                             #print("Robot bekerja maximal")
                             mode_collab = 1
                             Vr = vrmax
-                            speed = 250
-                            print("change value speed max 250: ", speed)
+                            speed = 750
+                            print("change value speed max 750: ", speed)
                             #jacoRobot.setSpeed(Vr, vrot)
                             #mode SSM ori full speed = 1
                             mode_SSMori = 1
