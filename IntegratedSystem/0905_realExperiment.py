@@ -128,6 +128,11 @@ window.blit(text_mode, (511, 526))
 pygame.draw.rect(window, purple, (913, 547, 339, 127), border_radius=5)
 pygame.draw.rect(window, gray, (1077, 557, 166, 110), border_radius=5)
 
+pygame.draw.rect(window, purple, (808, 549, 99, 125), border_radius=5)
+pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
+text_titcounter = font_reg.render("COUNTER", True, (242, 242, 247))
+window.blit(text_titcounter, (812, 553))
+
 text_Rtask = font.render("Robot Task", True, (242, 242, 247))
 window.blit(text_Rtask, (929, 557))
 
@@ -481,10 +486,8 @@ point4H24 = [445.919, -346.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
 point4H25 = [445.919, -371.222, 345.819, 178.6967, -0.0031, -0.0308, 0]
 
 #pointHomeA = [445.916, -387.580, 345.821, 178.6969, -0.0029, -0.0306, 0]
-
-progress = [0, 0, 0, 0]
-finish = [1, 1, 1, 1]
 start_time = datetime.now()
+counter = 0
 
 class Job(threading.Thread):
     def __init__(self, *args, **kwargs):
@@ -503,6 +506,12 @@ class Job(threading.Thread):
         speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
         speed = SPEED_XYZ[2]
 
+        #==counter position==
+
+        pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
+        text_fillcounter = font_reg.render(str(counter), True, (242, 242, 247))
+        window.blit(text_fillcounter, (836,590))
+
         pygame.draw.rect(window, purple, (929, 602, 140, 29), border_radius=5)
         text_process = font_reg.render("PROCESS", True, (242, 242, 247))
         window.blit(text_process, (940, 600))
@@ -511,7 +520,7 @@ class Job(threading.Thread):
         imgPro = pygame.transform.scale(imgPro, (99, 99))
         window.blit(imgPro, (1119, 562))
         while self.__running.is_set():
-            print("reading condition", progress)
+            print("Robot counter: ", counter)
             # Read initial position
             if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
                 x, y, z, rx, ry, rz, re = pos_info['pos']
@@ -868,7 +877,7 @@ class Job(threading.Thread):
 
                      ]
 
-            counter = 0
+
             for i in postMove:
                 self.__flag.wait()
                 time_d = time_robot(speed, dist[index], delay_rob)
@@ -884,6 +893,21 @@ class Job(threading.Thread):
 
             counter = counter + 1
 
+            if counter == 2:
+                finish_task = datetime.now() - start_time
+                finish_task = str(finish_task)
+                print(datetime.now() - start_time)
+                pygame.draw.rect(window, gray, (1119, 562, 99, 99), border_radius=5)
+                imgSuc = pygame.image.load("assets/success.png").convert()
+                imgSuc = pygame.transform.scale(imgSuc, (99, 99))
+                window.blit(imgSuc, (1119, 562))
+                pygame.draw.rect(window, purple, (929, 602, 140, 29), border_radius=5)
+                text_process = font_reg.render("FINISH", True, (242, 242, 247))
+                window.blit(text_process, (940, 600))
+                pygame.draw.rect(window, purple, (916, 638, 157, 29), border_radius=5)
+                text_process = font_reg.render(finish_task[0:9], True, (242, 242, 247))
+                window.blit(text_process, (922, 638))
+                break
 
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
         # a hold off in case we switch to teach/play mode
