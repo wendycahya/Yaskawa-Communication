@@ -351,7 +351,7 @@ midshoulderRAW = 0
 midHipsRAW = 0
 
 #information
-write_file = "SSMdata_Analysis.csv"
+write_file = "0908-Trial_SSMdata_Analysis.csv"
 mode_collab = 0
 
 #SSM original data
@@ -1427,8 +1427,9 @@ if __name__ == '__main__':
             window.blit(frame, (18, 18))
             # ===== research documentation =====
             interval = interval + 1
+
             # nilai calibrasi data raw real hip, real shoulder, real nose, pixel hip, pixel shoulder, pixel nose
-            # output.write(str(interval) + ',' + str(Scurrent) + ',' + str(VrOriSSM) + ',' + str(Vr) + ',' + str(mode_SSMori) + ',' + str(mode_collab) + '\n')
+            output.write(str(interval) + ',' + str(Scurrent) + ',' + str(VrOriSSM) + ',' + str(speed) + ',' + str(mode_SSMori) + ',' + str(mode_collab) + ',' + str(x) + ',' + str(y) + ',' + str(z) + ',' + str(rx) + ',' + str(ry) + ',' + str(rz) + '\n')
             print("SUCCESS RECORD!!!")
             # Update Display
             pygame.display.update()
