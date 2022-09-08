@@ -1428,7 +1428,7 @@ if __name__ == '__main__':
             interval = interval + 1
 
             # nilai calibrasi data raw real hip, real shoulder, real nose, pixel hip, pixel shoulder, pixel nose
-            output.write(str(interval) + ',' + str(Scurrent) + ',' + str(VrOriSSM) + ',' + str(speed) + ',' + str(mode_SSMori) + ',' + str(mode_collab) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str([2]) + '\n')
+            output.write(str(interval) + ',' + str(Scurrent) + ',' + str(VrOriSSM) + ',' + str(speed) + ',' + str(mode_SSMori) + ',' + str(mode_collab) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str(XnRob[2]) + '\n')
             print("SUCCESS RECORD!!!")
             # Update Display
             pygame.display.update()
