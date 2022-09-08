@@ -1,5 +1,3 @@
-Powered by Anonymousemail → Join Us!
-
 #1. copy assets folder
 #2. Test the speed control the movement
 #3.
@@ -85,7 +83,7 @@ text_zRobot = font_reg.render("z:", True, (50, 50, 50))
 window.blit(text_zRobot, (825, 194))
 text_rmRobot = font_reg.render("Robot Movement", True, (50, 50, 50))
 window.blit(text_rmRobot, (1006, 89))
-text_spRobot = font_reg.render("Speed:", True, (50, 50, 50))
+text_spRobot = font_reg.render("Vsend:", True, (50, 50, 50))
 window.blit(text_spRobot, (1006, 125))
 text_vrRobot = font_reg.render("Vr:", True, (50, 50, 50))
 window.blit(text_vrRobot, (1006, 156))
@@ -299,10 +297,10 @@ Vrmax = 0
 Vr_max_command = 0
 
 #Robot Velocity
-vrchest = 100
+vrchest = 250
 vrface = 60
 vrstop = 0
-vrmax = 200
+vrmax = 750
 vrot = 90
 velRob = 0
 robotZ = 0
@@ -980,9 +978,9 @@ if __name__ == '__main__':
             zRob = round(curRobotPos[2], 2)
             XnRob = [xRob, yRob, zRob]
 
-            xTrob = round(xRob + 900, 2)
-            yTrob = round(yRob + 900, 2)
-            zTrob = round(zRob + 900, 2)
+            xTrob = round(xRob + 850, 2)
+            yTrob = round(yRob + 850, 2)
+            zTrob = round(zRob + 850, 2)
             RobTablePos = [xTrob, yTrob, zTrob]
             #print("Robot Position X Y Z: ", xRob, yRob, zRob)
             #print("Robot Last Position X Y Z: ", XnRob_last[0], XnRob_last[1], XnRob_last[2])
@@ -1234,9 +1232,9 @@ if __name__ == '__main__':
                             else:
                                 Vr = Vr_max_command
                                 if Vr_max_command <= vrface:
+                                    speed = 150
                                     Vr = 50
-                                    speed = 500
-                                    print("change value speed 500: ", speed)
+                                    print("change value speed 150: ", speed)
                                     #jacoRobot.setSpeed(Vr, vrot)
                                     #jacoRobot.message("Jaco Speed Vr warning")
                                     #print("Succes send speed Vr Command")
@@ -1250,14 +1248,14 @@ if __name__ == '__main__':
                             # calculate the Vmax allowable
                             #print("Vmax allowable in this workspace: ", Vr_max_command)
                             # Vr = Vr_max_command
-                            Vr = 100
                             speed = 500
+                            Vr = speed
                             print("change value speed 500: ", speed)
                             #jacoRobot.setSpeed(Vr, vrot)
 
                             #mode SSM ori reduce speed = 2
                             mode_SSMori = 2
-                            VrOriSSM = 100
+                            VrOriSSM = speed
 
                             print("Succes send speed Vr Mid")
                             pygame.draw.rect(window, purple, (467, 555, 165, 29), border_radius=5)
@@ -1270,14 +1268,15 @@ if __name__ == '__main__':
                             server.resume()
                             #print("Robot bekerja maximal")
                             mode_collab = 1
-                            Vr = vrmax
                             speed = 750
+                            Vr = speed
+
                             print("change value speed 750: ", speed)
                             #jacoRobot.setSpeed(Vr, vrot)
 
                             #mode SSM ori full speed = 1
                             mode_SSMori = 1
-                            VrOriSSM = vrmax
+                            VrOriSSM = speed
                             #print("Succes send speed Vr Full Speed")
                             pygame.draw.rect(window, purple, (467, 555, 165, 29), border_radius=5)
                             text_freespeed = font_reg.render("Full Speed", True, (242, 242, 247))
@@ -1314,8 +1313,8 @@ if __name__ == '__main__':
                             server.resume()
                             #print("Robot bekerja maximal")
                             mode_collab = 1
-                            Vr = vrmax
                             speed = 750
+                            Vr = speed
                             print("change value speed max 750: ", speed)
                             #jacoRobot.setSpeed(Vr, vrot)
                             #mode SSM ori full speed = 1
@@ -1429,7 +1428,7 @@ if __name__ == '__main__':
             interval = interval + 1
 
             # nilai calibrasi data raw real hip, real shoulder, real nose, pixel hip, pixel shoulder, pixel nose
-            output.write(str(interval) + ',' + str(Scurrent) + ',' + str(VrOriSSM) + ',' + str(speed) + ',' + str(mode_SSMori) + ',' + str(mode_collab) + ',' + str(x) + ',' + str(y) + ',' + str(z) + ',' + str(rx) + ',' + str(ry) + ',' + str(rz) + '\n')
+            output.write(str(interval) + ',' + str(Scurrent) + ',' + str(VrOriSSM) + ',' + str(speed) + ',' + str(mode_SSMori) + ',' + str(mode_collab) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str([2]) + '\n')
             print("SUCCESS RECORD!!!")
             # Update Display
             pygame.display.update()
