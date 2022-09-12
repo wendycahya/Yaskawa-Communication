@@ -1223,7 +1223,7 @@ if __name__ == '__main__':
 
             # nilai calibrasi data raw real hip, real shoulder, real nose, pixel hip, pixel shoulder, pixel nose
             output.write(str(interval) + ',' + str(Scurrent) + ',' + str(VrOriSSM) + ',' + str(Vr) + ',' + str(mode_SSMori) + ',' + str(mode_collab) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str(XnRob[2]) + '\n')
-            print("SUCCESS RECORD!!!")
+            print("SUCCESS RECORD ", interval, " !!!" )
             # Update Display
             pygame.display.update()
             # Set FPS
