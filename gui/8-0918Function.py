@@ -1,8 +1,9 @@
-from fs100 import FS100
+from utilsFS100 import FS100
 import os
 import threading
 import time
 import math
+from datetime import datetime
 
 def convert_mm(x, y, z, rx, ry, rz, re):
     str_x = "{:4d}.{:03d}".format(x // 1000, x % 1000)
@@ -54,7 +55,7 @@ def move_distance(post1, post2):
 def time_robot(speed, distance):
     distance = distance / 1000
     speed = speed / 10
-    time = (distance / speed) + 0.5
+    time = (distance / speed)
     return time
 
 def rob_command(post1):
@@ -175,10 +176,7 @@ if FS100.ERROR_SUCCESS == robot.get_status(status):
     if not status['servo_on']:
         robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
 
-pos_updater = threading.Thread(target=update_pos)
-index = 0
-tredON = False
-
+move0, distance0 = move_distance(post_ori, post_1)
 move1, distance1 = move_distance(post_1, post_2)
 move2, distance2 = move_distance(post_2, post_3)
 move3, distance3 = move_distance(post_3, post_4)
@@ -188,9 +186,13 @@ print("list move 2: ", move2)
 print("=========================")
 print("list move 2: ", move3)
 print("=========================")
-list_move = [move1, move2, move3]
-dist = [distance1, distance2, distance3]
+list_move = [[post_1], [post_2], [post_3],  [post_4]]
+#list_move = [move1, move2, move3]
+dist = [distance0, distance1, distance2, distance3]
 print(dist)
+index = 0
+start = datetime.now()
+stop = datetime.now()
 
 for x in list_move:
 #declare the post
@@ -198,12 +200,18 @@ for x in list_move:
 #function movement and distance
 #time calculation
     time_d = time_robot(speed, dist[index])
-    print(time_d)
-    if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS,FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, x):
-        time.sleep(time_d)  # robot may not update the status
-        if not is_alarmed() and tredON == False:
-            pos_updater.start()
-            tredON = True
+    if status == FS100.TRAVEL_STATUS_START:
+        start = datetime.now()
+    elif status == FS100.TRAVEL_STATUS_END:
+        stop = datetime.now()
+    print("nilai start", start)
+    print("nilai start", stop)
+
+    diff_seconds = (stop - start)
+    robot_time = diff_seconds.seconds + 3
+    print("nilai second", robot_time)
+    robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,FS100.MOVE_SPEED_CLASS_PERCENT, speed, x)
+    time.sleep(robot_time)  # robot may not update the status
     index = index + 1
     print("Finished step ", index)
 
