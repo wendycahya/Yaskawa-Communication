@@ -1,7 +1,3 @@
-#1. copy assets folder
-#2. Test the speed control the movement
-#3.
-#Robot library
 import math
 import time as t
 import threading
@@ -274,7 +270,7 @@ Vr = Vrinitial
 Vh = 1600
 Tr = 0.41
 ac = 200
-C = 1200
+C = 1000
 Zd = 90
 Zr = 25
 
@@ -306,7 +302,7 @@ vrot = 90
 velRob = 0
 robotZ = 0
 vel = 0
-RobotVrmax = 200
+RobotVrmax = 300
 
 
 distView = 0
@@ -478,6 +474,8 @@ p104 = [462.417,139.332,-132.797,179.999,0.0014,-179.9998,0]
 
 
 start_time = datetime.now()
+# ==counter position==
+counter = 0
 
 class Job(threading.Thread):
     def __init__(self, *args, **kwargs):
@@ -496,8 +494,7 @@ class Job(threading.Thread):
         #speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
         speed = SPEED_XYZ[2]
 
-        # ==counter position==
-        counter = 0
+
 
         pygame.draw.rect(window, purple, (929, 602, 140, 29), border_radius=5)
         text_process = font_reg.render("PROCESS", True, (242, 242, 247))
@@ -678,7 +675,7 @@ class Job(threading.Thread):
                     start = datetime.now()
                 print("nilai x yang masuk ", index, "sebesar ", i)
                 robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
-                           FS100.MOVE_SPEED_CLASS_PERCENT, speed, x)
+                           FS100.MOVE_SPEED_CLASS_PERCENT, speed, i)
                 if status == FS100.TRAVEL_STATUS_END:
                     stop = datetime.now()
                 print("nilai start", start)
@@ -689,15 +686,19 @@ class Job(threading.Thread):
                 t.sleep(robot_time)  # robot may not update the status
                 index = index + 1
                 print("Finished step ", index)
+                #exception
+                if i == post_100:
+                    counter = counter + 1
+                    break
 
-            counter = counter + 1
+
             ## counter information
             print("Robot counter: ", counter)
             pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
             text_fillcounter = font_big.render(str(counter), True, (50, 50, 50))
             window.blit(text_fillcounter, (836, 590))
 
-            if counter == 2:
+            if counter == 1:
                 finish_task = datetime.now() - start_time
                 finish_task = str(finish_task)
                 print(datetime.now() - start_time)
