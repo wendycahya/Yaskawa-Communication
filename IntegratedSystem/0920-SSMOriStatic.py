@@ -474,8 +474,7 @@ p39 = [501.68,-102.75,-232.793,180,0.0029,179.9975,0]
 
 
 start_time = datetime.now()
-# ==counter position==
-counter = 0
+
 
 class Job(threading.Thread):
     def __init__(self, *args, **kwargs):
@@ -656,11 +655,11 @@ class Job(threading.Thread):
 
             postMove = [post_1,post_2,post_3,post_4,post_5,post_6,post_7,post_8,post_9,post_10,
                          post_11,post_12,post_13,post_14,post_15,post_16,post_17,post_18,post_19,post_20,
-                         post_21,post_22,post_23,post_24,post_25,post_26,post_27,post_28,post_29,post_30,
-                         post_31,post_32,post_33,post_34,post_35,post_36,post_37,post_38,post_39
+                         post_21,post_22,post_23
                         ]
 
-                        # post_40,
+                        # ,post_24,post_25,post_26,post_27,post_28,post_29,post_30,
+            #                          post_31,post_32,post_33,post_34,post_35,post_36,post_37,post_38,post_39, post_40,
                         #  post_41,post_42,post_43,post_44,post_45,post_46,post_47,post_48,post_49,post_50,
                         #  post_51,post_52,post_53,post_54,post_55,post_56,post_57,post_58,post_59,post_60,
                         #  post_61,post_62,post_63,post_64,post_65,post_66,post_67,post_68,post_69,post_70,
@@ -669,8 +668,8 @@ class Job(threading.Thread):
                         #  post_91,post_92,post_93,post_94,post_95,post_96,post_97,post_98,post_99,post_100,
                         #  post_101,post_102,post_103,post_104]
 
-
-
+            # ==counter position==
+            counter = 0
             for i in postMove:
                 self.__flag.wait()
                 #time_d = time_robot(speed, dist[index], delay_rob)
@@ -690,7 +689,7 @@ class Job(threading.Thread):
                 index = index + 1
                 print("Finished step ", index)
                 #exception
-                if i == post_39:
+                if i == post_23:
                     counter = counter + 1
                     ## counter information
                     print("Robot counter: ", counter)
@@ -698,7 +697,7 @@ class Job(threading.Thread):
                     text_fillcounter = font_big.render(str(counter), True, (50, 50, 50))
                     window.blit(text_fillcounter, (836, 590))
                     break
-            if counter == 1:
+            if counter == 3:
                 finish_task = datetime.now() - start_time
                 finish_task = str(finish_task)
                 print(datetime.now() - start_time)
