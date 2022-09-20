@@ -790,7 +790,8 @@ if __name__ == '__main__':
             SpStatis = SSM_calculation(Vrinitial, Vh, Tr, ac, C, Zd, Zr)
             #print("SSM Statis", SpStatis)
             # ===== SSM calculation ======
-            Sp = SSM_calculation(VelRnew, velHum, Tr, ac, C, Zd, Zr)
+            #Sp = SSM_calculation(VelRnew, velHum, Tr, ac, C, Zd, Zr)
+            Sp = SpStatis
             #print("SSM Dynamic", Sp)
 
             if faces:
