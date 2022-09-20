@@ -689,15 +689,12 @@ class Job(threading.Thread):
                 #exception
                 if i == post_100:
                     counter = counter + 1
+                    ## counter information
+                    print("Robot counter: ", counter)
+                    pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
+                    text_fillcounter = font_big.render(str(counter), True, (50, 50, 50))
+                    window.blit(text_fillcounter, (836, 590))
                     break
-
-
-            ## counter information
-            print("Robot counter: ", counter)
-            pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
-            text_fillcounter = font_big.render(str(counter), True, (50, 50, 50))
-            window.blit(text_fillcounter, (836, 590))
-
             if counter == 1:
                 finish_task = datetime.now() - start_time
                 finish_task = str(finish_task)

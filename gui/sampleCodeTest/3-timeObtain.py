@@ -10,4 +10,5 @@ stop = datetime.now()
 print("nilai second stop: ", stop)
 
 diff_seconds = (stop - start)
-print("nilai second", diff_seconds.seconds)
+timer = diff_seconds.seconds + 0.5
+print("nilai second", timer)
