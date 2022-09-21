@@ -265,11 +265,11 @@ def on_reset_alarm():
 
 # ===== initialization & variables declaration =====
 #SSM variables
-Vrinitial = 200
+Vrinitial = 750
 Vr = Vrinitial
-Vh = 1600
+Vh = 2000
 Tr = 0.41
-ac = 200
+ac = 5000
 C = 1000
 Zd = 90
 Zr = 25
@@ -1222,7 +1222,7 @@ if __name__ == '__main__':
             interval = interval + 1
 
             # nilai calibrasi data raw real hip, real shoulder, real nose, pixel hip, pixel shoulder, pixel nose
-            output.write(str(interval) + ',' + str(Scurrent) + ',' + str(VrOriSSM) + ',' + str(Vr) + ',' + str(mode_SSMori) + ',' + str(mode_collab) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str(XnRob[2]) + '\n')
+            output.write(str(interval) + ',' + str(Scurrent) + ',' + str(VrOriSSM) + ',' + str(Vr) + ',' + str(Sp) + ',' + str(mode_collab) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str(XnRob[2]) + '\n')
             print("SUCCESS RECORD ", interval, " !!!" )
             # Update Display
             pygame.display.update()
