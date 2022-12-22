@@ -288,6 +288,11 @@ XnHum = [0, 0, 0]
 XnHum_last = [0, 0, 0]
 velXH, velYH, velZH = [0, 0, 0]
 
+accHum = [0, 0, 0]
+VelnHum = [0, 0, 0]
+VelnHum_last = [0, 0, 0]
+accXH, accYH, accZH = [0, 0, 0]
+
 XnRob = [0, 0, 0]
 XnRob_last = [0, 0, 0]
 velXR, velYR, velZR = [0, 0, 0]
@@ -755,7 +760,7 @@ if __name__ == '__main__':
                 if event.type == pygame.QUIT:
                     start = False
                     pygame.quit()
-                    
+
 # ============================ START CORE PROGRAM ========================================
     # ================= Apply Logic =================
             # Detect human skeleton
@@ -870,11 +875,13 @@ if __name__ == '__main__':
                         # ===== Human Velocity Control =====
                         XnHum = [Xn1D, yRob, zRob]
                         velH = velXYZ(XnHum, XnHum_last, ts)
-
+                        velnHum = [velH[0], velH[1], velH[2]]
+                        accHum = velXYZ(velnHum, VelnHum_last, ts)
                         vel = velH[0]
                         print("Jarak sebelum ", XnHum, " !!!")
                         print("Jarak sesudah ", XnHum_last, " !!!")
                         print("Velocity ", vel, " !!!")
+                        print("Acceleration Test Human = ", accHum, " !!!")
 
                         # Xn = [round(Shomid[0],4), round(Shomid[1],4), round(distanceCM,4)]
                         # velX, velY, veLZ = velXYZ(Xn, Xn_last, ts)
@@ -1036,6 +1043,7 @@ if __name__ == '__main__':
                         t.sleep(ts)
                         # Xn_last = Xn
                         XnHum_last = XnHum
+                        VelnHum_last = VelnHum
                         #Xn_last1D = Xn1D
                         XnRob_last = XnRob
                     except:
