@@ -768,8 +768,8 @@ if __name__ == '__main__':
             imgMesh, faces = detector.findFaceMesh(img, draw=False)
             imgFace, bboxs = detectFace.findFaces(img)
 
-            # === Robot analysis Velocity ===
-            # Read initial position
+    # ===== Robot analysis Velocity =====
+        # === Read initial position ===
             # if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
             #     x, y, z, rx, ry, rz, re = pos_info['pos']
             #     #pointHome = (x, y, z, 0, 0, 0, 0)
