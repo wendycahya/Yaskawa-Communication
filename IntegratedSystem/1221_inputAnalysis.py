@@ -19,6 +19,10 @@ import csv
 #GUI
 import pygame
 
+#fuzzy logic library
+from simpful import *
+from numpy import linspace, array
+
 #====================INITIALIZE GUI=========================
 # Initialize
 pygame.init()
@@ -133,7 +137,52 @@ pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
 text_titcounter = font_reg.render("COUNT", True, (242, 242, 247))
 window.blit(text_titcounter, (812, 553))
 
+# ================ Fuzzy Define System ======================
+FS = FuzzySystem()
 
+# Define fuzzy sets and linguistic variables
+S_1 = FuzzySet(function=Sigmoid_MF(c=0, a=40), term="positive")
+S_2 = FuzzySet(function=InvSigmoid_MF(c=0, a=40), term="negative")
+input1 = LinguisticVariable([S_1, S_2], concept="Derivative Distance", universe_of_discourse=[-1, 1])
+FS.add_linguistic_variable("TimeDistance", input1)
+
+F_1 = FuzzySet(function=Sigmoid_MF(c=0, a=40), term="positive")
+F_2 = FuzzySet(function=InvSigmoid_MF(c=0, a=40), term="negative")
+input2 = LinguisticVariable([F_1, F_2], concept="Scalar Product", universe_of_discourse=[-0.15, 0.15])
+FS.add_linguistic_variable("ScalarProduct", input2)
+
+T_1 = FuzzySet(function=Sigmoid_MF(c=0.6, a=40), term="high")
+T_2 = FuzzySet(function=Gaussian_MF(mu=0.5, sigma=0.1), term="medium")
+T_3 = FuzzySet(function=InvSigmoid_MF(c=0.4, a=40), term="small")
+target = LinguisticVariable([T_1, T_2, T_3], concept="Alpha", universe_of_discourse=[0, 1])
+FS.add_linguistic_variable("Alpha", target)
+#
+# # Define fuzzy rules
+R1 = "IF (TimeDistance IS negative) OR (ScalarProduct IS positive) THEN (Alpha IS high)"
+R2 = "IF (TimeDistance IS negative) OR (ScalarProduct IS negative) THEN (Alpha IS high)"
+R3 = "IF (TimeDistance IS positive) OR (ScalarProduct IS negative) THEN (Alpha IS small)"
+R4 = "IF (TimeDistance IS positive) OR (ScalarProduct IS positive) THEN (Alpha IS medium)"
+
+FS.add_rules([R1, R2, R3, R4])
+
+
+# ===== Fuzzy mapping input constrains =====
+fz_in1Min = -1500
+fz_in1Max = 1500
+fz_out1Min = -1
+fz_out1Max = 1
+
+fz_in2Min = -500
+fz_in2Max = 500
+fz_out2Min = -1.5
+fz_out2Max = 1.5
+
+d_HR = 0
+d_HRLast = 0
+
+# ================= function common =========================
+def map_range(x, in_min, in_max, out_min, out_max):
+  return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
 
 # =================function SSM =============================
 def SSM_calculation(Vr, Vh, Tr, ac, C, Zd, Zr):
@@ -163,6 +212,16 @@ def velXYZ(Xn, Xn_last, ts):
     velZ = (Xn_last[2] - Xn[2]) / ts
 
     return velX, velY, velZ
+
+def inputVRVH(dIn, Pos1, Pos2):
+    p1 = np.array(Pos1)
+    p2 = np.array(Pos2)
+    v1 = np.array(dIn)
+    num = p2 - p1
+    denum = np.linalg.norm(num)
+    calcnumDenum = num/denum
+    inputParam = abs(np.dot(v1, calcnumDenum))
+    return inputParam
 
 def Vr_max(Sp, Vh, Vr, Tr, ac, C, Zd, Zr):
     Ts = Vr / ac
@@ -292,6 +351,7 @@ accHum = [0, 0, 0]
 VelnHum = [0, 0, 0]
 VelnHum_last = [0, 0, 0]
 accXH, accYH, accZH = [0, 0, 0]
+VelnRob = [0, 0, 0]
 
 XnRob = [0, 0, 0]
 XnRob_last = [0, 0, 0]
@@ -361,6 +421,9 @@ mode_collab = 0
 VrOriSSM = 0
 mode_SSMori = 0
 
+#input Data Fuzzy
+inputDistance = 0
+inputScalar = 0
 
 # ===== Yaskawa Connect Robot =====
 # robot connection
@@ -788,6 +851,7 @@ if __name__ == '__main__':
             #print("Robot Position X Y Z: ", xRob, yRob, zRob)
             #print("Robot Last Position X Y Z: ", XnRob_last[0], XnRob_last[1], XnRob_last[2])
             velR = velXYZ(XnRob, XnRob_last, ts)
+            VelnRob = velR
             #print("Robot velocity X Y Z: ", velR[0], velR[1], velR[2])
             # velR[0] = round(velR[0], 2)
             # velR[1] = round(velR[1], 2)
@@ -829,6 +893,7 @@ if __name__ == '__main__':
 
                     # Extract landmarks
                     try:
+                        fpsnew, img = fpsReader.update(img, pos=(10, 40), color=(0, 255, 0), scale=2, thickness=2)
                         landmarks = results.pose_landmarks.landmark
                         # Get coordinates
                         xyzFoot = [landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x,
@@ -878,10 +943,10 @@ if __name__ == '__main__':
                         velnHum = [velH[0], velH[1], velH[2]]
                         accHum = velXYZ(velnHum, VelnHum_last, ts)
                         vel = velH[0]
-                        print("Jarak sebelum ", XnHum, " !!!")
-                        print("Jarak sesudah ", XnHum_last, " !!!")
-                        print("Velocity ", vel, " !!!")
-                        print("Acceleration Test Human = ", accHum, " !!!")
+                        #print("Jarak sebelum ", XnHum, " !!!")
+                        #print("Jarak sesudah ", XnHum_last, " !!!")
+                        #print("Velocity ", vel, " !!!")
+                        #print("Acceleration Test Human = ", accHum, " !!!")
 
                         # Xn = [round(Shomid[0],4), round(Shomid[1],4), round(distanceCM,4)]
                         # velX, velY, veLZ = velXYZ(Xn, Xn_last, ts)
@@ -894,9 +959,9 @@ if __name__ == '__main__':
                         nilai_shoulderMid = tuple(np.multiply([Shomid[0], Shomid[1]], [640, 480]).astype(int))
                         nilai_HipMid = tuple(np.multiply([Hipmid[0], Hipmid[1]], [640, 480]).astype(int))
 
-                        print("Data raw nose ", nilai_nose[1])
-                        print("Read raw mid shoulder ", nilai_shoulderMid[1])
-                        print("Read raw mid hips ", nilai_HipMid[1])
+                        #print("Data raw nose ", nilai_nose[1])
+                        #print("Read raw mid shoulder ", nilai_shoulderMid[1])
+                        #print("Read raw mid hips ", nilai_HipMid[1])
 
                         noseRAW = nilai_nose[1]
                         midshoulderRAW = nilai_shoulderMid[1]
@@ -911,6 +976,41 @@ if __name__ == '__main__':
                         disHR = distanceCM / 100
                         #Spmin = 100
                         SpminVal = Spmin(velHum, Tr, ac, C, Zd, Zr)
+
+                # ===== Fuzzy input detection =====
+                #inputVRVH(dIn, Pos1, Pos2)
+                #np.linalg.norm(num)
+
+                        Vhnew = inputVRVH(VelnHum, XnHum, XnRob)
+                        Vrnew = inputVRVH(VelnRob, XnRob, XnHum)
+
+                        humParam = np.array(XnHum)
+                        robParam = np.array(XnRob)
+                        VhumParam = np.array(VelnHum)
+                        VrobParam = np.array(VelnRob)
+
+                        d_HR = np.linalg.norm(humParam-robParam)
+
+                        fz_input1 = (d_HRLast-d_HR) / ts
+                        print("Input 1 RAW Fuzzy:", fz_input1)
+
+                        fz_input2 = np.dot(VrobParam, VhumParam)
+                        print("Input 2 RAW Fuzzy:", fz_input2)
+                # ===== Fuzzy mapping input =====
+                ## map_range(x, in_min, in_max, out_min, out_max)
+                        inputDistance = map_range(fz_input1, fz_in1Min, fz_in1Max, fz_out1Min, fz_out1Max)
+                        inputScalar = map_range(fz_input2, fz_in2Min, fz_in2Max, fz_out2Min, fz_out2Max)
+
+                # ===== Fuzzy Operation =====
+                        # # Set antecedents values
+                        FS.set_variable("TimeDistance", inputDistance)
+                        FS.set_variable("ScalarProduct", inputScalar)
+
+                        # Perform Mamdani inference and print output
+                        alphaVal = FS.Mamdani_inference(["Alpha"])
+                        print("Nilai Alpha Value Fuzzy: ", alphaVal.get("Alpha"))
+
+
 
                         if SpminVal > Sp or SpminVal < 1000:
                             SpminVal = 1000
@@ -972,15 +1072,15 @@ if __name__ == '__main__':
                         minChest = hipsLoc * 10
                         maxChest = shoulderLoc * 10
                         zChest = [minChest, maxChest]
-                        print("Read Head Position ", zHead)
-                        print("Read Chest Position ", zChest)
+                        #print("Read Head Position ", zHead)
+                        #print("Read Chest Position ", zChest)
                         #print("Nilai S Current adalah ", Scurrent)
                         Scurrent = eye_dist
                         Scurrent = round(Scurrent, 2)
 
 
 
-                        # logical SSM send robot
+            # ===== logical SSM send robot =====
                         if Scurrent < Sp:
                             #server.pause()
                             print("Robot harus berhenti", vrstop)
@@ -1046,6 +1146,7 @@ if __name__ == '__main__':
                         VelnHum_last = VelnHum
                         #Xn_last1D = Xn1D
                         XnRob_last = XnRob
+                        d_HRLast = d_HR
                     except:
                         if Scurrent < Sp:
                             #server.pause()
