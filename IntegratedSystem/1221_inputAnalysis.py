@@ -192,6 +192,13 @@ def SSM_calculation(Vr, Vh, Tr, ac, C, Zd, Zr):
     Sp = Vh * ( Tr + Tb ) + (Vr * Tr) + Ss + Ctot
     return Sp
 
+def SSM_fuzzy(alpha, Vr, Vh, Tr, ac, C, Zd, Zr):
+    Tb = Vr / ac
+    Ss  = pow(Vr, 2) / (2*ac)
+    Ctot = C + Zd + Zr
+    Sp = alpha*(Vh * ( Tr + Tb ) + (Vr * Tr) + Ss) + Ctot
+    return Sp
+
 def center_point(a,b):
     a = np.array(a)
     b = np.array(b)
@@ -328,7 +335,7 @@ Vr = Vrinitial
 Vh = 2000
 Tr = 0.41
 ac = 5000
-C = 1000
+C_SSM = 1000
 Zd = 90
 Zr = 25
 
@@ -377,10 +384,10 @@ distView = 0
 sampleDistance = 1
 pause_active = 0
 
-Spmax = SSM_calculation(Vrinitial, Vh, Tr, ac, C, Zd, Zr)
+Spmax = SSM_calculation(Vrinitial, Vh, Tr, ac, C_SSM, Zd, Zr)
 Sp = Spmax
 Scurrent = Spmax + 1000
-SpminInitial = Spmin(Vh, Tr, ac, C, Zd, Zr)
+SpminInitial = Spmin(Vh, Tr, ac, C_SSM, Zd, Zr)
 SpminVal = SpminInitial
 #calibration position variable
 zHead = [0, 0]
@@ -867,6 +874,7 @@ if __name__ == '__main__':
             Sp = SSM_calculation(VelRnew, velHum, Tr, ac, C, Zd, Zr)
             #print("SSM Dynamic", Sp)
 
+
             if faces:
                 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
                     # skeleton detection
@@ -975,7 +983,7 @@ if __name__ == '__main__':
                         #Sp = 400
                         disHR = distanceCM / 100
                         #Spmin = 100
-                        SpminVal = Spmin(velHum, Tr, ac, C, Zd, Zr)
+                        SpminVal = Spmin(velHum, Tr, ac, C_SSM, Zd, Zr)
 
                 # ===== Fuzzy input detection =====
                 #inputVRVH(dIn, Pos1, Pos2)
@@ -1009,8 +1017,8 @@ if __name__ == '__main__':
                         # Perform Mamdani inference and print output
                         alphaVal = FS.Mamdani_inference(["Alpha"])
                         print("Nilai Alpha Value Fuzzy: ", alphaVal.get("Alpha"))
-
-
+                        alphaInput = alphaVal.get("Alpha")
+                        Sp = SSM_fuzzy(alphaInput, VelRnew, velHum, Tr, ac, C_SSM, Zd, Zr)
 
                         if SpminVal > Sp or SpminVal < 1000:
                             SpminVal = 1000
