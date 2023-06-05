@@ -137,13 +137,6 @@ window.blit(text_titcounter, (812, 553))
 
 
 # =================function SSM =============================
-# def SSM_calculation(Vr, Vh, Tr, ac, C, Zd, Zr):
-#     Tb = Vr / ac
-#     Ss  = pow(Vr, 2) / (2*ac)
-#     Ctot = C + Zd + Zr
-#     Sp = Vh * ( Tr + Tb ) + (Vr * Tr) + Ss + Ctot
-#     return Sp
-
 def SSM_calculation(Vr, Vh, Tr, Ts, ac, C, Zd, Zr):
     Ctot = C + Zd + Zr
     Ss   = Vr*Ts + ((ac*pow(Ts, 2))/2)
@@ -322,7 +315,7 @@ Vr_PFL = 400
 Vh_max = 1600
 Vh = 0
 Tr = 0.1
-Ts = 1
+Ts = 0.08
 ac = 3000
 C = 200
 Zd = 106.7
@@ -801,6 +794,12 @@ if __name__ == '__main__':
     # masukkan program utama disini (looping program)
     with open(write_file, "wt", encoding="utf-8") as output:
         while True:
+            # Detect human skeleton
+            success, img = cap.read()
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            imgMesh, faces = detector.findFaceMesh(img, draw=False)
+            imgFace, bboxs = detectFace.findFaces(img)
+
             # Get Events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -808,10 +807,6 @@ if __name__ == '__main__':
                     pygame.quit()
 
     # ================= Apply Logic =================
-            # Detect human skeleton
-            success, img = cap.read()
-            imgMesh, faces = detector.findFaceMesh(img, draw=False)
-            imgFace, bboxs = detectFace.findFaces(img)
 
             # === Robot analysis Velocity ===
             # Read initial position
@@ -864,7 +859,7 @@ if __name__ == '__main__':
 
                     # skeleton mediapipe migrasion
                     # Recolor image to RGB
-                    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
                     img.flags.writeable = False
                     # Make detection
                     results = pose.process(img)
@@ -1007,7 +1002,7 @@ if __name__ == '__main__':
                         print("Read Head Position ", zHead)
                         print("Read Chest Position ", zChest)
                         #print("Nilai S Current adalah ", Scurrent)
-                        D = eye_dist
+                        D = eye_dist - 500
                         D = round(D, 2)
 
                         if velHum > Vh:
