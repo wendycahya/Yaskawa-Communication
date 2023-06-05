@@ -25,7 +25,8 @@ def on_reset_alarm():
     is_alarmed()
 
 # robot connection
-robot = FS100('192.168.255.1')
+#robot = FS100('192.168.255.1')
+robot = FS100('172.16.0.1') #robot control besar Yaskawa
 stop_sign = threading.Semaphore()
 
 pos_info = {}
@@ -72,8 +73,8 @@ if FS100.ERROR_SUCCESS == robot.get_status(status):
 
 pos_updater = threading.Thread(target=update_pos)
 
-if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS,FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, pos_move):
-    time.sleep(10)  # robot may not update the status
+if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, pos_move):
+    time.sleep(50)  # robot may not update the status
     if not is_alarmed():
         pos_updater.start()
 
@@ -84,7 +85,7 @@ dy = 0
 dz = 50000
 update_pos_move = (dx, dy, dz, 0, 0, 0, 0)
 if FS100.ERROR_SUCCESS == robot.one_move(FS100.MOVE_TYPE_LINEAR_INCREMENTAL_POS,FS100.MOVE_COORDINATE_SYSTEM_ROBOT, speed_class, speed, update_pos_move):
-    time.sleep(10)  # robot may not update the status
+    time.sleep(50)  # robot may not update the status
     # if not is_alarmed():
     #     pos_updater.start()
 

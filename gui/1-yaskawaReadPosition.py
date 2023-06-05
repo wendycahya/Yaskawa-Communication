@@ -4,7 +4,10 @@ import threading
 import time
 
 # robot connection
-robot = FS100('192.168.255.1')
+#robot = FS100('192.168.255.1')
+
+robot = FS100('172.16.0.1')
+#robot = FS100('127.0.0.1')
 stop_sign = threading.Semaphore()
 
 pos_info = {}

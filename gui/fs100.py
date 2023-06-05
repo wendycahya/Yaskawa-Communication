@@ -220,7 +220,8 @@ class FS100:
         self.traveller_thread = None
         self.stop_travelling = False
 
-+        if self.sock is None:
+    def connect(self, port=UDP_PORT_ROBOT_CONTROL):
+        if self.sock is None:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.sock.settimeout(self.timeout)
             self.sock.connect((self.ip, port))

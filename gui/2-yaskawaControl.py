@@ -24,7 +24,8 @@ def on_reset_alarm(self):
     is_alarmed()
 
 # robot connection
-robot = FS100('192.168.255.1')
+#robot = FS100('192.168.255.1')
+robot = FS100('172.16.0.1') #robot control besar Yaskawa
 stop_sign = threading.Semaphore()
 
 pos_info = {}
