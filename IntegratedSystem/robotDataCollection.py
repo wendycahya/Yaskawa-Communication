@@ -31,7 +31,7 @@ def check_near(reached: tuple, true: tuple):
 
 def run_fs100():
     print(ipAddress)
-    robot = FS100('192.168.255.1')
+    robot = FS100('172.16.0.1')
 
 
     pos_info = {}
@@ -106,14 +106,14 @@ def run_fs100():
         now = datetime.now()
         Current_time = now.strftime("%H:%M:%S")
 
-        torques_dataframe = torques_dataframe.append(
+        torques_dataframe = torques_dataframe._append(
             {'DateTime': date_time, 'Time': Current_time, 'Position_X(mm)': x * 0.001,
              'Position_Y(mm)': y * 0.001,
              'Position_Z(mm)': z * 0.001, 'R_X(deg)': rx * 0.0001,
              'R_Y(deg)': ry * 0.0001, 'R_Z(deg)': rz * 0.0001}, ignore_index=True)
         time.sleep(0.5)
         indexx += 1
-        if indexx == 50:
+        if indexx == 125:
             break
             # index +=1
 
