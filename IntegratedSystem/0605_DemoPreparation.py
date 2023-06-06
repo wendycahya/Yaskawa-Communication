@@ -20,6 +20,22 @@ import math as mt
 #realtime show graph
 import matplotlib.pyplot as plt
 
+#plotvariable
+# Create an empty plot
+# plt.ion()
+#
+# # Create a figure and axes
+# fig, ax = plt.subplots()
+# x_data = []
+# y_data = []
+#
+# # Create a line object
+# line, = ax.plot(x_data, y_data)
+#
+# # Set up the plot axes
+# ax.set_xlim(0, 100)
+# ax.set_ylim(0, 1)
+
 import csv
 
 Sp, Spfull, SpminVal, SpSafeVal, SpPFLVal = 0, 0, 0, 0, 0
@@ -275,31 +291,6 @@ mode_collab = 0
 #SSM original data
 VrOriSSM = 0
 mode_SSMori = 0
-
-#realtime variable
-# Initialize empty lists to store data
-x_data = []
-y_data = []
-
-# Create figure and axis
-fig, ax = plt.subplots()
-
-# Create empty line object
-line, = ax.plot(x_data, y_data)
-
-# Create empty line object
-line, = ax.plot(x_data, y_data)
-
-# Set plot labels
-ax.set_xlabel('Time')
-ax.set_ylabel('Speed')
-ax.set_title('Real-time Plot Robot Speed')
-
-# Set the x-axis limits
-ax.set_xlim(0, 10)
-
-# Start the animation
-plt.ion()
 
 
 # ===== Yaskawa Connect Robot =====
@@ -1080,20 +1071,23 @@ if __name__ == '__main__':
             # pygame.display.update()
             # # Set FPS
             # clock.tick(fps)
-            # Append new data to the lists
-            x_data.append(interval)
-            y_data.append(speed)
+            #
+            # #plotting
+            # # Generate new data point
+            # x = interval
+            # y = speed
+            #
+            # # Append the new data point to the arrays
+            # x_data.append(x)
+            # y_data.append(y)
+            #
+            # # Update the line data
+            # line.set_data(x_data, y_data)
+            #
+            # # Redraw the plot
+            # plt.draw()
+            # plt.pause(0.1)
 
-
-            line.set_xdata(x_data)
-            line.set_ydata(y_data)
-
-            # Adjust the x-axis limits based on new data
-            ax.set_xlim(min(x_data), max(x_data))
-
-            # Redraw the plot
-            plt.draw()
-            plt.pause(0.1)
 
 
             cv2.imshow("Image", img)
@@ -1103,5 +1097,5 @@ if __name__ == '__main__':
         cap.release()
         cv2.destroyAllWindows()
         # Stop the animation and show the final plot
-plt.ioff()
-plt.show()
+        #plt.ioff()
+        #plt.show()

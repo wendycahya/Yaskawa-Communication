@@ -1,29 +1,15 @@
-import io
-import numpy as np
 import matplotlib.pyplot as plt
 
-arr = np.array([1,2,3,4])
+x = [1, 2, 3, 4, 5]
+y = [10, 5, 8, 3, 6]
 
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-ax.plot(arr)
+plt.plot(x, y)
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Plot')
+
+# Save the plot as an image file
+#plt.savefig('plot.png')
+
+# Alternatively, display the plot using an external viewer
 plt.show()
-plt.close(fig)
-
-backend_orig = plt.get_backend()
-plt.switch_backend("TkAgg")
-
-buf = io.BytesIO()
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-ax.plot(arr)
-plt.savefig(buf, format="png")
-plt.close(fig)
-
-plt.switch_backend(backend_orig)
-
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-ax.plot(arr)
-plt.show()
-plt.close(fig)
