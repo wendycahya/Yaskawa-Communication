@@ -709,7 +709,7 @@ if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
     cap.set(3, 640)  # width
     cap.set(4, 480)  # height
-
+    output.write(str(interval) + ',' + str(D) + ',' + str(SpPFLVal) + ',' + str(Vr) + ',' + str(speed) + '\n')
     detector = FaceMeshDetector(maxFaces=1)
     detectFace = FaceDetector()
     #print("Nilai S Current adalah ", Scurrent)

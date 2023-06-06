@@ -13,7 +13,7 @@ y_data = []
 line, = ax.plot(x_data, y_data)
 
 # Set up the plot axes
-ax.set_xlim(0, 10)
+ax.set_xlim(0, 100)
 ax.set_ylim(0, 1)
 
 # Start the loop to update the plot
@@ -34,7 +34,7 @@ while True:
     plt.pause(0.1)
 
     # Break the loop condition if desired
-    if x >= 10:
+    if x >= 100:
         break
 
 # Keep the plot displayed after the loop ends
