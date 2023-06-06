@@ -16,127 +16,13 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import math as mt
+
+#realtime show graph
+import matplotlib.pyplot as plt
+
 import csv
 
-#GUI
-import pygame
-
-# #====================INITIALIZE GUI=========================
-# # Initialize
-# pygame.init()
-#
-# # Create Window/Display
-# width, height = 1280, 700
-# window = pygame.display.set_mode((width, height))
-# pygame.display.set_caption("Human Robot Safety Collaboration")
-#
-# # Initialize Clock for FPS
-# fps = 30
-# clock = pygame.time.Clock()
-#
-# #font and coloring
-# font = pygame.font.Font('assets/Inter-SemiBold.otf', 24)
-# font_big = pygame.font.Font('assets/Inter-SemiBold.otf', 48)
-# font_reg = pygame.font.Font('assets/Inter-Regular.otf', 24)
-# green, yellow, blue, red, purple, gray = (20, 128, 10), (236, 190, 35), (0, 103, 230), (197, 54, 55), (123, 97, 255), (229, 229, 229)
-# window.fill((255, 255, 255))
-#
-# # ===layout interface===
-# pygame.draw.rect(window, gray, (667, 50, 590, 213), border_radius=5)
-# pygame.draw.rect(window, gray, (18, 513, 640, 172), border_radius=5)
-# pygame.draw.rect(window, gray, (667, 276, 590, 409), border_radius=5)
-# #mode collaboration
-# pygame.draw.rect(window, purple, (442, 523, 203, 152), border_radius=5)
-#
-# #warning head and chest
-# pygame.draw.rect(window, purple, (1104, 414, 148, 127), border_radius=5)
-# pygame.draw.rect(window, gray, (1112, 444, 134, 95), border_radius=5)
-# text = font.render("WARNING!!!", True, (242, 242, 247))
-# window.blit(text, (1112, 414))
-#
-# #img assets
-# imgKinova = pygame.image.load("assets/kinova.png").convert()
-# imgKinova = pygame.transform.scale(imgKinova, (166, 167))
-# window.blit(imgKinova, (693, 89))
-# imgHuman = pygame.image.load("assets/human.png").convert()
-# imgHuman = pygame.transform.scale(imgHuman, (361, 360))
-# window.blit(imgHuman, (693, 325))
-#
-# # ===Title Text===
-# text = font.render("Safety Human Robot Collaboration", True, (50, 50, 50))
-# window.blit(text, (748, 13))
-#
-#
-#
-# # ====Robot domain===
-# text_Robot = font.render("Robot Domain", True, (50, 50, 50))
-# window.blit(text_Robot, (693, 59))
-# text_RobotPos = font_reg.render("Robot Position", True, (50, 50, 50))
-# window.blit(text_RobotPos, (822, 89))
-# text_xRobot = font_reg.render("x:", True, (50, 50, 50))
-# window.blit(text_xRobot, (825, 119))
-# text_yRobot = font_reg.render("y:", True, (50, 50, 50))
-# window.blit(text_yRobot, (825, 156))
-# text_zRobot = font_reg.render("z:", True, (50, 50, 50))
-# window.blit(text_zRobot, (825, 194))
-# text_rmRobot = font_reg.render("Robot Movement", True, (50, 50, 50))
-# window.blit(text_rmRobot, (1006, 89))
-# text_spRobot = font_reg.render("Vsend:", True, (50, 50, 50))
-# window.blit(text_spRobot, (1006, 125))
-# text_vrRobot = font_reg.render("Vr:", True, (50, 50, 50))
-# window.blit(text_vrRobot, (1006, 156))
-#
-# # ====Human domain===
-# text_Human = font.render("Human Domain", True, (50, 50, 50))
-# window.blit(text_Human, (693, 292))
-# text_mvHuman = font_reg.render("Human Movement", True, (50, 50, 50))
-# window.blit(text_mvHuman, (987, 292))
-# text_fHuman = font_reg.render("FACE", True, (50, 50, 50))
-# window.blit(text_fHuman, (860, 329))
-# text_fminHuman = font_reg.render("max:", True, (50, 50, 50))
-# window.blit(text_fminHuman, (860, 358))
-# text_fmaxHuman = font_reg.render("min:", True, (50, 50, 50))
-# window.blit(text_fmaxHuman, (860, 391))
-# text_cHuman = font_reg.render("CHEST", True, (50, 50, 50))
-# window.blit(text_cHuman, (860, 435))
-# text_cminHuman = font_reg.render("max:", True, (50, 50, 50))
-# window.blit(text_cminHuman, (860, 472))
-# text_cmaxHuman = font_reg.render("min:", True, (50, 50, 50))
-# window.blit(text_cmaxHuman, (860, 505))
-# text_vhHuman = font_reg.render("Vh:", True, (50, 50, 50))
-# window.blit(text_vhHuman, (987, 329))
-#
-#
-# # ====SSM Information===
-# text_SSMInf = font.render("SSM Information", True, (50, 50, 50))
-# window.blit(text_SSMInf, (28, 519))
-# text_currDistance = font_reg.render("Current Distance:", True, (50, 50, 50))
-# window.blit(text_currDistance, (28, 555))
-# text_spSSM = font_reg.render("Sp:", True, (50, 50, 50))
-# window.blit(text_spSSM, (28, 584))
-# text_spminSSM = font_reg.render("Sp min:", True, (50, 50, 50))
-# window.blit(text_spminSSM, (28, 616))
-# text_vrMax = font_reg.render("Vr Max:", True, (50, 50, 50))
-# window.blit(text_vrMax, (28, 646))
-#
-#
-# # ===mode collaboration===
-# text_mode = font_reg.render("Mode", True, (242, 242, 247))
-# window.blit(text_mode, (511, 526))
-# #robot task
-# pygame.draw.rect(window, purple, (913, 547, 339, 127), border_radius=5)
-# pygame.draw.rect(window, gray, (1077, 557, 166, 110), border_radius=5)
-#
-# text_Rtask = font.render("Robot Task", True, (242, 242, 247))
-# window.blit(text_Rtask, (929, 557))
-#
-# pygame.draw.rect(window, purple, (808, 549, 99, 125), border_radius=5)
-# pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
-# text_titcounter = font_reg.render("COUNT", True, (242, 242, 247))
-# window.blit(text_titcounter, (812, 553))
-
-
-
+Sp, Spfull, SpminVal, SpSafeVal, SpPFLVal = 0, 0, 0, 0, 0
 # =================function SSM =============================
 def SSM_calculation(Vr, Vh, Tr, Ts, ac, C, Zd, Zr):
     Ctot = C + Zd + Zr
@@ -194,16 +80,17 @@ def Spmin(C, Zd, Zr):
     return SpminVal
 
 def SpPFL(Vr_PFL, Vh, Tr, Ts, ac, C, Zd, Zr):
+    global SpPFLVal
     Ctot = C + Zd + Zr
     Ss   = Vr_PFL*Ts + ((ac*pow(Ts,2))/2)
-    SpPFL   = Vh * ( Tr + Ts ) + (Vr_PFL * Tr) + Ss + Ctot
-    return SpPFL
+    SpPFLVal   = Vh * ( Tr + Ts ) + (Vr_PFL * Tr) + Ss + Ctot
+    return SpPFLVal
+
 def SpSafe(Vr_PFL, Ts, ac, C, Zd, Zr):
     Ctot = C + Zd + Zr
     Ss   = Vr_PFL*Ts + ((ac*pow(Ts, 2))/2)
     SpSafeVal = Ss + Ctot
     return SpSafeVal
-
 
 def inputVRVH(dIn, Pos1, Pos2):
     p1 = np.array(Pos1)
@@ -247,59 +134,59 @@ def move_convert(post_original):
     post_robot = (x, y, z, rx, ry, rz, re)
     return post_robot
 
-# def move_distance(post1, post2):
-#     print("nilai post akhir", post2[2])
-#     print("nilai post awal", post1[2])
-#     x_coor = post2[0] - post1[0]
-#     y_coor = post2[1] - post1[1]
-#     z_coor = post2[2] - post1[2]
-#     rx_coor = post2[3] - post1[3]
-#     ry_coor = post2[4] - post1[4]
-#     rz_coor = post2[5] - post1[5]
-#     re_coor = post2[6] - post1[6]
-#
-#     dist = math.sqrt(math.pow((post2[0] - post1[0]), 2) + math.pow((post2[1] - post1[1]), 2) + math.pow((post2[2] - post1[2]), 2))
-#
-#     move_coor = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
-#     return move_coor, int(dist)
+def move_distance(post1, post2):
+    print("nilai post akhir", post2[2])
+    print("nilai post awal", post1[2])
+    x_coor = post2[0] - post1[0]
+    y_coor = post2[1] - post1[1]
+    z_coor = post2[2] - post1[2]
+    rx_coor = post2[3] - post1[3]
+    ry_coor = post2[4] - post1[4]
+    rz_coor = post2[5] - post1[5]
+    re_coor = post2[6] - post1[6]
 
-# def time_robot(speed, distance, delay_rob):
-#     distance = distance / 1000
-#     speed = speed / 10
-#     time_move = (distance / speed) + delay_rob
-#     return time_move
+    dist = math.sqrt(math.pow((post2[0] - post1[0]), 2) + math.pow((post2[1] - post1[1]), 2) + math.pow((post2[2] - post1[2]), 2))
 
-# def rob_command(post1):
-#     x_coor = post1[0] * 1000
-#     y_coor = post1[1] * 1000
-#     z_coor = post1[2] * 1000
-#     rx_coor = post1[3] * 10000
-#     ry_coor = post1[4] * 10000
-#     rz_coor = post1[5] * 10000
-#     re_coor = post1[6] * 10000
+    move_coor = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
+    return move_coor, int(dist)
+
+def time_robot(speed, distance, delay_rob):
+    distance = distance / 1000
+    speed = speed / 10
+    time_move = (distance / speed) + delay_rob
+    return time_move
+
+def rob_command(post1):
+    x_coor = post1[0] * 1000
+    y_coor = post1[1] * 1000
+    z_coor = post1[2] * 1000
+    rx_coor = post1[3] * 10000
+    ry_coor = post1[4] * 10000
+    rz_coor = post1[5] * 10000
+    re_coor = post1[6] * 10000
+
+    robot_command = [(int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))]
+    #robot_command = (int(x_coor), int(y_coor), int(z_coor), 0, 0, 0, 0)
+    return robot_command
 #
-#     robot_command = [(int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))]
-#     #robot_command = (int(x_coor), int(y_coor), int(z_coor), 0, 0, 0, 0)
-#     return robot_command
-#
-# def update_pos():
-#     while stop_sign.acquire(blocking=False):
-#         stop_sign.release()
-#         # let button up take effect
-#         t.sleep(0.02)
-#
-# def is_alarmed():
-#     alarmed = True
-#     status = {}
-#     if FS100.ERROR_SUCCESS == robot.get_status(status):
-#         alarmed = status['alarming']
-#     return alarmed
-#
-# def on_reset_alarm():
-#     robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
-#     t.sleep(0.1)
-#     # reflect the ui
-#     is_alarmed()
+def update_pos():
+    while stop_sign.acquire(blocking=False):
+        stop_sign.release()
+        # let button up take effect
+        t.sleep(0.02)
+
+def is_alarmed():
+    alarmed = True
+    status = {}
+    if FS100.ERROR_SUCCESS == robot.get_status(status):
+        alarmed = status['alarming']
+    return alarmed
+
+def on_reset_alarm():
+    robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
+    t.sleep(0.1)
+    # reflect the ui
+    is_alarmed()
 
 # ===== initialization & variables declaration =====
 #SSM variables
@@ -343,8 +230,9 @@ robotZ = 0
 vel = 0
 RobotVrmax = 1500
 
-Sp, Spfull, SpminVal, SpSafeVal, SpPFLVal = 0, 0, 0, 0, 0
 
+Spfull = SpMax(vrmax, velHum_Ori, Tr, Ts, ac, C_SSM, Zd, Zr)
+SpminVal = Spmin(C_SSM, Zd, Zr)
 distView = 0
 sampleDistance = 1
 pause_active = 0
@@ -388,30 +276,58 @@ mode_collab = 0
 VrOriSSM = 0
 mode_SSMori = 0
 
+#realtime variable
+# Initialize empty lists to store data
+x_data = []
+y_data = []
+
+# Create figure and axis
+fig, ax = plt.subplots()
+
+# Create empty line object
+line, = ax.plot(x_data, y_data)
+
+# Create empty line object
+line, = ax.plot(x_data, y_data)
+
+# Set plot labels
+ax.set_xlabel('Time')
+ax.set_ylabel('Speed')
+ax.set_title('Real-time Plot Robot Speed')
+
+# Set the x-axis limits
+ax.set_xlim(0, 10)
+
+# Start the animation
+plt.ion()
+
 
 # ===== Yaskawa Connect Robot =====
 # robot connection
-# robot = FS100('192.168.255.1')
-# stop_sign = threading.Semaphore()
+#robot = FS100('192.168.255.1')
+robot = FS100('172.16.0.1')
+SPEED_XYZ = (10, 150, 500)
+speed = SPEED_XYZ[2]
+stop_sign = threading.Semaphore()
 #
 # # Initialize the robot model
-# pos_info = {}
-# robot_no = 1
-# status = {}
-# speed = 0
-# x, y, z, rx, ry, rz, re = 0, 0, 0, 0, 0, 0, 0
-# delay_rob = 0.1
+pos_info = {}
+robot_no = 1
+status = {}
+speed = 0
+x, y, z, rx, ry, rz, re = 0, 0, 0, 0, 0, 0, 0
+delay_rob = 0.1
 # # ===== Movement Position List =====
-# p1 = [489.918,58.66,-232.798,179.9994,0.0013,180,0]
-# p2 = [503.826,49.941,-232.801,179.9994,0.0008,179.9983,0]
-# p3 = [517.714,34.156,-232.792,179.9993,0.0025,179.9994,0]
-# p4 = [524.313,19.02,-232.794,179.9994,0.0018,179.9998,0]
-# p5 = [527.394,1.638,-232.795,179.9995,0.0018,179.9996,0]
-# p6 = [524.974,-16.781,-232.8,179.9995,0.0019,179.9984,0]
-# p7 = [519.415,-31.248,-232.798,179.9996,0.0021,179.9978,0]
-# p8 = [506.061,-48.025,-232.799,179.9996,0.0013,179.9974,0]
-# p9 = [493.358,-56.936,-232.796,179.9997,0.002,179.9982,0]
-# p10 = [474.845,-63.793,-232.795,179.9998,0.0021,179.9975,0]
+p1 = [723.086, 54.302, 379.545, -167.291, -80.048, -8.599, 0]
+p2 = [730.100, 72.261, 345.694, -167.375, -76.904, -7.293, 0]
+p3 = [735.083, 90.800, 310.952, -167.492, -73.691, -5.964, 0]
+p4 = [737.850, 109.369, 276.195, -167.630, -70.481, -4.654, 0]
+p5 = [738.423,127.829,241.500,-167.792,-67.272,-3.361,0]
+p6 = [736.815,146.175,206.694,-167.988,-64.043,-2.067,0]
+p7 = [733.049,164.151,172.148,-168.207,-60.819,-0.792,0]
+p8 = [727.335,181.233,138.696,-168.447,-57.670,0.436,0]
+p9 = [719.535,197.959,105.147,-168.722,-54.479,1.670,0]
+p10 = [709.706,214.064,71.832,-169.027,-51.267,2.895,0]
 # p11 = [456.362,-64.478,-232.797,179.9998,0.0014,179.9998,0]
 # p12 = [440.952,-61.331,-232.798,179.9998,0.0012,179.9982,0]
 # p13 = [421.762,-50.653,-232.796,179.9998,0.0016,179.9989,0]
@@ -511,22 +427,23 @@ mode_SSMori = 0
 start_time = datetime.now()
 
 
-# class Job(threading.Thread):
-#     def __init__(self, *args, **kwargs):
-#         super(Job, self).__init__(*args, **kwargs)
-#         self.__flag = threading.Event()     # 用于暂停线程的标识
-#         self.__flag.set()       # 设置为True
-#         self.__running = threading.Event()      # 用于停止线程的标识
-#         self.__running.set()      # 将running设置为True
-#
-#     def run(self):
-#
-#         # set speed
-#         SPEED_XYZ = (10, 150, 500)
-#         SPEED_R_XYZE = (10, 50, 100)
-#
-#         #speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
-#         speed = SPEED_XYZ[2]
+class Job(threading.Thread):
+    def __init__(self, *args, **kwargs):
+        super(Job, self).__init__(*args, **kwargs)
+        self.__flag = threading.Event()     # 用于暂停线程的标识
+        self.__flag.set()       # 设置为True
+        self.__running = threading.Event()      # 用于停止线程的标识
+        self.__running.set()      # 将running设置为True
+
+    def run(self):
+
+        # set speed
+        SPEED_XYZ = (10, 150, 500)
+        SPEED_R_XYZE = (10, 50, 100)
+
+        #speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
+        global speed
+        #speed = SPEED_XYZ[2]
 #
 #
 #
@@ -542,40 +459,40 @@ start_time = datetime.now()
 #         text_fillcounter = font_big.render("0", True, (50, 50, 50))
 #         window.blit(text_fillcounter, (836, 590))
 #         index = 0
-#         start = datetime.now()
-#         stop = datetime.now()
+        start = datetime.now()
+        stop = datetime.now()
 #
-#         while self.__running.is_set():
-#
-#             # Read initial position
-#             if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-#                 x, y, z, rx, ry, rz, re = pos_info['pos']
-#                 pointHome = (x, y, z, 0, 0, 0, 0)
-#                 straaa = "CURRENT POSITION\n" + \
-#                       "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-#                       "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-#                                                                                          x // 1000, x % 1000,
-#                                                                                          rx // 10000,
-#                                                                                          rx % 10000) + \
-#                       "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-#                           y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-#                       "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-#                           z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-#                       "                            Re   {:4d}.{:04d} deg.\n".format(
-#                           re // 10000, re % 10000)
-#
-#             print(straaa)
+        while self.__running.is_set():
+
+            # Read initial position
+            if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                x, y, z, rx, ry, rz, re = pos_info['pos']
+                pointHome = (x, y, z, 0, 0, 0, 0)
+                straaa = "CURRENT POSITION\n" + \
+                      "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
+                      "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
+                                                                                         x // 1000, x % 1000,
+                                                                                         rx // 10000,
+                                                                                         rx % 10000) + \
+                      "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
+                          y // 1000, y % 1000, ry // 10000, ry % 10000) + \
+                      "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
+                          z // 1000, z % 1000, rz // 10000, rz % 10000) + \
+                      "                            Re   {:4d}.{:04d} deg.\n".format(
+                          re // 10000, re % 10000)
+
+            print(straaa)
 #             # ===== convert robot command =====
-#             post_1 = rob_command(p1)
-#             post_2 = rob_command(p2)
-#             post_3 = rob_command(p3)
-#             post_4 = rob_command(p4)
-#             post_5 = rob_command(p5)
-#             post_6 = rob_command(p6)
-#             post_7 = rob_command(p7)
-#             post_8 = rob_command(p8)
-#             post_9 = rob_command(p9)
-#             post_10 = rob_command(p10)
+            post_1 = rob_command(p1)
+            post_2 = rob_command(p2)
+            post_3 = rob_command(p3)
+            post_4 = rob_command(p4)
+            post_5 = rob_command(p5)
+            post_6 = rob_command(p6)
+            post_7 = rob_command(p7)
+            post_8 = rob_command(p8)
+            post_9 = rob_command(p9)
+            post_10 = rob_command(p10)
 #             post_11 = rob_command(p11)
 #             post_12 = rob_command(p12)
 #             post_13 = rob_command(p13)
@@ -680,21 +597,20 @@ start_time = datetime.now()
             # ==counter position==
             # counter = 0
             # # servo on check
-            # if FS100.ERROR_SUCCESS == robot.get_status(status):
-            #     if not status['servo_on']:
-            #         robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
+            if FS100.ERROR_SUCCESS == robot.get_status(status):
+                if not status['servo_on']:
+                    robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
             #
             # # ===== list movement task ========
-            # pos_updater = threading.Thread(target=update_pos)
-            # index = 0
-            # tredON = False
+            pos_updater = threading.Thread(target=update_pos)
+            index = 0
+            tredON = False
             #
-            # postMove = [post_1,post_2,post_3,post_4,post_5,post_6,post_7,post_8,post_9,post_10,
-            #              post_11,post_12,post_13,post_14,post_15,post_16,post_17,post_18,post_19,post_20,
-            #              post_21,post_22,post_23
-            #             ]
+            postMove = [post_1, post_2, post_3, post_4, post_5, post_6, post_7,post_8,post_9,post_10]
 
-                        # ,post_24,post_25,post_26,post_27,post_28,post_29,post_30,
+                        # ,post_6,post_7,post_8,post_9,post_10,
+            #                          post_11,post_12,post_13,post_14,post_15,post_16,post_17,post_18,post_19,post_20,
+            #                          post_21,post_22,post_23,post_24,post_25,post_26,post_27,post_28,post_29,post_30,
             #                          post_31,post_32,post_33,post_34,post_35,post_36,post_37,post_38,post_39, post_40,
                         #  post_41,post_42,post_43,post_44,post_45,post_46,post_47,post_48,post_49,post_50,
                         #  post_51,post_52,post_53,post_54,post_55,post_56,post_57,post_58,post_59,post_60,
@@ -704,35 +620,31 @@ start_time = datetime.now()
                         #  post_91,post_92,post_93,post_94,post_95,post_96,post_97,post_98,post_99,post_100,
                         #  post_101,post_102,post_103,post_104]
     #
-    #
-    #
-    #         for i in postMove:
-    #             self.__flag.wait()
-    #             #time_d = time_robot(speed, dist[index], delay_rob)
-    #             if status == FS100.TRAVEL_STATUS_START:
-    #                 start = datetime.now()
-    #             print("nilai x yang masuk ", index, "sebesar ", i)
-    #             robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
-    #                        FS100.MOVE_SPEED_CLASS_PERCENT, speed, i)
-    #             if status == FS100.TRAVEL_STATUS_END:
-    #                 stop = datetime.now()
-    #             print("nilai start", start)
-    #             print("nilai stop", stop)
-    #             diff_seconds = (stop - start)
-    #             robot_time = diff_seconds.seconds + 3
-    #             print("nilai second", robot_time)
-    #             t.sleep(robot_time)  # robot may not update the status
-    #             index = index + 1
-    #             print("Finished step ", index)
+            counter = 0
+            for i in postMove:
+                self.__flag.wait()
+                #time_d = time_robot(speed, dist[index], delay_rob)
+                if status == FS100.TRAVEL_STATUS_START:
+                    start = datetime.now()
+                print("nilai x yang masuk ", index, "sebesar ", i)
+                robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
+                           FS100.MOVE_SPEED_CLASS_PERCENT, speed, i)
+                if status == FS100.TRAVEL_STATUS_END:
+                    stop = datetime.now()
+                # print("nilai start", start)
+                # print("nilai stop", stop)
+                diff_seconds = (stop - start)
+                robot_time = int(diff_seconds.seconds) + 5
+                print("nilai second", robot_time)
+                #t.sleep(robot_time)  # robot may not update the status
+                index = index + 1
+                print("Finished step ", index)
     #             #exception
-    #             if i == post_23:
-    #                 counter = counter + 1
-    #                 ## counter information
-    #                 print("Robot counter: ", counter)
-    #                 pygame.draw.rect(window, gray, (816, 585, 84, 82), border_radius=5)
-    #                 text_fillcounter = font_big.render(str(counter), True, (50, 50, 50))
-    #                 window.blit(text_fillcounter, (836, 590))
-    #                 break
+                if i == post_6:
+                    counter = counter + 1
+                    ## counter information
+                    print("Robot counter: ", counter)
+                    break
     #         if counter == 3:
     #             finish_task = datetime.now() - start_time
     #             finish_task = str(finish_task)
@@ -749,25 +661,25 @@ start_time = datetime.now()
     #             window.blit(text_process, (922, 638))
     #             break
     #
-    #     robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
+        robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
     #     # a hold off in case we switch to teach/play mode
-    #     robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
+        robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
     #
     #
-    # def pause(self):
-    #     self.__flag.clear()     # 设置为False, 让线程阻塞
-    #
-    # def resume(self):
-    #     self.__flag.set()    # 设置为True, 让线程停止阻塞
-    #
-    # def stop(self):
-    #     self.__flag.set()       # 将线程从暂停状态恢复, 如何已经暂停的话
-    #     self.__running.clear()        # 设置为False
+    def pause(self):
+        self.__flag.clear()     # 设置为False, 让线程阻塞
+
+    def resume(self):
+        self.__flag.set()    # 设置为True, 让线程停止阻塞
+
+    def stop(self):
+        self.__flag.set()       # 将线程从暂停状态恢复, 如何已经暂停的话
+        self.__running.clear()        # 设置为False
 
 
 if __name__ == '__main__':
-#    server = Job()
-#    server.start()
+    server = Job()
+    server.start()
     # MAIN PRORGAM:
     # ===== camera installation =====
     fpsReader = cvzone.FPS()
@@ -826,7 +738,6 @@ if __name__ == '__main__':
             # if VelRnew > RobotVrmax:
             #     VelRnew = RobotVrmax
             #print("Robot average velocity", VelRnew)
-
 
             if faces:
                 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
@@ -925,7 +836,8 @@ if __name__ == '__main__':
 
 
                         #Sp = 400
-                        disHR = distanceCM / 100
+                        disHR = distanceCM * 10
+                        disHR = round(disHR, 2)
                         print("2. Human Distance ", disHR)
 
 
@@ -946,7 +858,7 @@ if __name__ == '__main__':
                         # left monitoring input
                         # velHum = vel * 1000
                         # velRob = VelRnew
-                        ShodisXY, ShoXYmid = center_pointXY(leftShoulder, rightShoulder)
+                        # ShodisXY, ShoXYmid = center_pointXY(leftShoulder, rightShoulder)
 
 
                         #  right monitoring output
@@ -992,41 +904,43 @@ if __name__ == '__main__':
                         # print("Read Head Position ", zHead)
                         # print("Read Chest Position ", zChest)
                         #print("Nilai S Current adalah ", Scurrent)
-                        D = eye_dist
-                        D = round(D, 2)
-                        print("Jarak deteksi manusia", D)
-                        if velHum > Vh:
+                        eye_dist = round(eye_dist, 2)
+                        D = min(eye_dist, disHR)
+                        print("3. Jarak deteksi manusia", D)
+                        Vh = 0
+
+                        if Vh < velHum:
                             Vh = 1600
                         else:
                             Vh = velHum
+                        print("4. Jarak deteksi manusia", Vh)
+                        # Vh = 1600
+
+
                     # print("SSM Dynamic", Sp)
                         ## SSM Preparation Calculation
-                        Sp = SSM_calculation(Vr, Vh, Tr, Ts, ac, C_SSM, Zd, Zr)
-                        Spfull = SpMax(Vr, Vh, Tr, Ts, ac, C_SSM, Zd, Zr)
-                        SpminVal = Spmin(C_SSM, Zd, Zr)
-                        SpSafeVal = SpSafe(Vr_PFL, Ts, ac, C_SSM, Zd, Zr)
-                        SpPFLVal = SpPFL(Vr_PFL, Vh, Tr, Ts, ac, C_SSM, Zd, Zr)
-                        # ===== SSM calculation ======
-                        print("Safety Separation Distance: ",Sp,",",Spfull,",", SpminVal,", ",SpSafeVal,",",SpPFLVal)
 
+                        # ===== SSM calculation ======
+                        SpPFLVal = SpPFL(Vr_PFL, Vh, Tr, Ts, ac, C_SSM, Zd, Zr)
+                        SpSafeVal = SpSafe(Vr_PFL, Ts, ac, C_SSM, Zd, Zr)
+                        print("4. Safety Separation Distance: ", Spfull,",", SpminVal,", ", SpSafeVal,",", SpPFLVal)
+
+                        D = D - 200
 
                         # logical SSM send robot
                         if D <= SpminVal:
+                            server.pause()
                             Vr = 0
-                            #server.pause()
+                            speed = 0
                             print("Robot harus berhenti", Vr)
-                            #mode SSM ori stop = 3
-                            # pygame.draw.rect(window, purple, (467, 555, 165, 29), border_radius=5)
-                            # text_stop = font_reg.render("Stop", True, (242, 242, 247))
-                            # window.blit(text_stop, (467, 555))
-                            # pygame.draw.rect(window, red, (460, 588, 166, 81), border_radius=5)
-                            t.sleep(0.5)
+                            #t.sleep(0.5)
 
                         elif D > SpminVal and D <= SpSafeVal:
-                            #server.resume()
+                            server.resume()
                             #print("Robot speed reduction")
-                            speed = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
-                            Vr = round(speed, 2)
+                            Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
+                            Vr = round(Vr, 2)
+                            speed = 100
                             # calculate the Vmax allowable
                             #print("Vmax allowable in this workspace: ", Vr_max_command)
                             # Vr = Vr_max_command
@@ -1044,16 +958,16 @@ if __name__ == '__main__':
                             # window.blit(text_coll, (467, 555))
                             # pygame.draw.rect(window, blue, (460, 588, 166, 81), border_radius=5)
                             # #jacoRobot.message("Robot speed reduction")
-                            t.sleep(0.5)
+                            #t.sleep(0.5)
 
                         elif D > SpSafeVal and D <= SpPFLVal:
-                            # server.resume()
+                            server.resume()
                             # print("Robot speed reduction")
                             mode_collab = 2
                             # calculate the Vmax allowable
                             # print("Vmax allowable in this workspace: ", Vr_max_command)
                             # Vr = Vr_max_command
-                            speed = Vr_PFL
+                            speed = 250
                             Vr = round(speed, 2)
                             print("change value speed PFL: ", Vr)
                             # jacoRobot.setSpeed(Vr, vrot)
@@ -1063,17 +977,18 @@ if __name__ == '__main__':
                             # window.blit(text_coll, (467, 555))
                             # pygame.draw.rect(window, blue, (460, 588, 166, 81), border_radius=5)
                             # jacoRobot.message("Robot speed reduction")
-                            t.sleep(0.5)
+                            #t.sleep(0.5)
 
                         elif D > SpPFLVal and D <= Spfull:
-                            # server.resume()
+                            server.resume()
                             # print("Robot speed reduction")
                             # mode_collab = 2
                             # calculate the Vmax allowable
                             # print("Vmax allowable in this workspace: ", Vr_max_command)
                             # Vr = Vr_max_command
-                            speed = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
-                            Vr = round(speed, 2)
+                            Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
+                            Vr = round(Vr, 2)
+                            speed = 300
                             print("change value speed Reduce: ", Vr)
                             # jacoRobot.setSpeed(Vr, vrot)
 
@@ -1086,13 +1001,13 @@ if __name__ == '__main__':
                             # window.blit(text_reduce, (467, 555))
                             # pygame.draw.rect(window, yellow, (460, 588, 166, 81), border_radius=5)
                             # jacoRobot.message("Robot speed reduction")
-                            t.sleep(0.5)
+                            #t.sleep(0.5)
                         else:
-                            #server.resume()
+                            server.resume()
                             #print("Robot bekerja maximal")
                             #mode_collab = 1
                             Vr = RobotVrmax
-
+                            speed = 500
                             print("change value speed maximum: ", Vr)
                             #jacoRobot.setSpeed(Vr, vrot)
 
@@ -1105,7 +1020,7 @@ if __name__ == '__main__':
                             # window.blit(text_freespeed, (467, 555))
                             # pygame.draw.rect(window, green, (460, 588, 166, 81), border_radius=5)
                             #jacoRobot.message("Robot free speed")
-                            t.sleep(0.5)
+                            #t.sleep(0.5)
 
                     except:
                         print("Pass the detection")
@@ -1154,104 +1069,32 @@ if __name__ == '__main__':
                                           mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
                                           mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
                                           )
-
-            #print("Scurrent update ", Scurrent)
-
-            # ======= Information Visualization =========
-
-            # SSM output value
-            # pygame.draw.rect(window, gray, (233, 555, 196, 29), border_radius=5)
-            # text_currval = font_reg.render(str(D) + " mm", True, (50, 50, 50))
-            # window.blit(text_currval, (233, 555))
-            #
-            # Sp = round(Sp, 2)
-            # pygame.draw.rect(window, gray, (74, 584, 196, 29), border_radius=5)
-            # text_Spval = font_reg.render(str(Sp) + " mm", True, (50, 50, 50))
-            # window.blit(text_Spval, (74, 584))
-            #
-            # SpminVal = round(SpminVal, 2)
-            # pygame.draw.rect(window, gray, (115, 616, 196, 29), border_radius=5)
-            # text_Spminval = font_reg.render(str(SpminVal) + " mm", True, (50, 50, 50))
-            # window.blit(text_Spminval, (115, 616))
-            #
-            # Vr_max_command = round(Vr_max_command, 2)
-            # pygame.draw.rect(window, gray, (118, 647, 196, 29), border_radius=5)
-            # text_vmaxcmdval = font_reg.render(str(Vr_max_command) + " mm/s", True, (50, 50, 50))
-            # window.blit(text_vmaxcmdval, (118, 647))
-            #
-            # # ============== Robot Domain ===============
-            # pygame.draw.rect(window, gray, (845, 119, 150, 29), border_radius=5)
-            # text_xRval = font_reg.render(str(RobTablePos[0]) + " mm", True, (50, 50, 50))
-            # window.blit(text_xRval, (855, 119))
-            #
-            # pygame.draw.rect(window, gray, (845, 156, 150, 29), border_radius=5)
-            # text_yRval = font_reg.render(str(RobTablePos[1]) + " mm", True, (50, 50, 50))
-            # window.blit(text_yRval, (855, 156))
-            #
-            # pygame.draw.rect(window, gray, (845, 194, 150, 29), border_radius=5)
-            # text_zRval = font_reg.render(str(RobTablePos[2]) + " mm", True, (50, 50, 50))
-            # window.blit(text_zRval, (855, 194))
-            #
-            # Vr = round(Vr, 2)
-            # pygame.draw.rect(window, gray, (1088, 125, 165, 29), border_radius=5)
-            # text_speedRval = font_reg.render(str(Vr) + " mm/s", True, (50, 50, 50))
-            # window.blit(text_speedRval, (1088, 125))
-            #
-            # #VelRnew = round(VelRnew, 2)
-            # VelRnew = Vrinitial
-            # pygame.draw.rect(window, gray, (1045, 160, 170, 29), border_radius=5)
-            # text_veloRval = font_reg.render(str(VelRnew) + " mm/s", True, (50, 50, 50))
-            # window.blit(text_veloRval, (1045, 156))
-            #
-            # # === Human domain filter data
-            #
-            # if zHead[0] > 2000:
-            #     zHead[0] = 1800
-            # zHead[0] = abs(round(zHead[0], 2))
-            # pygame.draw.rect(window, gray, (929, 391, 165, 29), border_radius=5)
-            # text_minHead = font_reg.render(str(zHead[0]) + " mm", True, (50, 50, 50))
-            # window.blit(text_minHead, (929, 391))
-            # if zHead[1] > 2000:
-            #     zHead[1] = 1800
-            # zHead[1] = abs(round(zHead[1], 2))
-            # pygame.draw.rect(window, gray, (929, 358, 165, 29), border_radius=5)
-            # text_maxHead = font_reg.render(str(zHead[1]) + " mm", True, (50, 50, 50))
-            # window.blit(text_maxHead, (929, 358))
-            #
-            # if zChest[0] > 2000:
-            #     zChest[0] = 0
-            # zChest[0] = abs(round(zChest[0], 2))
-            # pygame.draw.rect(window, gray, (935, 508, 165, 29), border_radius=5)
-            # text_minZchest = font_reg.render(str(zChest[0]) + " mm", True, (50, 50, 50))
-            # window.blit(text_minZchest, (935, 508))
-            #
-            # if zChest[1] > 2000:
-            #     zChest[1] = 0
-            # zChest[1] = abs(round(zChest[1], 2))
-            # pygame.draw.rect(window, gray, (935, 475, 165, 29), border_radius=5)
-            # text_maxZchest = font_reg.render(str(zChest[1]) + " mm", True, (50, 50, 50))
-            # window.blit(text_maxZchest, (935, 475))
-            #
-            # velHum = abs(round(velHum, 2))
-            # pygame.draw.rect(window, gray, (1031, 329, 165, 29), border_radius=5)
-            # text_velHum = font_reg.render(str(velHum) + " mm/s", True, (50, 50, 50))
-            # window.blit(text_velHum, (1031, 329))
-            #
-            # imgRGB = np.rot90(img)
-            # frame = pygame.surfarray.make_surface(imgRGB).convert()
-            # frame = pygame.transform.flip(frame, True, False)
-            #
-            # window.blit(frame, (18, 18))
             # ===== research documentation =====
             interval = interval + 1
+            print("5. Nilai Robot Speed", speed)
             # nilai calibrasi data raw real hip, real shoulder, real nose, pixel hip, pixel shoulder, pixel nose
             #output.write(str(interval) + ',' + str(D) + ',' + str(Sp) + ',' + str(Vr) + ',' + str(Sp) + ',' + str(Vr) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str(XnRob[2]) + '\n')
-            output.write(str(interval) + ',' + str(D) + ',' + str(Sp) + ',' + str(Vr) + '\n')
+            output.write(str(interval) + ',' + str(D) + ',' + str(SpPFLVal) + ',' + str(Vr) + ',' + str(speed) +'\n')
             print("SUCCESS RECORD ", interval, " !!!")
             # Update Display
             # pygame.display.update()
             # # Set FPS
             # clock.tick(fps)
+            # Append new data to the lists
+            x_data.append(interval)
+            y_data.append(speed)
+
+
+            line.set_xdata(x_data)
+            line.set_ydata(y_data)
+
+            # Adjust the x-axis limits based on new data
+            ax.set_xlim(min(x_data), max(x_data))
+
+            # Redraw the plot
+            plt.draw()
+            plt.pause(0.1)
+
 
             cv2.imshow("Image", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -1259,3 +1102,6 @@ if __name__ == '__main__':
 
         cap.release()
         cv2.destroyAllWindows()
+        # Stop the animation and show the final plot
+plt.ioff()
+plt.show()
