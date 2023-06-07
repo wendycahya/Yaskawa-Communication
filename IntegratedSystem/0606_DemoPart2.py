@@ -868,7 +868,7 @@ if __name__ == '__main__':
             print("5. Nilai Robot Speed", speed)
             # nilai calibrasi data raw real hip, real shoulder, real nose, pixel hip, pixel shoulder, pixel nose
             #output.write(str(interval) + ',' + str(D) + ',' + str(Sp) + ',' + str(Vr) + ',' + str(Sp) + ',' + str(Vr) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str(XnRob[2]) + '\n')
-            output.write(str(interval) + ',' + str(D) + ',' + str(SpPFLVal) + ',' + str(Vr) + ',' + str(mode_collab) +',' + str(VrPaper)+'\n')
+            output.write(str(interval) + ',' + str(D) + ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper)+'\n')
             print("SUCCESS RECORD ", interval, " !!!")
             # Update Display
             cv2.imshow("Image", img)
