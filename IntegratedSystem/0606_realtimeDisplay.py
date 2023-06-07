@@ -9,20 +9,23 @@ from matplotlib.animation import FuncAnimation
 plt.style.use('fivethirtyeight')
 
 x_values = []
-y_values = []
-
+y1_values = []
+y2_values = []
 index = count()
 
 
 def animate(i):
     data = pd.read_csv('0605-SSMNewDemo.csv')
-    x_values = data['Time']
-    y_values = data['Price']
+    x_values = data['time']
+    y1_values = data['Vr']
+    y2_values = data['VrPaper']
+
     plt.cla()
-    plt.plot(x_values, y_values)
-    plt.xlabel('Time')
-    plt.ylabel('Price')
-    plt.title('Infosys')
+    plt.plot(x_values, y1_values)
+    plt.plot(x_values, y2_values)
+    plt.xlabel('time(s)')
+    plt.ylabel('Robot Speed(mm/s)')
+    plt.title('Comparison Performance')
     plt.gcf().autofmt_xdate()
     plt.tight_layout()
 
