@@ -224,6 +224,7 @@ interval = 0
 VrSSM = 0
 VrSSM2 = 0
 
+
 #Robot Velocity
 vrchest = 400
 vrface = 100
@@ -246,6 +247,7 @@ pause_active = 0
 zHead = [0, 0]
 zChest = [0, 0]
 RobTablePos = [0, 0, 0]
+robotPos = [0, 0, 0, 0, 0, 0, 0]
 
 #distance measurement
 #x shoulder in cm
@@ -759,8 +761,28 @@ if __name__ == '__main__':
                         disHR = distanceCM * 10
                         disHR = round(disHR, 2)
                         print("2. Human Distance ", disHR)
-
+                        xRobPos = 500
                         print("===========================================")
+                        if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                            x, y, z, rx, ry, rz, re = pos_info['pos']
+                            pointHome = (x, y, z, 0, 0, 0, 0)
+                            straaa = "CURRENT POSITION\n" + \
+                                     "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
+                                     "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
+                                                                                                        x // 1000,
+                                                                                                        x % 1000,
+                                                                                                        rx // 10000,
+                                                                                                        rx % 10000) + \
+                                     "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
+                                         y // 1000, y % 1000, ry // 10000, ry % 10000) + \
+                                     "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
+                                         z // 1000, z % 1000, rz // 10000, rz % 10000) + \
+                                     "                            Re   {:4d}.{:04d} deg.\n".format(
+                                         re // 10000, re % 10000)
+
+                        print(straaa)
+                        global robotPos
+                        robotPos = convert_mm(x, y, z, rx, ry, rz, re)
                         eye_dist = round(eye_dist, 2)
                         D = min(eye_dist, disHR)
                         print("3. Jarak deteksi manusia", D)
@@ -772,7 +794,7 @@ if __name__ == '__main__':
                             Vh = velHum
                         print("4. Jarak deteksi manusia", Vh)
                         # Vh = 1600
-
+                        xRobPos = robotPos[0]
 
                     # print("SSM Dynamic", Sp)
                         ## SSM Preparation Calculation
@@ -782,7 +804,7 @@ if __name__ == '__main__':
                         SpSafeVal = SpSafe(Vr_PFL, Ts, ac, C_SSM, Zd, Zr)
                         print("4. Safety Separation Distance: ", Spfull,",", SpminVal,", ", SpSafeVal,",", SpPFLVal)
 
-                        D = D - 500
+                        D = D - xRobPos
 
                         # logical SSM send robot
                         if D <= SpminVal:

@@ -57,9 +57,9 @@ def velXYZ(Xn, Xn_last, ts):
 def Vr_SSM(D, Vh, Tr, Ts, ac, C, Zd, Zr, Vr_PFL):
     T = Tr + Ts
     Ctot = C + Zd + Zr
-    VrSSM = ((D - (Vh*T) - Ctot) / T) - (ac*pow(Ts, 2)/(2*T))
+    VrSSM = (((D - (Vh*T) - Ctot)) / T) - ((ac*pow(Ts, 2))/(2*T))
     if VrSSM < Vr_PFL:
-        Reduce_Value = 0
+        Reduce_Value = Vr_PFL
     else:
         Reduce_Value = VrSSM
     return Reduce_Value
@@ -224,6 +224,7 @@ interval = 0
 VrSSM = 0
 VrSSM2 = 0
 
+
 #Robot Velocity
 vrchest = 400
 vrface = 100
@@ -246,6 +247,7 @@ pause_active = 0
 zHead = [0, 0]
 zChest = [0, 0]
 RobTablePos = [0, 0, 0]
+robotPos = [0, 0, 0, 0, 0, 0, 0]
 
 #distance measurement
 #x shoulder in cm
@@ -274,7 +276,9 @@ midshoulderRAW = 0
 midHipsRAW = 0
 
 #information
-write_file = "0609-SSMNewDemo.csv"
+start = datetime.now()
+#calibration = 1200
+write_file = "TestVR-"+str(start)+"-SSMNewDemo.csv"
 mode_collab = 0
 
 #SSM original data
@@ -436,7 +440,7 @@ class Job(threading.Thread):
         global speed
         #speed = SPEED_XYZ[2]
 
-        start = datetime.now()
+
         stop = datetime.now()
 #
         while self.__running.is_set():
@@ -656,8 +660,8 @@ class Job(threading.Thread):
 
 
 if __name__ == '__main__':
-    server = Job()
-    server.start()
+    #server = Job()
+    #server.start()
     # MAIN PRORGAM:
     # ===== camera installation =====
     fpsReader = cvzone.FPS()
@@ -693,10 +697,10 @@ if __name__ == '__main__':
                     d = d * 10  # distance in mm
                     eye_dist = round(d, 3)
 
-                    Xn1D = eye_dist
-                    velHum = (Xn1D - Xn_last1D) / ts
-                    velHum = abs(velHum)
-                    print("1. Human Velocity", velHum)
+                    #Xn1D = eye_dist
+                    #velHum = (Xn1D - Xn_last1D) / ts
+                    #velHum = abs(velHum)
+                    #print("1. Human Velocity", velHum)
                     # skeleton mediapipe migrasion
                     # Recolor image to RGB
 
@@ -709,84 +713,116 @@ if __name__ == '__main__':
 
                     # Extract landmarks
                     try:
-                        landmarks = results.pose_landmarks.landmark
-                        # Get coordinates
-                        xyzFoot = [landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x,
-                                   landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y,
-                                   landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].z]
+                        data = []  # List to store the input data
 
-                        xyzKnee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
-                                   landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y,
-                                   landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].z]
+                        # Collect 10 input values
+                        while len(data) < 10:
 
-                        xyzNose = [landmarks[mp_pose.PoseLandmark.NOSE.value].x,
-                                   landmarks[mp_pose.PoseLandmark.NOSE.value].y,
-                                   landmarks[mp_pose.PoseLandmark.NOSE.value].z]
-                        # landmarks shoulder left and right
-                        rightShoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
-                                         landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
-                                         landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z]
-                        leftShoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
-                                        landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
-                                        landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z]
+                            landmarks = results.pose_landmarks.landmark
+                            # Get coordinates
+                            xyzFoot = [landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x,
+                                       landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y,
+                                       landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].z]
 
-                        rightHip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
-                                    landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y,
-                                    landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].z]
-                        leftHip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
-                                   landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,
-                                   landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].z]
+                            xyzKnee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
+                                       landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y,
+                                       landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].z]
 
-                        # Calculate angle
-                        Shodis, Shomid = center_point(leftShoulder, rightShoulder)
-                        Hipdis, Hipmid = center_point(leftHip, rightHip)
+                            xyzNose = [landmarks[mp_pose.PoseLandmark.NOSE.value].x,
+                                       landmarks[mp_pose.PoseLandmark.NOSE.value].y,
+                                       landmarks[mp_pose.PoseLandmark.NOSE.value].z]
+                            # landmarks shoulder left and right
+                            rightShoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
+                                             landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
+                                             landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z]
+                            leftShoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
+                                            landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
+                                            landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z]
 
-                        # distance mid
-                        middis, midCoor = center_point(Shomid, Hipmid)
+                            rightHip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
+                                        landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y,
+                                        landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].z]
+                            leftHip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
+                                       landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,
+                                       landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].z]
 
-                        # read the Xn
-                        RAWdist = round(Shomid[2] * 100, 3)
-                        distanceCM = A * RAWdist ** 2 + B * RAWdist + C
-                        # shoulder distance
+                            # Calculate angle
+                            Shodis, Shomid = center_point(leftShoulder, rightShoulder)
+                            Hipdis, Hipmid = center_point(leftHip, rightHip)
 
-                        # Scol active pada saat terdapat vr pada rentang kecepatan
+                            # distance mid
+                            middis, midCoor = center_point(Shomid, Hipmid)
 
-                        # Human Height detection
-                        nilai_nose = tuple(np.multiply([xyzNose[0], xyzNose[1]], [640, 480]).astype(int))
-                        nilai_shoulderMid = tuple(np.multiply([Shomid[0], Shomid[1]], [640, 480]).astype(int))
-                        nilai_HipMid = tuple(np.multiply([Hipmid[0], Hipmid[1]], [640, 480]).astype(int))
+                            # read the Xn
+                            RAWdist = round(Shomid[2] * 100, 3)
+                            distanceCM = A * RAWdist ** 2 + B * RAWdist + C
+                            # shoulder distance
 
-                        disHR = distanceCM * 10
-                        disHR = round(disHR, 2)
-                        print("2. Human Distance ", disHR)
+                            # Scol active pada saat terdapat vr pada rentang kecepatan
 
-                        print("===========================================")
-                        eye_dist = round(eye_dist, 2)
-                        D = min(eye_dist, disHR)
-                        print("3. Jarak deteksi manusia", D)
-                        Vh = 0
+                            # Human Height detection
+                            nilai_nose = tuple(np.multiply([xyzNose[0], xyzNose[1]], [640, 480]).astype(int))
+                            nilai_shoulderMid = tuple(np.multiply([Shomid[0], Shomid[1]], [640, 480]).astype(int))
+                            nilai_HipMid = tuple(np.multiply([Hipmid[0], Hipmid[1]], [640, 480]).astype(int))
 
-                        if Vh < velHum:
+                            disHR = distanceCM * 10
+                            disHR = round(disHR, 2)
+                            print("2. Human Distance ", disHR)
+                            xRobPos = 550
+                            print("===========================================")
+                            # if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                            #     x, y, z, rx, ry, rz, re = pos_info['pos']
+                            #     pointHome = (x, y, z, 0, 0, 0, 0)
+                            #     straaa = "CURRENT POSITION\n" + \
+                            #              "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
+                            #              "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
+                            #                                                                                 x // 1000,
+                            #                                                                                 x % 1000,
+                            #                                                                                 rx // 10000,
+                            #                                                                                 rx % 10000) + \
+                            #              "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
+                            #                  y // 1000, y % 1000, ry // 10000, ry % 10000) + \
+                            #              "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
+                            #                  z // 1000, z % 1000, rz // 10000, rz % 10000) + \
+                            #              "                            Re   {:4d}.{:04d} deg.\n".format(
+                            #                  re // 10000, re % 10000)
+                            #
+                            # print(straaa)
+                            # global robotPos
+                            # robotPos = convert_mm(x, y, z, rx, ry, rz, re)
+
+                            eye_dist = round(eye_dist, 2)
+                            #D = min(eye_dist, disHR)
+                            D = eye_dist
+                            print("3. Jarak deteksi manusia", D)
                             Vh = 1600
-                        else:
-                            Vh = velHum
-                        print("4. Jarak deteksi manusia", Vh)
-                        # Vh = 1600
 
+                            #if Vh < velHum:
+                            #    Vh = 1600
+                            #else:
+                            #    Vh = velHum
+                            print("4. Jarak deteksi manusia", Vh)
+                            # Vh = 1600
+                            #xRobPos = robotPos[0]
 
-                    # print("SSM Dynamic", Sp)
-                        ## SSM Preparation Calculation
+                        # print("SSM Dynamic", Sp)
+                            ## SSM Preparation Calculation
 
-                        # ===== SSM calculation ======
-                        SpPFLVal = SpPFL(Vr_PFL, Vh, Tr, Ts, ac, C_SSM, Zd, Zr)
-                        SpSafeVal = SpSafe(Vr_PFL, Ts, ac, C_SSM, Zd, Zr)
-                        print("4. Safety Separation Distance: ", Spfull,",", SpminVal,", ", SpSafeVal,",", SpPFLVal)
+                            # ===== SSM calculation ======
+                            SpPFLVal = SpPFL(Vr_PFL, Vh, Tr, Ts, ac, C_SSM, Zd, Zr)
+                            SpSafeVal = SpSafe(Vr_PFL, Ts, ac, C_SSM, Zd, Zr)
+                            print("4. Safety Separation Distance: ", Spfull,",", SpminVal,", ", SpSafeVal,",", SpPFLVal)
 
-                        D = D - 500
+                            value = D
+                            data.append(value)
+
+                        # Calculate the average
+                        D = sum(data) / len(data)
+                        D = D - xRobPos
 
                         # logical SSM send robot
                         if D <= SpminVal:
-                            server.pause()
+                            #server.pause()
                             Vr = 0
                             speed = 0
                             print("Robot harus berhenti", Vr)
@@ -794,7 +830,7 @@ if __name__ == '__main__':
                             #t.sleep(0.5)
 
                         elif D > SpminVal and D <= SpSafeVal:
-                            server.resume()
+                            #server.resume()
                             #print("Robot speed reduction")
                             Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
                             Vr = round(Vr, 2)
@@ -807,16 +843,17 @@ if __name__ == '__main__':
                             #t.sleep(0.5)
 
                         elif D > SpSafeVal and D <= SpPFLVal:
-                            server.resume()
+                            #server.resume()
                             # print("Robot speed reduction")
                             mode_collab = 2
+                            Vr = 400
+                            Vr = round(Vr, 2)
                             speed = 500
-                            Vr = round(speed, 2)
                             print("change value speed PFL: ", Vr)
                             #t.sleep(0.5)
 
                         elif D > SpPFLVal and D <= Spfull:
-                            server.resume()
+                            #server.resume()
                             Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
                             Vr = round(Vr, 2)
                             speed = 700
@@ -824,7 +861,7 @@ if __name__ == '__main__':
                             mode_collab = 3
                             #t.sleep(0.5)
                         else:
-                            server.resume()
+                            #server.resume()
                             mode_collab = 4
                             #print("Robot bekerja maximal")
                             #mode_collab = 1
@@ -869,7 +906,8 @@ if __name__ == '__main__':
             # nilai calibrasi data raw real hip, real shoulder, real nose, pixel hip, pixel shoulder, pixel nose
             #output.write(str(interval) + ',' + str(D) + ',' + str(Sp) + ',' + str(Vr) + ',' + str(Sp) + ',' + str(Vr) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str(XnRob[2]) + '\n')
             start_time = datetime.now()
-            output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper)+'\n')
+            output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper) + '\n')
+            #output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper)+',' + str(calibration)+'\n')
             print("SUCCESS RECORD ", interval, " !!!")
             # Update Display
             cv2.imshow("Image", img)
