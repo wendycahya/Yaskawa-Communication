@@ -284,6 +284,7 @@ midHipsRAW = 0
 
 #information
 start = datetime.now()
+milliseconds = 0
 #calibration = 1200
 write_file = "TestVR-"+str(start)+"-SSMNewDemo.csv"
 mode_collab = 0
