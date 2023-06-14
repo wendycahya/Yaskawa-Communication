@@ -808,40 +808,43 @@ if __name__ == '__main__':
                         D = sum(data) / len(data)
 
                         ## =========================== Read Robot Current Position =====================================
-                        if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-                            x, y, z, rx, ry, rz, re = pos_info['pos']
-                            pointHome = (x, y, z, 0, 0, 0, 0)
-                            straaa = "CURRENT POSITION\n" + \
-                                     "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-                                     "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-                                                                                                        x // 1000,
-                                                                                                        x % 1000,
-                                                                                                        rx // 10000,
-                                                                                                        rx % 10000) + \
-                                     "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-                                         y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-                                     "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-                                         z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-                                     "                            Re   {:4d}.{:04d} deg.\n".format(
-                                         re // 10000, re % 10000)
+                        # if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                        #     x, y, z, rx, ry, rz, re = pos_info['pos']
+                        #     pointHome = (x, y, z, 0, 0, 0, 0)
+                        #     straaa = "CURRENT POSITION\n" + \
+                        #              "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
+                        #              "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
+                        #                                                                                 x // 1000,
+                        #                                                                                 x % 1000,
+                        #                                                                                 rx // 10000,
+                        #                                                                                 rx % 10000) + \
+                        #              "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
+                        #                  y // 1000, y % 1000, ry // 10000, ry % 10000) + \
+                        #              "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
+                        #                  z // 1000, z % 1000, rz // 10000, rz % 10000) + \
+                        #              "                            Re   {:4d}.{:04d} deg.\n".format(
+                        #                  re // 10000, re % 10000)
+                        #
+                        # print(straaa)
+                        #
+                        # robotPos = convert_mm(x, y, z, rx, ry, rz, re)
+                        # XnRob = [robotPos[0], robotPos[1], robotPos[2]]
+                        #
+                        # #XnRob_last = [0, 0, 0]
+                        # velXR, velYR, velZR = velXYZ(XnRob, XnRob_last, ts)
 
-                        print(straaa)
-
-                        robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-                        XnRob = [robotPos[0], robotPos[1], robotPos[2]]
-
-                        #XnRob_last = [0, 0, 0]
-                        velXR, velYR, velZR = velXYZ(XnRob, XnRob_last, ts)
-
-                        offset = 0
-                        #D = (D + offset) - xRobPos
-                        D = (D + offset) - robotPos[0]
+                        offset = 500
+                        D = (D + offset) - xRobPos
+                        #D = (D + offset) - robotPos[0]
                         D = round(D, 3)
 
                         if D < 0:
                             D = 0
                         else:
                             D = abs(D)
+
+                        start_time = datetime.now()
+                        milliseconds = start_time.microsecond // 1000
 
                         # logical SSM send robot
                         if D <= SpminVal:
@@ -933,8 +936,7 @@ if __name__ == '__main__':
             #velVR = 0
             #VelVR = math.sqrt(velXR**2 + velYR**2 + velZR**2)
 
-            start_time = datetime.now()
-            milliseconds = start_time.microsecond // 1000
+
             output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(milliseconds) + ',' + str(D)+ ',' + str(mode_collab) + ',' + str(speed)+'\n')
             #output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper) + ',' + str(speed) + '\n')
             print("SUCCESS RECORD ", interval, " !!!")
