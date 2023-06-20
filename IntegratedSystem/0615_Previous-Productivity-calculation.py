@@ -285,7 +285,7 @@ midHipsRAW = 0
 #information
 start = datetime.now()
 #calibration = 1200
-write_file = "TestVR-"+str(start)+"-SSMNewDemo.csv"
+write_file = "Previous-Productivity-"+str(start)+".csv"
 mode_collab = 0
 
 #SSM original data
@@ -712,7 +712,7 @@ if __name__ == '__main__':
 
                     img.flags.writeable = False
                     # Make detection
-                    results = pose.process(img)
+                    # results = pose.process(img)
                     # Recolor back to BGR
                     #img.flags.writeable = True
 
@@ -724,55 +724,55 @@ if __name__ == '__main__':
                         # Collect 10 input values
                         while len(data) < 10:
 
-                            landmarks = results.pose_landmarks.landmark
-                            # Get coordinates
-                            xyzFoot = [landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x,
-                                       landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y,
-                                       landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].z]
-
-                            xyzKnee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
-                                       landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y,
-                                       landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].z]
-
-                            xyzNose = [landmarks[mp_pose.PoseLandmark.NOSE.value].x,
-                                       landmarks[mp_pose.PoseLandmark.NOSE.value].y,
-                                       landmarks[mp_pose.PoseLandmark.NOSE.value].z]
-                            # landmarks shoulder left and right
-                            rightShoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
-                                             landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
-                                             landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z]
-                            leftShoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
-                                            landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
-                                            landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z]
-
-                            rightHip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
-                                        landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y,
-                                        landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].z]
-                            leftHip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
-                                       landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,
-                                       landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].z]
-
-                            # Calculate angle
-                            Shodis, Shomid = center_point(leftShoulder, rightShoulder)
-                            Hipdis, Hipmid = center_point(leftHip, rightHip)
-
-                            # distance mid
-                            middis, midCoor = center_point(Shomid, Hipmid)
+                            # landmarks = results.pose_landmarks.landmark
+                            # # Get coordinates
+                            # xyzFoot = [landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x,
+                            #            landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y,
+                            #            landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].z]
+                            #
+                            # xyzKnee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
+                            #            landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y,
+                            #            landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].z]
+                            #
+                            # xyzNose = [landmarks[mp_pose.PoseLandmark.NOSE.value].x,
+                            #            landmarks[mp_pose.PoseLandmark.NOSE.value].y,
+                            #            landmarks[mp_pose.PoseLandmark.NOSE.value].z]
+                            # # landmarks shoulder left and right
+                            # rightShoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
+                            #                  landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
+                            #                  landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z]
+                            # leftShoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
+                            #                 landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
+                            #                 landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z]
+                            #
+                            # rightHip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
+                            #             landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y,
+                            #             landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].z]
+                            # leftHip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
+                            #            landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,
+                            #            landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].z]
+                            #
+                            # # Calculate angle
+                            # Shodis, Shomid = center_point(leftShoulder, rightShoulder)
+                            # Hipdis, Hipmid = center_point(leftHip, rightHip)
+                            #
+                            # # distance mid
+                            # middis, midCoor = center_point(Shomid, Hipmid)
 
                             # read the Xn
-                            RAWdist = round(Shomid[2] * 100, 3)
-                            distanceCM = A * RAWdist ** 2 + B * RAWdist + C
+                            # RAWdist = round(Shomid[2] * 100, 3)
+                            # distanceCM = A * RAWdist ** 2 + B * RAWdist + C
                             # shoulder distance
 
                             # Scol active pada saat terdapat vr pada rentang kecepatan
 
                             # Human Height detection
-                            nilai_nose = tuple(np.multiply([xyzNose[0], xyzNose[1]], [640, 480]).astype(int))
-                            nilai_shoulderMid = tuple(np.multiply([Shomid[0], Shomid[1]], [640, 480]).astype(int))
-                            nilai_HipMid = tuple(np.multiply([Hipmid[0], Hipmid[1]], [640, 480]).astype(int))
-
-                            disHR = distanceCM * 10
-                            disHR = round(disHR, 2)
+                            # nilai_nose = tuple(np.multiply([xyzNose[0], xyzNose[1]], [640, 480]).astype(int))
+                            # nilai_shoulderMid = tuple(np.multiply([Shomid[0], Shomid[1]], [640, 480]).astype(int))
+                            # nilai_HipMid = tuple(np.multiply([Hipmid[0], Hipmid[1]], [640, 480]).astype(int))
+                            #
+                            # disHR = distanceCM * 10
+                            # disHR = round(disHR, 2)
                             #print("2. Human Distance ", disHR)
                             xRobPos = 550
                             #print("===========================================")
@@ -807,106 +807,116 @@ if __name__ == '__main__':
                         D = sum(data) / len(data)
 
                         ## =========================== Read Robot Current Position =====================================
-                        # if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-                        #     x, y, z, rx, ry, rz, re = pos_info['pos']
-                        #     pointHome = (x, y, z, 0, 0, 0, 0)
-                        #     straaa = "CURRENT POSITION\n" + \
-                        #              "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-                        #              "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-                        #                                                                                 x // 1000,
-                        #                                                                                 x % 1000,
-                        #                                                                                 rx // 10000,
-                        #                                                                                 rx % 10000) + \
-                        #              "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-                        #                  y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-                        #              "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-                        #                  z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-                        #              "                            Re   {:4d}.{:04d} deg.\n".format(
-                        #                  re // 10000, re % 10000)
-                        #
+                        if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                            x, y, z, rx, ry, rz, re = pos_info['pos']
+                            pointHome = (x, y, z, 0, 0, 0, 0)
+                            straaa = "CURRENT POSITION\n" + \
+                                     "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
+                                     "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
+                                                                                                        x // 1000,
+                                                                                                        x % 1000,
+                                                                                                        rx // 10000,
+                                                                                                        rx % 10000) + \
+                                     "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
+                                         y // 1000, y % 1000, ry // 10000, ry % 10000) + \
+                                     "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
+                                         z // 1000, z % 1000, rz // 10000, rz % 10000) + \
+                                     "                            Re   {:4d}.{:04d} deg.\n".format(
+                                         re // 10000, re % 10000)
+
                         # print(straaa)
 
-                        # robotPos = convert_mm(x, y, z, rx, ry, rz, re)
+                        robotPos = convert_mm(x, y, z, rx, ry, rz, re)
                         # XnRob = [robotPos[0], robotPos[1], robotPos[2]]
                         #
                         # #XnRob_last = [0, 0, 0]
                         # velXR, velYR, velZR = velXYZ(XnRob, XnRob_last, ts)
                         #D = (D + 500) - robotPos[0]
-                        offset = 0
-                        D = (D + offset) - xRobPos
+                        offset = 500
+                        #D = (D + offset) - xRobPos
+                        D = (D - offset) - robotPos[0]
                         D = round(D, 3)
+
 
                         if D < 0:
                             D = 0
                         else:
                             D = abs(D)
+                        cvzone.putTextRect(img, f'Depth: {D} mm', (face[10][0] - 100, face[10][1] - 50), scale=1.5)
+                        # # logical SSM send robot
+                        # if D <= SpminVal:
+                        #     server.pause()
+                        #     Vr = 0
+                        #     speed = 0
+                        #     #print("Robot harus berhenti", Vr)
+                        #     mode_collab = 0
+                        #     #t.sleep(0.5)
+                        #
+                        # elif D > SpminVal and D <= SpSafeVal:
+                        #     server.resume()
+                        #     #print("Robot speed reduction")
+                        #     Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
+                        #     Vr = round(Vr, 2)
+                        #     speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #     # calculate the Vmax allowable
+                        #     #print("Vmax allowable in this workspace: ", Vr_max_command)
+                        #     # Vr = Vr_max_command
+                        #     mode_collab = 1
+                        #     #print("change value speed safe: ", Vr)
+                        #     #t.sleep(0.5)
+                        #
+                        # elif D > SpSafeVal and D <= SpPFLVal:
+                        #     server.resume()
+                        #     # print("Robot speed reduction")
+                        #     mode_collab = 2
+                        #     Vr = 400
+                        #     Vr = round(Vr, 2)
+                        #     speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #     #print("change value speed PFL: ", Vr)
+                        #     #t.sleep(0.5)
+                        #
+                        # elif D > SpPFLVal and D <= Spfull:
+                        #     server.resume()
+                        #     Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
+                        #     Vr = round(Vr, 2)
+                        #     speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #     #print("change value speed Reduce: ", Vr)
+                        #     mode_collab = 3
+                        #     #t.sleep(0.5)
+                        #
+                        # else:
+                        #     server.resume()
+                        #     mode_collab = 4
+                        #     #print("Robot bekerja maximal")
+                        #     #mode_collab = 1
+                        #     Vr = RobotVrmax
+                        #     speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #     #print("change value speed maximum: ", Vr)
+                        #     # t.sleep(0.5)
 
-                        # logical SSM send robot
-                        if D <= SpminVal:
-                            server.pause()
-                            Vr = 0
-                            speed = 0
-                            #print("Robot harus berhenti", Vr)
-                            mode_collab = 0
-                            #t.sleep(0.5)
-
-                        elif D > SpminVal and D <= SpSafeVal:
-                            server.resume()
-                            #print("Robot speed reduction")
-                            Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
-                            Vr = round(Vr, 2)
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            # calculate the Vmax allowable
-                            #print("Vmax allowable in this workspace: ", Vr_max_command)
-                            # Vr = Vr_max_command
-                            mode_collab = 1
-                            #print("change value speed safe: ", Vr)
-                            #t.sleep(0.5)
-
-                        elif D > SpSafeVal and D <= SpPFLVal:
-                            server.resume()
-                            # print("Robot speed reduction")
-                            mode_collab = 2
-                            Vr = 400
-                            Vr = round(Vr, 2)
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            #print("change value speed PFL: ", Vr)
-                            #t.sleep(0.5)
-
-                        elif D > SpPFLVal and D <= Spfull:
-                            server.resume()
-                            Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
-                            Vr = round(Vr, 2)
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            #print("change value speed Reduce: ", Vr)
-                            mode_collab = 3
-                            #t.sleep(0.5)
-
-                        else:
-                            server.resume()
-                            mode_collab = 4
-                            #print("Robot bekerja maximal")
-                            #mode_collab = 1
-                            Vr = RobotVrmax
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            #print("change value speed maximum: ", Vr)
-                            # t.sleep(0.5)
-
-            #============ Previous Method Comparison ===========================
+            # #============ Previous Method Comparison ===========================
                         if D <= 307.7:
+                            server.pause()
                             VrPaper = 0
+                            speed = int(remap(VrPaper, 0, 1500, 0, 800))
                             #print("Robot harus berhenti", VrPaper)
 
                         elif D > 307.7 and D <= 740.3:
+                            server.resume()
                             VrPaper = 375
+                            speed = int(remap(VrPaper, 0, 1500, 0, 800))
                             #print("change value speed safe: ", VrPaper)
 
 
                         elif D > 740.3 and D <= 1490.3:
+                            server.resume()
                             VrPaper = 750
+                            speed = int(remap(VrPaper, 0, 1500, 0, 800))
                             #print("change value speed PFL: ", VrPaper)
                         else:
+                            server.resume()
                             VrPaper = 1500
+                            speed = int(remap(VrPaper, 0, 1500, 0, 800))
                             #print("change value speed maximum: ", VrPaper)
 
                     except:
@@ -919,10 +929,10 @@ if __name__ == '__main__':
                     Xn_last1D = Xn1D
                     XnRob_last = XnRob
                 # Render detections
-                mp_drawing.draw_landmarks(img, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                                          mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-                                          mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
-                                          )
+                # mp_drawing.draw_landmarks(img, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                #                           mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
+                #                           mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
+                #                           )
             # ===== research documentation =====
             interval = interval + 1
             print("5. Nilai Robot Speed", speed)
@@ -930,8 +940,10 @@ if __name__ == '__main__':
             # output.write(str(interval) + ',' + str(D) + ',' + str(Sp) + ',' + str(Vr) + ',' + str(Sp) + ',' + str(Vr) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str(XnRob[2]) + '\n')
             start_time = datetime.now()
             # output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(robotPos[0])+ ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper) + ',' + str(velXR) + ',' + str(velYR) + ',' + str(velZR) + '\n')
-            output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper) + ',' + str(speed) + '\n')
+            #output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper) + ',' + str(speed) + '\n')
+            output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(speed) + ',' + str(counter) + '\n')
             print("SUCCESS RECORD ", interval, " !!!")
+            print("SUCCESS RECORD counter", counter, " !!!")
             # Update Display
             cv2.imshow("Image", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
