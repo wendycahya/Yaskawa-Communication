@@ -306,6 +306,9 @@ midHipsRAW = 0
 
 #information
 start = datetime.now()
+start_time = datetime.now()
+end_time = datetime.now()
+milliseconds = 0
 #calibration = 1200
 write_file = "Productivity-"+str(start)+".csv"
 mode_collab = 0
@@ -998,9 +1001,6 @@ if __name__ == '__main__':
 
             # output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(robotPos[0])+ ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper) + ',' + str(velXR) + ',' + str(velYR) + ',' + str(velZR) + '\n')
             #output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper) + ',' + str(speed) + '\n')
-            output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(milliseconds) + ',' + str(D) + ',' + str(speed) + ',' + str(counter) + ',' + str(robotPos[0]) + ',' + str(robotPos[1]) + ',' + str(robotPos[2]) + '\n')
-            print("SUCCESS RECORD ", interval, " !!!")
-            print("SUCCESS RECORD counter", counter, " !!!")
 
             if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
                 x, y, z, rx, ry, rz, re = pos_info['pos']
@@ -1041,7 +1041,9 @@ if __name__ == '__main__':
 
             # Update the plot
             update_plot()
-
+            output.write(str(end_time.strftime("%H:%M:%S")) + ',' + str(milliseconds) + ',' + str(D) + ',' + str(speed) + ',' + str(counter) + ',' + str(velocity) + ',' + str(robotPos[0]) + ',' + str(robotPos[1]) + ',' + str(robotPos[2]) + '\n')
+            print("SUCCESS RECORD ", interval, " !!!")
+            print("SUCCESS RECORD counter", counter, " !!!")
             # Load the saved plot image
             plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
 
