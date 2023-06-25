@@ -904,80 +904,80 @@ if __name__ == '__main__':
                             D = abs(D)
                         cvzone.putTextRect(img, f'Depth: {D} mm', (face[10][0] - 100, face[10][1] - 50), scale=1.5)
                         # # logical SSM send robot
-                        if D <= SpminVal:
-                            server.pause()
-                            Vr = 0
-                            speed = 0
-                            #print("Robot harus berhenti", Vr)
-                            mode_collab = 0
-                            #t.sleep(0.5)
-
-                        elif D > SpminVal and D <= SpSafeVal:
-                            server.resume()
-                            #print("Robot speed reduction")
-                            Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
-                            Vr = round(Vr, 2)
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            # calculate the Vmax allowable
-                            #print("Vmax allowable in this workspace: ", Vr_max_command)
-                            # Vr = Vr_max_command
-                            mode_collab = 1
-                            #print("change value speed safe: ", Vr)
-                            #t.sleep(0.5)
-
-                        elif D > SpSafeVal and D <= SpPFLVal:
-                            server.resume()
-                            # print("Robot speed reduction")
-                            mode_collab = 2
-                            Vr = 400
-                            Vr = round(Vr, 2)
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            #print("change value speed PFL: ", Vr)
-                            #t.sleep(0.5)
-
-                        elif D > SpPFLVal and D <= Spfull:
-                            server.resume()
-                            Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
-                            Vr = round(Vr, 2)
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            #print("change value speed Reduce: ", Vr)
-                            mode_collab = 3
-                            #t.sleep(0.5)
-
-                        else:
-                            server.resume()
-                            mode_collab = 4
-                            #print("Robot bekerja maximal")
-                            #mode_collab = 1
-                            Vr = RobotVrmax
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            #print("change value speed maximum: ", Vr)
-                            # t.sleep(0.5)
+                        # if D <= SpminVal:
+                        #     server.pause()
+                        #     Vr = 0
+                        #     speed = 0
+                        #     #print("Robot harus berhenti", Vr)
+                        #     mode_collab = 0
+                        #     #t.sleep(0.5)
+                        #
+                        # elif D > SpminVal and D <= SpSafeVal:
+                        #     server.resume()
+                        #     #print("Robot speed reduction")
+                        #     Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
+                        #     Vr = round(Vr, 2)
+                        #     speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #     # calculate the Vmax allowable
+                        #     #print("Vmax allowable in this workspace: ", Vr_max_command)
+                        #     # Vr = Vr_max_command
+                        #     mode_collab = 1
+                        #     #print("change value speed safe: ", Vr)
+                        #     #t.sleep(0.5)
+                        #
+                        # elif D > SpSafeVal and D <= SpPFLVal:
+                        #     server.resume()
+                        #     # print("Robot speed reduction")
+                        #     mode_collab = 2
+                        #     Vr = 400
+                        #     Vr = round(Vr, 2)
+                        #     speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #     #print("change value speed PFL: ", Vr)
+                        #     #t.sleep(0.5)
+                        #
+                        # elif D > SpPFLVal and D <= Spfull:
+                        #     server.resume()
+                        #     Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
+                        #     Vr = round(Vr, 2)
+                        #     speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #     #print("change value speed Reduce: ", Vr)
+                        #     mode_collab = 3
+                        #     #t.sleep(0.5)
+                        #
+                        # else:
+                        #     server.resume()
+                        #     mode_collab = 4
+                        #     #print("Robot bekerja maximal")
+                        #     #mode_collab = 1
+                        #     Vr = RobotVrmax
+                        #     speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #     #print("change value speed maximum: ", Vr)
+                        #     # t.sleep(0.5)
 
             # #============ Previous Method Comparison ===========================
-            #             if D <= 307.7:
-            #                 server.pause()
-            #                 VrPaper = 0
-            #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
-            #                 #print("Robot harus berhenti", VrPaper)
-            #
-            #             elif D > 307.7 and D <= 740.3:
-            #                 server.resume()
-            #                 VrPaper = 375
-            #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
-            #                 #print("change value speed safe: ", VrPaper)
-            #
-            #
-            #             elif D > 740.3 and D <= 1490.3:
-            #                 server.resume()
-            #                 VrPaper = 750
-            #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
-            #                 #print("change value speed PFL: ", VrPaper)
-            #             else:
-            #                 server.resume()
-            #                 VrPaper = 1500
-            #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
-            #                 #print("change value speed maximum: ", VrPaper)
+                        if D <= 307.7:
+                            server.pause()
+                            VrPaper = 0
+                            speed = int(remap(VrPaper, 0, 1500, 0, 800))
+                            #print("Robot harus berhenti", VrPaper)
+
+                        elif D > 307.7 and D <= 740.3:
+                            server.resume()
+                            VrPaper = 375
+                            speed = int(remap(VrPaper, 0, 1500, 0, 800))
+                            #print("change value speed safe: ", VrPaper)
+
+
+                        elif D > 740.3 and D <= 1490.3:
+                            server.resume()
+                            VrPaper = 750
+                            speed = int(remap(VrPaper, 0, 1500, 0, 800))
+                            #print("change value speed PFL: ", VrPaper)
+                        else:
+                            server.resume()
+                            VrPaper = 1500
+                            speed = int(remap(VrPaper, 0, 1500, 0, 800))
+                            #print("change value speed maximum: ", VrPaper)
 
                     except:
                         print("Pass the detection")
