@@ -306,8 +306,10 @@ midHipsRAW = 0
 
 #information
 start = datetime.now()
+stopwatch_time = t.time()
 start_time = datetime.now()
 end_time = datetime.now()
+elapsed_time = 0
 milliseconds = 0
 #calibration = 1200
 write_file = "Productivity-"+str(start)+".csv"
@@ -741,10 +743,12 @@ if __name__ == '__main__':
         while True:
             # Detect human skeleton
             success, img = cap.read()
+            height, width, channels = img.shape
             #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             imgMesh, faces = detector.findFaceMesh(img, draw=False)
             imgFace, bboxs = detectFace.findFaces(img)
-
+            cv2.rectangle(img, (0, 0), (width, 70), (10, 10, 10), -1)
+            elapsed_time = round(t.time() - stopwatch_time, 3)
             if faces:
                 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
                     # skeleton detection
@@ -1041,7 +1045,7 @@ if __name__ == '__main__':
 
             # Update the plot
             update_plot()
-            output.write(str(end_time.strftime("%H:%M:%S")) + ',' + str(milliseconds) + ',' + str(D) + ',' + str(speed) + ',' + str(counter) + ',' + str(velocity) + ',' + str(robotPos[0]) + ',' + str(robotPos[1]) + ',' + str(robotPos[2]) + '\n')
+            output.write(str(end_time.strftime("%H:%M:%S")) + ',' + str(elapsed_time) + ',' + str(D) + ',' + str(speed) + ',' + str(counter) + ',' + str(velocity) + ',' + str(robotPos[0]) + ',' + str(robotPos[1]) + ',' + str(robotPos[2]) + '\n')
             print("SUCCESS RECORD ", interval, " !!!")
             print("SUCCESS RECORD counter", counter, " !!!")
             # Load the saved plot image
@@ -1049,14 +1053,15 @@ if __name__ == '__main__':
 
             # Resize the plot image to match the video frame size
             plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))
-
+            cv2.putText(img, "{}   s".format(elapsed_time), (10, 30), cv2.FONT_HERSHEY_PLAIN,
+                        2, (15, 225, 215), 2)
+            cv2.putText(img, "counter {}".format(counter), (10, 60), cv2.FONT_HERSHEY_PLAIN,
+                        2, (15, 225, 215), 2)
             # Display the video frame in the 'Video Stream' window
             cv2.imshow('Video Stream', img)
 
             # Display the plot in the 'Live Plot' window
             cv2.imshow('Real time HR Distance vs Robot Velocity Plot', plot_img[:, :, :3])
-
-
             # Update Display
             #cv2.imshow("Image", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
