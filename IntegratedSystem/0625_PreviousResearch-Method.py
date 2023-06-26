@@ -972,7 +972,7 @@ if __name__ == '__main__':
                             #print("change value speed safe: ", VrPaper)
 
 
-                        elif D > 740.3 and D <= 1490.3:
+                        elif D > 740.3 and D <= 1430.3:
                             server.resume()
                             VrPaper = 750
                             speed = int(remap(VrPaper, 0, 1500, 0, 800))

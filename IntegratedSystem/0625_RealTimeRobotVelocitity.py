@@ -225,7 +225,7 @@ def on_reset_alarm():
 D = 0
 VrPaper = 1000
 Vr = 1500
-Vr_PFL = 400
+Vr_PFL = 600
 Vh_max = 1600
 Vh_min = 0
 Tr = 0.1
@@ -933,7 +933,7 @@ if __name__ == '__main__':
                             server.resume()
                             # print("Robot speed reduction")
                             mode_collab = 2
-                            Vr = 400
+                            Vr = Vr_PFL
                             Vr = round(Vr, 2)
                             speed = int(remap(Vr, 0, 1500, 0, 800))
                             #print("change value speed PFL: ", Vr)
