@@ -706,7 +706,7 @@ dataVR = []
 # Function to update the plot
 def update_plot():
     ax.clear()
-    ax.plot(dataD, 'C1-')
+    ax.plot(dataD, 'b-')
     ax2.plot(dataVR, 'r--')
     # ax2.plot(dataX, 'r')
     # ax2.plot(dataY, 'g')

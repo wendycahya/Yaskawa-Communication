@@ -312,7 +312,7 @@ end_time = datetime.now()
 elapsed_time = 0
 milliseconds = 0
 #calibration = 1200
-write_file = "Productivity-"+str(start)+".csv"
+write_file = "Previous-Productivity-"+str(start)+".csv"
 mode_collab = 0
 
 #SSM original data
@@ -706,7 +706,7 @@ dataVR = []
 # Function to update the plot
 def update_plot():
     ax.clear()
-    ax.plot(dataD, 'C1-')
+    ax.plot(dataD, 'b-')
     ax2.plot(dataVR, 'r--')
     # ax2.plot(dataX, 'r')
     # ax2.plot(dataY, 'g')
