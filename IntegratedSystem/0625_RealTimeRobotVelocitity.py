@@ -225,7 +225,7 @@ def on_reset_alarm():
 D = 0
 VrPaper = 1000
 Vr = 1500
-Vr_PFL = 600
+Vr_PFL = 1500
 Vh_max = 1600
 Vh_min = 0
 Tr = 0.1
@@ -325,14 +325,13 @@ counter = 0
 #robot = FS100('192.168.255.1')
 robot = FS100('172.16.0.1')
 SPEED_XYZ = (10, 150, 500)
-speed = SPEED_XYZ[2]
+speed = 0
 stop_sign = threading.Semaphore()
 #
 # # Initialize the robot model
 pos_info = {}
 robot_no = 1
 status = {}
-speed = 0
 x, y, z, rx, ry, rz, re = 0, 0, 0, 0, 0, 0, 0
 delay_rob = 0.1
 # # ===== Movement Position List =====
