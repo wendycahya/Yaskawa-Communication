@@ -1,5 +1,6 @@
 #================== Library Declaration ============================
 import math
+import time
 import time as t
 import threading
 from datetime import datetime
@@ -307,7 +308,7 @@ midshoulderRAW = 0
 midHipsRAW = 0
 
 #information
-start = datetime.now()
+start = time.strftime("%Y%m%d-%H%M%S")
 stopwatch_time = t.time()
 start_time = datetime.now()
 end_time = datetime.now()
@@ -455,9 +456,6 @@ p113=[362.109,-264.585,-320.718,-179.474,-0.295,19.251,0]
 p114=[362.109,-264.585,-320.718,-179.474,-0.295,19.251,0]
 p115=[362.109,-264.585,-320.718,-179.474,-0.295,19.251,0]
 
-
-
-
 class Job(threading.Thread):
     def __init__(self, *args, **kwargs):
         super(Job, self).__init__(*args, **kwargs)
@@ -467,7 +465,6 @@ class Job(threading.Thread):
         self.__running.set()      # 将running设置为True
 
     def run(self):
-
         # set speed
         SPEED_XYZ = (10, 150, 500)
         SPEED_R_XYZE = (10, 50, 100)
@@ -681,12 +678,12 @@ class Job(threading.Thread):
                     ser.write(message.encode())
                     print("nilai message= ", message)
                     break
-        # Close the serial port connection
-        ser.close()
+
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
-    #     # a hold off in case we switch to teach/play mode
+        #a hold off in case we switch to teach/play mode
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
-    #
+        #Close the serial port connection
+        ser.close()
     #
     def pause(self):
         self.__flag.clear()     # 设置为False, 让线程阻塞
@@ -736,7 +733,8 @@ if __name__ == '__main__':
     # MAIN PRORGAM:
     # ===== camera installation =====
     fpsReader = cvzone.FPS()
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
+    #cap = cv2.VideoCapture(0)
     cap.set(3, 640)  # width
     cap.set(4, 480)  # height
 
