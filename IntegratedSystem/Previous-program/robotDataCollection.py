@@ -6,7 +6,7 @@ from datetime import datetime
 import configparser
 
 config = configparser.ConfigParser()
-config_file = r'config.ini'
+config_file = r'../config.ini'
 config.read(config_file)
 
 ipAddress = (config['Robot']['Ip_Address'])
