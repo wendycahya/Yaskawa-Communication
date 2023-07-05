@@ -1066,7 +1066,7 @@ if __name__ == '__main__':
             cv2.imshow('Video Stream', img)
 
             # Display the plot in the 'Live Plot' window
-            cv2.imshow('Real time HR Distance vs Robot Velocity Plot', plot_img[:, :, :3])
+            cv2.imshow('Real time HR Distance vs Robot Velocity', plot_img[:, :, :3])
             # Update Display
             #cv2.imshow("Image", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
