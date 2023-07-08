@@ -316,14 +316,12 @@ milliseconds = 0
 write_file = "Productivity-"+str(start)+".csv"
 mode_collab = 0
 
-#arduino initial connection
-ser = serial.Serial('/dev/ttyUSB0', 9600)  # Replace 'COM3' with your port name
-
 #SSM original data
 VrOriSSM = 0
 mode_SSMori = 0
 
 counter = 0
+message = "1"
 # ===== Yaskawa Connect Robot =====
 # robot connection
 #robot = FS100('192.168.255.1')
@@ -474,7 +472,7 @@ class Job(threading.Thread):
         SPEED_R_XYZE = (10, 50, 100)
 
         #speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
-        global speed
+        global speed, message
         #speed = SPEED_XYZ[2]
 
 
@@ -678,15 +676,11 @@ class Job(threading.Thread):
                     ## counter information
                     print("Robot counter step: ", counter)
                     message = "1"
-                    # message = input("Enter a message to send to Arduino: ")
-                    ser.write(message.encode())
-                    print("nilai message= ", message)
                     break
 
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
     #     # a hold off in case we switch to teach/play mode
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
-        ser.close()
     #
     #
     def pause(self):
@@ -729,15 +723,31 @@ def update_plot():
 # Create windows for video stream and plot
 # cv2.namedWindow('Video Stream')
 # cv2.namedWindow('Data Analysis')
+# Function for Thread 1
+def thread_conveyor():
+    print("Thread conveyor started")
+    # arduino initial connection
+    ser = serial.Serial('/dev/ttyUSB0', 9600)  # Replace 'COM3' with your port name
 
+    while True:
+        print("Thread 1 is running")
+        #t.sleep(1)
+        #message = input("Enter a message to send to Arduino: ")
+        ser.write(message.encode())
+        print("nilai message= ", message)
+        line = ser.readline().decode('latin-1').rstrip()
+        print(line)
+    ser.close()
 
 if __name__ == '__main__':
     server = Job()
     server.start()
+    thread_1 = threading.Thread(target=thread_conveyor)
+    thread_1.start()
     # MAIN PRORGAM:
     # ===== camera installation =====
     fpsReader = cvzone.FPS()
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(2)
     cap.set(3, 640)  # width
     cap.set(4, 480)  # height
 
@@ -844,7 +854,6 @@ if __name__ == '__main__':
                             #print("2. Human Distance ", disHR)
                             xRobPos = 550
                             #print("===========================================")
-
 
                             eye_dist = round(eye_dist, 2)
                             #D = min(eye_dist, disHR)

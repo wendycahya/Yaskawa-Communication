@@ -13,7 +13,7 @@ d =0
 
 #Device connection
 fpsReader = cvzone.FPS()
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 detector = FaceMeshDetector(maxFaces=1)
 
 with open(write_file, "wt", encoding="utf-8") as output:
