@@ -226,7 +226,7 @@ def on_reset_alarm():
 D = 0
 VrPaper = 1000
 Vr = 1500
-Vr_PFL = 1500
+Vr_PFL = 400
 Vh_max = 1600
 Vh_min = 0
 Tr = 0.1
@@ -313,7 +313,7 @@ end_time = datetime.now()
 elapsed_time = 0
 milliseconds = 0
 #calibration = 1200
-write_file = "Productivity-"+str(start)+".csv"
+write_file = "400-Productivity-"+str(start)+".csv"
 mode_collab = 0
 
 #SSM original data
