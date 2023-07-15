@@ -179,28 +179,7 @@ def rob_command(post1):
     robot_command = [(int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))]
     #robot_command = (int(x_coor), int(y_coor), int(z_coor), 0, 0, 0, 0)
     return robot_command
-#===== new Function to complete Research
-def calculate_velocity(distance, time):
-    """
-    Calculates the velocity given the distance and time.
-    :param distance: The distance traveled by the robot (in meters).
-    :param time: The time taken by the robot to cover the distance (in seconds).
-    :return: The velocity of the robot (in meters per second).
-    """
-    velocity = distance / time
-    return velocity
-
-def get_time_difference_ms(start_time, end_time):
-    """
-    Calculates the time difference in milliseconds between two datetime objects.
-    :param start_time: The starting datetime.
-    :param end_time: The ending datetime.
-    :return: The time difference in milliseconds.
-    """
-    time_diff = end_time - start_time
-    time_diff_ms = time_diff.total_seconds() * 1000
-    return time_diff_ms
-
+#
 def update_pos():
     while stop_sign.acquire(blocking=False):
         stop_sign.release()
@@ -225,7 +204,7 @@ def on_reset_alarm():
 D = 0
 VrPaper = 1000
 Vr = 1500
-Vr_PFL = 1500
+Vr_PFL = 400
 Vh_max = 1600
 Vh_min = 0
 Tr = 0.1
@@ -246,7 +225,6 @@ ts = 0.05
 #velocity human
 velHum_Ori = 1600
 XnRob = [0, 0, 0]
-XnRobEnd = [0, 0, 0]
 XnRob_last = [0, 0, 0]
 velXR, velYR, velZR = [0, 0, 0]
 interval = 0
@@ -277,7 +255,7 @@ zHead = [0, 0]
 zChest = [0, 0]
 RobTablePos = [0, 0, 0]
 robotPos = [0, 0, 0, 0, 0, 0, 0]
-distance_traveled, time_diff_ms, time_diff_s, velocity = 0, 0, 0, 0
+
 #distance measurement
 #x shoulder in cm
 #y real measurement
@@ -306,11 +284,6 @@ midHipsRAW = 0
 
 #information
 start = datetime.now()
-stopwatch_time = t.time()
-start_time = datetime.now()
-end_time = datetime.now()
-elapsed_time = 0
-milliseconds = 0
 #calibration = 1200
 write_file = "Productivity-"+str(start)+".csv"
 mode_collab = 0
@@ -325,13 +298,14 @@ counter = 0
 #robot = FS100('192.168.255.1')
 robot = FS100('172.16.0.1')
 SPEED_XYZ = (10, 150, 500)
-speed = 0
+speed = SPEED_XYZ[2]
 stop_sign = threading.Semaphore()
 #
 # # Initialize the robot model
 pos_info = {}
 robot_no = 1
 status = {}
+speed = 0
 x, y, z, rx, ry, rz, re = 0, 0, 0, 0, 0, 0, 0
 delay_rob = 0.1
 # # ===== Movement Position List =====
@@ -697,29 +671,27 @@ fig, ax = plt.subplots()
 ax2 = ax.twinx()
 # Create an empty list to store data for plotting
 dataD = []
-dataVR = []
-# dataX = []
-# dataY = []
-# dataZ = []
+dataX = []
+dataY = []
+dataZ = []
 
 # Function to update the plot
 def update_plot():
     ax.clear()
-    ax.plot(dataD, 'b-')
-    ax2.plot(dataVR, 'r--')
-    # ax2.plot(dataX, 'r')
-    # ax2.plot(dataY, 'g')
-    # ax2.plot(dataZ, 'b')
+    ax.plot(dataD, 'p-')
+    ax2.plot(dataX, 'r')
+    ax2.plot(dataY, 'g')
+    ax2.plot(dataZ, 'b')
     plt.axis('on')  # Turn off axis labels and ticks
-    ax.set_xlabel("Sample Time")
+    ax.set_xlabel("Time")
     ax.set_ylabel("Distance (mm)")
     ax2.set_ylabel("Speed (mm/s)")
     plt.tight_layout()  # Adjust the plot to remove any padding
     plt.savefig('temp_plot.png')  # Save the plot as an image
 
 # Create windows for video stream and plot
-# cv2.namedWindow('Video Stream')
-# cv2.namedWindow('Data Analysis')
+cv2.namedWindow('Video Stream')
+cv2.namedWindow('Data Analysis')
 
 
 if __name__ == '__main__':
@@ -742,12 +714,10 @@ if __name__ == '__main__':
         while True:
             # Detect human skeleton
             success, img = cap.read()
-            height, width, channels = img.shape
             #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             imgMesh, faces = detector.findFaceMesh(img, draw=False)
             imgFace, bboxs = detectFace.findFaces(img)
-            cv2.rectangle(img, (0, 0), (width, 70), (10, 10, 10), -1)
-            elapsed_time = round(t.time() - stopwatch_time, 3)
+
             if faces:
                 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
                     # skeleton detection
@@ -886,11 +856,7 @@ if __name__ == '__main__':
                         # print(straaa)
 
                         robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-                        start_time = datetime.now()
-                        milliseconds = start_time.microsecond // 1000
-                        XnRob = [robotPos[0], robotPos[1], robotPos[2]]
-
-
+                        # XnRob = [robotPos[0], robotPos[1], robotPos[2]]
                         #
                         # #XnRob_last = [0, 0, 0]
                         # velXR, velYR, velZR = velXYZ(XnRob, XnRob_last, ts)
@@ -932,7 +898,7 @@ if __name__ == '__main__':
                             server.resume()
                             # print("Robot speed reduction")
                             mode_collab = 2
-                            Vr = Vr_PFL
+                            Vr = 400
                             Vr = round(Vr, 2)
                             speed = int(remap(Vr, 0, 1500, 0, 800))
                             #print("change value speed PFL: ", Vr)
@@ -989,8 +955,8 @@ if __name__ == '__main__':
                     t.sleep(ts)
 
                     # Xn_last = Xn
-                    # Xn_last1D = Xn1D
-                    # XnRob_last = XnRob
+                    Xn_last1D = Xn1D
+                    XnRob_last = XnRob
                 # Render detections
                 # mp_drawing.draw_landmarks(img, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                 #                           mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
@@ -1001,66 +967,38 @@ if __name__ == '__main__':
             print("5. Nilai Robot Speed", speed)
             # nilai calibrasi data raw real hip, real shoulder, real nose, pixel hip, pixel shoulder, pixel nose
             # output.write(str(interval) + ',' + str(D) + ',' + str(Sp) + ',' + str(Vr) + ',' + str(Sp) + ',' + str(Vr) + ',' + str(XnRob[0]) + ',' + str(XnRob[1]) + ',' + str(XnRob[2]) + '\n')
-
+            start_time = datetime.now()
+            milliseconds = start_time.microsecond // 1000
             # output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(robotPos[0])+ ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper) + ',' + str(velXR) + ',' + str(velYR) + ',' + str(velZR) + '\n')
             #output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(D) + ',' + str(mode_collab) + ',' + str(Vr) + ',' + str(VrPaper) + ',' + str(speed) + '\n')
+            output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(milliseconds) + ',' + str(D) + ',' + str(speed) + ',' + str(counter) + ',' + str(robotPos[0]) + ',' + str(robotPos[1]) + ',' + str(robotPos[2]) + '\n')
+            print("SUCCESS RECORD ", interval, " !!!")
+            print("SUCCESS RECORD counter", counter, " !!!")
 
-            if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-                x, y, z, rx, ry, rz, re = pos_info['pos']
-                pointHome = (x, y, z, 0, 0, 0, 0)
-                straaa = "CURRENT POSITION\n" + \
-                         "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-                         "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-                                                                                            x // 1000,
-                                                                                            x % 1000,
-                                                                                            rx // 10000,
-                                                                                            rx % 10000) + \
-                         "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-                             y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-                         "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-                             z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-                         "                            Re   {:4d}.{:04d} deg.\n".format(
-                             re // 10000, re % 10000)
-
-            # print(straaa)
-
-            robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-            end_time = datetime.now()
-
-            XnRobEnd = [robotPos[0], robotPos[1], robotPos[2]]
-
-            distance_traveled = mt.sqrt((XnRobEnd[0]-XnRob[0])**2 + (XnRobEnd[2]-XnRob[2])**2 + (XnRobEnd[2]-XnRob[2])**2)
-            time_diff_ms = get_time_difference_ms(start_time, end_time)
-            time_diff_s = time_diff_ms / 1000  # converting milliseconds to seconds
-            velocity = calculate_velocity(distance_traveled, time_diff_s)
             # Replace this with your actual variable that you want to plot
             # import random
             # new_data = random.randint(0, 100)
             dataD.append(D)
-            dataVR.append(velocity)
-            # dataX.append(robotPos[0])
-            # dataY.append(robotPos[1])
-            # dataZ.append(robotPos[2])
+            dataX.append(robotPos[0])
+            dataX.append(robotPos[1])
+            dataX.append(robotPos[2])
 
             # Update the plot
             update_plot()
-            output.write(str(end_time.strftime("%H:%M:%S")) + ',' + str(elapsed_time) + ',' + str(D) + ',' + str(speed) + ',' + str(counter) + ',' + str(velocity) + ',' + str(robotPos[0]) + ',' + str(robotPos[1]) + ',' + str(robotPos[2]) + '\n')
-            print("SUCCESS RECORD ", interval, " !!!")
-            print("SUCCESS RECORD counter", counter, " !!!")
+
             # Load the saved plot image
-            plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
+            plot_img = cv2.imread('../temp_plot.png', cv2.IMREAD_UNCHANGED)
 
             # Resize the plot image to match the video frame size
             plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))
-            cv2.putText(img, "{}   s".format(elapsed_time), (10, 30), cv2.FONT_HERSHEY_PLAIN,
-                        2, (15, 225, 215), 2)
-            cv2.putText(img, "counter {}".format(counter), (10, 60), cv2.FONT_HERSHEY_PLAIN,
-                        2, (15, 225, 215), 2)
+
             # Display the video frame in the 'Video Stream' window
             cv2.imshow('Video Stream', img)
 
             # Display the plot in the 'Live Plot' window
-            cv2.imshow('Real time HR Distance vs Robot Velocity Plot', plot_img[:, :, :3])
+            cv2.imshow('Live Plot', plot_img[:, :, :3])
+
+
             # Update Display
             #cv2.imshow("Image", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -210,7 +210,7 @@ while True:
     update_plot()
 
     # Load the saved plot image
-    plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
+    plot_img = cv2.imread('../temp_plot.png', cv2.IMREAD_UNCHANGED)
 
     # Resize the plot image to match the video frame size
     plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))

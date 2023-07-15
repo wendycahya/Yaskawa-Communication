@@ -9,6 +9,7 @@ from utilsFS100 import FS100
 import cvzone
 from cvzone.FaceMeshModule import FaceMeshDetector
 from cvzone.FaceDetectionModule import FaceDetector
+from cvzone.PoseModule import PoseDetector
 import cv2
 
 #computation
@@ -23,9 +24,6 @@ import pandas as pd
 from pandas.errors import EmptyDataError
 from matplotlib.animation import FuncAnimation
 import csv
-
-#arduino communication library
-import serial
 
 Sp, Spfull, SpminVal, SpSafeVal, SpPFLVal = 0, 0, 0, 0, 0
 # =================function SSM =============================
@@ -226,7 +224,7 @@ def on_reset_alarm():
 D = 0
 VrPaper = 1000
 Vr = 1500
-Vr_PFL = 1500
+Vr_PFL = 400
 Vh_max = 1600
 Vh_min = 0
 Tr = 0.1
@@ -245,7 +243,7 @@ velX, velY, velZ = [0, 0, 0]
 ts = 0.05
 
 #velocity human
-velHum_Ori = 1600
+Vh = 1600
 XnRob = [0, 0, 0]
 XnRobEnd = [0, 0, 0]
 XnRob_last = [0, 0, 0]
@@ -267,7 +265,7 @@ vel = 0
 RobotVrmax = 1500
 
 
-Spfull = SpMax(vrmax, velHum_Ori, Tr, Ts, ac, C_SSM, Zd, Zr)
+Spfull = SpMax(vrmax, Vr, Tr, Ts, ac, C_SSM, Zd, Zr)
 SpminVal = Spmin(C_SSM, Zd, Zr)
 distView = 0
 sampleDistance = 1
@@ -279,31 +277,21 @@ zChest = [0, 0]
 RobTablePos = [0, 0, 0]
 robotPos = [0, 0, 0, 0, 0, 0, 0]
 distance_traveled, time_diff_ms, time_diff_s, velocity = 0, 0, 0, 0
+
 #distance measurement
 #x shoulder in cm
 #y real measurement
-x = [-2, -4, -9, -15, -17, -23, -38, -50, -76, -80]
-y = [150, 140, 130, 120, 110, 70, 60, 50, 40, 30]
+#=== Calibration Value
+real_measurement = 0
+error = 0
+chestDistance = 0
+# Achest = 0.04629
+# Bchest = -24.60386
+# Cchest = 3870.58679
+Achest = 0.04628882081739653
+Bchest = -24.603862891449737
+Cchest = 3870.586790291231
 
-coff = np.polyfit(x, y, 2)
-A, B, C = coff
-
-xHeight = [0.2707, 0.2799, 0.2703, 0.2716, 0.29167, 0.634, 0.634, 0.6299, 0.6025, 0.6072, 0.1201, 0.1188, 0.0990, 0.1237, 0.1666]
-yHeight = [140, 140, 140, 140, 140, 90, 90, 90, 90, 90, 150, 150, 150, 150, 150]
-
-coffHeight = np.polyfit(xHeight, yHeight, 2)
-Ah, Bh, Ch = coffHeight
-
-Anose, Bnose, Cnose = -0.0001612723204521041, -0.23012162009342785, 180.10792676079961
-
-
-#initialization
-mp_drawing = mp.solutions.drawing_utils
-mp_pose = mp.solutions.pose
-
-noseRAW = 0
-midshoulderRAW = 0
-midHipsRAW = 0
 
 #information
 start = datetime.now()
@@ -313,7 +301,7 @@ end_time = datetime.now()
 elapsed_time = 0
 milliseconds = 0
 #calibration = 1200
-write_file = "Productivity-"+str(start)+".csv"
+write_file = "400-NewProductivity-"+str(start)+".csv"
 mode_collab = 0
 
 #SSM original data
@@ -321,7 +309,9 @@ VrOriSSM = 0
 mode_SSMori = 0
 
 counter = 0
-message = "1"
+
+
+
 # ===== Yaskawa Connect Robot =====
 # robot connection
 #robot = FS100('192.168.255.1')
@@ -466,13 +456,15 @@ class Job(threading.Thread):
         self.__running.set()      # 将running设置为True
 
     def run(self):
-
+        t.sleep(3)  # delay for initialization
+        # ser.write('1'.encode())
+        # t.sleep(1)
         # set speed
         SPEED_XYZ = (10, 150, 500)
         SPEED_R_XYZE = (10, 50, 100)
 
         #speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
-        global speed, message
+        global speed
         #speed = SPEED_XYZ[2]
 
 
@@ -660,13 +652,7 @@ class Job(threading.Thread):
                 #print("nilai x yang masuk ", index, "sebesar ", i)
                 robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
                            FS100.MOVE_SPEED_CLASS_PERCENT, speed, i)
-                # if status == FS100.TRAVEL_STATUS_END:
-                #     stop = datetime.now()
-                # print("nilai start", start)
-                # print("nilai stop", stop)
-                # diff_seconds = (stop - start)
-                # robot_time = int(diff_seconds.seconds) + 5
-                # print("nilai second", robot_time)
+
                 t.sleep(0.20)  # robot may not update the status
                 index = index + 1
                 #print("Finished step ", index)
@@ -675,14 +661,12 @@ class Job(threading.Thread):
                     counter = counter + 1
                     ## counter information
                     print("Robot counter step: ", counter)
-                    message = "1"
                     break
 
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
     #     # a hold off in case we switch to teach/play mode
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
-    #
-    #
+
     def pause(self):
         self.__flag.clear()     # 设置为False, 让线程阻塞
 
@@ -701,9 +685,6 @@ ax2 = ax.twinx()
 # Create an empty list to store data for plotting
 dataD = []
 dataVR = []
-# dataX = []
-# dataY = []
-# dataZ = []
 
 # Function to update the plot
 def update_plot():
@@ -720,30 +701,10 @@ def update_plot():
     plt.tight_layout()  # Adjust the plot to remove any padding
     plt.savefig('temp_plot.png')  # Save the plot as an image
 
-# Create windows for video stream and plot
-# cv2.namedWindow('Video Stream')
-# cv2.namedWindow('Data Analysis')
-# Function for Thread 1
-def thread_conveyor():
-    print("Thread conveyor started")
-    # arduino initial connection
-    ser = serial.Serial('/dev/ttyUSB0', 9600)  # Replace 'COM3' with your port name
-
-    while True:
-        print("Thread 1 is running")
-        #t.sleep(1)
-        #message = input("Enter a message to send to Arduino: ")
-        ser.write(message.encode())
-        print("nilai message= ", message)
-        line = ser.readline().decode('latin-1').rstrip()
-        print(line)
-    ser.close()
-
 if __name__ == '__main__':
     server = Job()
     server.start()
-    thread_1 = threading.Thread(target=thread_conveyor)
-    thread_1.start()
+
     # MAIN PRORGAM:
     # ===== camera installation =====
     fpsReader = cvzone.FPS()
@@ -753,6 +714,8 @@ if __name__ == '__main__':
 
     detector = FaceMeshDetector(maxFaces=1)
     detectFace = FaceDetector()
+    detectorPose = PoseDetector()
+
     #print("Nilai S Current adalah ", Scurrent)
     # ======================================================
     # masukkan program utama disini (looping program)
@@ -762,258 +725,218 @@ if __name__ == '__main__':
             # Detect human skeleton
             success, img = cap.read()
             height, width, channels = img.shape
-            #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             imgMesh, faces = detector.findFaceMesh(img, draw=False)
-            imgFace, bboxs = detectFace.findFaces(img)
+            #imgFace, bboxs = detectFace.findFaces(img)
+            fps, imgCap = fpsReader.update(img, pos=(20, 20), color=(0, 255, 0), scale=2, thickness=2)
+            img = detectorPose.findPose(img)
+            lmList, bboxInfo = detectorPose.findPosition(img, bboxWithHands=False)
+
             cv2.rectangle(img, (0, 0), (width, 70), (10, 10, 10), -1)
             elapsed_time = round(t.time() - stopwatch_time, 3)
+
             if faces:
-                with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
-                    # skeleton detection
-                    face = faces[0]
-                    # print(faces[0])
-                    pointLeft = face[145]
-                    pointRight = face[374]
-                    w, _ = detector.findDistance(pointLeft, pointRight)
-                    W = 6.3  # default real width eyes distance
-                    f = 714  # finding the average for focal length
-                    d = (W * f) / w
-                    d = d * 10  # distance in mm
-                    eye_dist = round(d, 3)
+                if bboxInfo:
+                    idrSh, xrSh, yrSh, zrSh = lmList[11]
+                    idlSh, xlSh, ylSh, zlSh = lmList[12]
+                    # print("===== asli =====")
+                    # print("Id data ", idrSh, "right shoulder x=", xrSh, ", right shoulder y=", yrSh)
+                    # print("Id data ", idlSh, "left shoulder x=", xrSh, ", left shoulder y=", yrSh)
+                    chestDistance = round(mt.sqrt((xrSh - xlSh) ** 2 + (yrSh - ylSh) ** 2), 3)
 
-                    #Xn1D = eye_dist
-                    #velHum = (Xn1D - Xn_last1D) / ts
-                    #velHum = abs(velHum)
-                    #print("1. Human Velocity", velHum)
-                    # skeleton mediapipe migrasion
-                    # Recolor image to RGB
+                # skeleton detection
+                face = faces[0]
+                # print(faces[0])
+                pointLeft = face[145]
+                pointRight = face[374]
+                w, _ = detector.findDistance(pointLeft, pointRight)
+                W = 6.3  # default real width eyes distance
+                f = 714  # finding the average for focal length
+                d = (W * f) / w
+                d = d * 10  # distance in mm
+                eye_dist = round(d, 3)
 
-                    img.flags.writeable = False
-                    # Make detection
-                    # results = pose.process(img)
-                    # Recolor back to BGR
-                    #img.flags.writeable = True
+                #Xn1D = eye_dist
+                #velHum = (Xn1D - Xn_last1D) / ts
+                #velHum = abs(velHum)
+                #print("1. Human Velocity", velHum)
+                # skeleton mediapipe migrasion
+                # Recolor image to RGB
 
-
-                    # Extract landmarks
-                    try:
-                        data = []  # List to store the input data
-
-                        # Collect 10 input values
-                        while len(data) < 10:
-
-                            # landmarks = results.pose_landmarks.landmark
-                            # # Get coordinates
-                            # xyzFoot = [landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x,
-                            #            landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y,
-                            #            landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].z]
-                            #
-                            # xyzKnee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
-                            #            landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y,
-                            #            landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].z]
-                            #
-                            # xyzNose = [landmarks[mp_pose.PoseLandmark.NOSE.value].x,
-                            #            landmarks[mp_pose.PoseLandmark.NOSE.value].y,
-                            #            landmarks[mp_pose.PoseLandmark.NOSE.value].z]
-                            # # landmarks shoulder left and right
-                            # rightShoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
-                            #                  landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
-                            #                  landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z]
-                            # leftShoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
-                            #                 landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
-                            #                 landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z]
-                            #
-                            # rightHip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
-                            #             landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y,
-                            #             landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].z]
-                            # leftHip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
-                            #            landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,
-                            #            landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].z]
-                            #
-                            # # Calculate angle
-                            # Shodis, Shomid = center_point(leftShoulder, rightShoulder)
-                            # Hipdis, Hipmid = center_point(leftHip, rightHip)
-                            #
-                            # # distance mid
-                            # middis, midCoor = center_point(Shomid, Hipmid)
-
-                            # read the Xn
-                            # RAWdist = round(Shomid[2] * 100, 3)
-                            # distanceCM = A * RAWdist ** 2 + B * RAWdist + C
-                            # shoulder distance
-
-                            # Scol active pada saat terdapat vr pada rentang kecepatan
-
-                            # Human Height detection
-                            # nilai_nose = tuple(np.multiply([xyzNose[0], xyzNose[1]], [640, 480]).astype(int))
-                            # nilai_shoulderMid = tuple(np.multiply([Shomid[0], Shomid[1]], [640, 480]).astype(int))
-                            # nilai_HipMid = tuple(np.multiply([Hipmid[0], Hipmid[1]], [640, 480]).astype(int))
-                            #
-                            # disHR = distanceCM * 10
-                            # disHR = round(disHR, 2)
-                            #print("2. Human Distance ", disHR)
-                            xRobPos = 550
-                            #print("===========================================")
-
-                            eye_dist = round(eye_dist, 2)
-                            #D = min(eye_dist, disHR)
-                            D = eye_dist
-                            #print("3. Jarak deteksi manusia", D)
-                            Vh = 1600
-
-                            #if Vh < velHum:
-                            #    Vh = 1600
-                            #else:
-                            #    Vh = velHum
-                            #print("4. Jarak deteksi manusia", Vh)
-                            # Vh = 1600
-                            #xRobPos = robotPos[0]
-
-                        # print("SSM Dynamic", Sp)
-                            ## SSM Preparation Calculation
-
-                            # ===== SSM calculation ======
-                            SpPFLVal = SpPFL(Vr_PFL, Vh, Tr, Ts, ac, C_SSM, Zd, Zr)
-                            SpSafeVal = SpSafe(Vr_PFL, Ts, ac, C_SSM, Zd, Zr)
-                            #print("4. Safety Separation Distance: ", Spfull,",", SpminVal,", ", SpSafeVal,",", SpPFLVal)
-
-                            value = D
-                            data.append(value)
-
-                        # Calculate the average
-                        D = sum(data) / len(data)
-
-                        ## =========================== Read Robot Current Position =====================================
-                        if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-                            x, y, z, rx, ry, rz, re = pos_info['pos']
-                            pointHome = (x, y, z, 0, 0, 0, 0)
-                            straaa = "CURRENT POSITION\n" + \
-                                     "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-                                     "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-                                                                                                        x // 1000,
-                                                                                                        x % 1000,
-                                                                                                        rx // 10000,
-                                                                                                        rx % 10000) + \
-                                     "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-                                         y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-                                     "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-                                         z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-                                     "                            Re   {:4d}.{:04d} deg.\n".format(
-                                         re // 10000, re % 10000)
-
-                        # print(straaa)
-
-                        robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-                        start_time = datetime.now()
-                        milliseconds = start_time.microsecond // 1000
-                        XnRob = [robotPos[0], robotPos[1], robotPos[2]]
+                img.flags.writeable = False
+                # Make detection
+                # results = pose.process(img)
+                # Recolor back to BGR
+                #img.flags.writeable = True
 
 
-                        #
-                        # #XnRob_last = [0, 0, 0]
-                        # velXR, velYR, velZR = velXYZ(XnRob, XnRob_last, ts)
-                        #D = (D + 500) - robotPos[0]
-                        offset = 500
-                        #D = (D + offset) - xRobPos
-                        D = (D - offset) - robotPos[0]
-                        D = round(D, 3)
+                # Extract landmarks
+                try:
+                    data = []  # List to store the input data
+
+                    # Collect 10 input values
+                    while len(data) < 10:
+
+                        #print("2. Human Distance ", disHR)
+                        xRobPos = 550
+                        #print("===========================================")
+
+                        eye_dist = round(eye_dist, 2)
+                        real_measurement = round((Achest * (chestDistance ** 2)) + (Bchest * chestDistance) + Cchest, 2)
+                        # print("==========")
+                        # print("lebar pixel ", chestDistance)
+                        print("Real Chest Distance", real_measurement)
+
+                        #D = min(eye_dist, disHR)
+                        D = min(eye_dist, real_measurement)
+                        #print("3. Jarak deteksi manusia", D)
 
 
-                        if D < 0:
-                            D = 0
-                        else:
-                            D = abs(D)
-                        cvzone.putTextRect(img, f'Depth: {D} mm', (face[10][0] - 100, face[10][1] - 50), scale=1.5)
-                        # # logical SSM send robot
-                        if D <= SpminVal:
-                            server.pause()
-                            Vr = 0
-                            speed = 0
-                            #print("Robot harus berhenti", Vr)
-                            mode_collab = 0
-                            #t.sleep(0.5)
+                        #if Vh < velHum:
+                        #    Vh = 1600
+                        #else:
+                        #    Vh = velHum
+                        #print("4. Jarak deteksi manusia", Vh)
+                        # Vh = 1600
+                        #xRobPos = robotPos[0]
 
-                        elif D > SpminVal and D <= SpSafeVal:
-                            server.resume()
-                            #print("Robot speed reduction")
-                            Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
-                            Vr = round(Vr, 2)
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            # calculate the Vmax allowable
-                            #print("Vmax allowable in this workspace: ", Vr_max_command)
-                            # Vr = Vr_max_command
-                            mode_collab = 1
-                            #print("change value speed safe: ", Vr)
-                            #t.sleep(0.5)
+                    # print("SSM Dynamic", Sp)
+                        ## SSM Preparation Calculation
 
-                        elif D > SpSafeVal and D <= SpPFLVal:
-                            server.resume()
-                            # print("Robot speed reduction")
-                            mode_collab = 2
-                            Vr = Vr_PFL
-                            Vr = round(Vr, 2)
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            #print("change value speed PFL: ", Vr)
-                            #t.sleep(0.5)
 
-                        elif D > SpPFLVal and D <= Spfull:
-                            server.resume()
-                            Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
-                            Vr = round(Vr, 2)
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            #print("change value speed Reduce: ", Vr)
-                            mode_collab = 3
-                            #t.sleep(0.5)
 
-                        else:
-                            server.resume()
-                            mode_collab = 4
-                            #print("Robot bekerja maximal")
-                            #mode_collab = 1
-                            Vr = RobotVrmax
-                            speed = int(remap(Vr, 0, 1500, 0, 800))
-                            #print("change value speed maximum: ", Vr)
-                            # t.sleep(0.5)
+                        value = D
+                        data.append(value)
 
-            # #============ Previous Method Comparison ===========================
-            #             if D <= 307.7:
-            #                 server.pause()
-            #                 VrPaper = 0
-            #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
-            #                 #print("Robot harus berhenti", VrPaper)
-            #
-            #             elif D > 307.7 and D <= 740.3:
-            #                 server.resume()
-            #                 VrPaper = 375
-            #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
-            #                 #print("change value speed safe: ", VrPaper)
-            #
-            #
-            #             elif D > 740.3 and D <= 1490.3:
-            #                 server.resume()
-            #                 VrPaper = 750
-            #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
-            #                 #print("change value speed PFL: ", VrPaper)
-            #             else:
-            #                 server.resume()
-            #                 VrPaper = 1500
-            #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
-            #                 #print("change value speed maximum: ", VrPaper)
+                    # Calculate the average
+                    D = sum(data) / len(data)
 
-                    except:
-                        print("Pass the detection")
+                    ## =========================== Read Robot Current Position =====================================
+                    if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                        x, y, z, rx, ry, rz, re = pos_info['pos']
+                        pointHome = (x, y, z, 0, 0, 0, 0)
+                        straaa = "CURRENT POSITION\n" + \
+                                 "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
+                                 "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
+                                                                                                    x // 1000,
+                                                                                                    x % 1000,
+                                                                                                    rx // 10000,
+                                                                                                    rx % 10000) + \
+                                 "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
+                                     y // 1000, y % 1000, ry // 10000, ry % 10000) + \
+                                 "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
+                                     z // 1000, z % 1000, rz // 10000, rz % 10000) + \
+                                 "                            Re   {:4d}.{:04d} deg.\n".format(
+                                     re // 10000, re % 10000)
 
-                # Update position
-                    t.sleep(ts)
+                    # print(straaa)
 
-                    # Xn_last = Xn
-                    # Xn_last1D = Xn1D
-                    # XnRob_last = XnRob
-                # Render detections
-                # mp_drawing.draw_landmarks(img, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                #                           mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-                #                           mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
-                #                           )
+                    robotPos = convert_mm(x, y, z, rx, ry, rz, re)
+                    start_time = datetime.now()
+                    milliseconds = start_time.microsecond // 1000
+                    XnRob = [robotPos[0], robotPos[1], robotPos[2]]
+
+
+                    #
+                    # #XnRob_last = [0, 0, 0]
+                    # velXR, velYR, velZR = velXYZ(XnRob, XnRob_last, ts)
+                    #D = (D + 500) - robotPos[0]
+                    offset = 500
+                    #D = (D + offset) - xRobPos
+                    D = (D - offset) - robotPos[0]
+                    D = round(D, 3)
+
+                    # ===== SSM calculation ======
+                    SpPFLVal = SpPFL(Vr_PFL, Vh, Tr, Ts, ac, C_SSM, Zd, Zr)
+                    SpSafeVal = SpSafe(Vr_PFL, Ts, ac, C_SSM, Zd, Zr)
+                    # print("4. Safety Separation Distance: ", Spfull,",", SpminVal,", ", SpSafeVal,",", SpPFLVal)
+
+                    if D < 0:
+                        D = 0
+                    else:
+                        D = abs(D)
+                    cvzone.putTextRect(img, f'Depth: {D} mm', (face[10][0] - 100, face[10][1] - 50), scale=1.5)
+                    # # logical SSM send robot
+                    if D <= SpminVal:
+                        server.pause()
+                        Vr = 0
+                        speed = 0
+                        #print("Robot harus berhenti", Vr)
+                        mode_collab = 0
+                        #t.sleep(0.5)
+
+                    elif D > SpminVal and D <= SpSafeVal:
+                        server.resume()
+                        #print("Robot speed reduction")
+                        Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
+                        Vr = round(Vr, 2)
+                        speed = int(remap(Vr, 0, 1500, 0, 800))
+                        # calculate the Vmax allowable
+                        #print("Vmax allowable in this workspace: ", Vr_max_command)
+                        # Vr = Vr_max_command
+                        mode_collab = 1
+                        #print("change value speed safe: ", Vr)
+                        #t.sleep(0.5)
+
+                    elif D > SpSafeVal and D <= SpPFLVal:
+                        server.resume()
+                        # print("Robot speed reduction")
+                        mode_collab = 2
+                        Vr = Vr_PFL
+                        Vr = round(Vr, 2)
+                        speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #print("change value speed PFL: ", Vr)
+                        #t.sleep(0.5)
+
+                    elif D > SpPFLVal and D <= Spfull:
+                        server.resume()
+                        Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
+                        Vr = round(Vr, 2)
+                        speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #print("change value speed Reduce: ", Vr)
+                        mode_collab = 3
+                        #t.sleep(0.5)
+
+                    else:
+                        server.resume()
+                        mode_collab = 4
+                        #print("Robot bekerja maximal")
+                        #mode_collab = 1
+                        Vr = RobotVrmax
+                        speed = int(remap(Vr, 0, 1500, 0, 800))
+                        #print("change value speed maximum: ", Vr)
+                        # t.sleep(0.5)
+
+        # #============ Previous Method Comparison ===========================
+        #             if D <= 307.7:
+        #                 server.pause()
+        #                 VrPaper = 0
+        #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
+        #                 #print("Robot harus berhenti", VrPaper)
+        #
+        #             elif D > 307.7 and D <= 740.3:
+        #                 server.resume()
+        #                 VrPaper = 375
+        #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
+        #                 #print("change value speed safe: ", VrPaper)
+        #
+        #
+        #             elif D > 740.3 and D <= 1490.3:
+        #                 server.resume()
+        #                 VrPaper = 750
+        #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
+        #                 #print("change value speed PFL: ", VrPaper)
+        #             else:
+        #                 server.resume()
+        #                 VrPaper = 1500
+        #                 speed = int(remap(VrPaper, 0, 1500, 0, 800))
+        #                 #print("change value speed maximum: ", VrPaper)
+
+                except:
+                    print("Pass the detection")
+
+            # Update position
+                t.sleep(ts)
+            # Render detections
             # ===== research documentation =====
             interval = interval + 1
             print("5. Nilai Robot Speed", speed)
@@ -1066,7 +989,7 @@ if __name__ == '__main__':
             print("SUCCESS RECORD ", interval, " !!!")
             print("SUCCESS RECORD counter", counter, " !!!")
             # Load the saved plot image
-            plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
+            plot_img = cv2.imread('../temp_plot.png', cv2.IMREAD_UNCHANGED)
 
             # Resize the plot image to match the video frame size
             plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))
@@ -1078,7 +1001,7 @@ if __name__ == '__main__':
             cv2.imshow('Video Stream', img)
 
             # Display the plot in the 'Live Plot' window
-            cv2.imshow('Real time HR Distance vs Robot Velocity Plot', plot_img[:, :, :3])
+            cv2.imshow('HR Distance and Robot Velocity', plot_img[:, :, :3])
             # Update Display
             #cv2.imshow("Image", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):

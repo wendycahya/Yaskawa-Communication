@@ -1,6 +1,4 @@
 #================== Library Declaration ============================
-import math
-import time
 import time as t
 import threading
 from datetime import datetime
@@ -24,10 +22,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from pandas.errors import EmptyDataError
 from matplotlib.animation import FuncAnimation
-
 import csv
-import serial
 
+#arduino communication library
+import serial
 
 Sp, Spfull, SpminVal, SpSafeVal, SpPFLVal = 0, 0, 0, 0, 0
 # =================function SSM =============================
@@ -159,7 +157,7 @@ def move_distance(post1, post2):
     rz_coor = post2[5] - post1[5]
     re_coor = post2[6] - post1[6]
 
-    dist = math.sqrt(math.pow((post2[0] - post1[0]), 2) + math.pow((post2[1] - post1[1]), 2) + math.pow((post2[2] - post1[2]), 2))
+    dist = mt.sqrt(mt.pow((post2[0] - post1[0]), 2) + mt.pow((post2[1] - post1[1]), 2) + mt.pow((post2[2] - post1[2]), 2))
 
     move_coor = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
     return move_coor, int(dist)
@@ -308,7 +306,7 @@ midshoulderRAW = 0
 midHipsRAW = 0
 
 #information
-start = time.strftime("%Y%m%d-%H%M%S")
+start = datetime.now()
 stopwatch_time = t.time()
 start_time = datetime.now()
 end_time = datetime.now()
@@ -317,13 +315,13 @@ milliseconds = 0
 #calibration = 1200
 write_file = "Productivity-"+str(start)+".csv"
 mode_collab = 0
-ser = serial.Serial('COM3', 9600)  # Replace 'COM3' with your port name
 
 #SSM original data
 VrOriSSM = 0
 mode_SSMori = 0
 
 counter = 0
+message = "1"
 # ===== Yaskawa Connect Robot =====
 # robot connection
 #robot = FS100('192.168.255.1')
@@ -456,6 +454,9 @@ p113=[362.109,-264.585,-320.718,-179.474,-0.295,19.251,0]
 p114=[362.109,-264.585,-320.718,-179.474,-0.295,19.251,0]
 p115=[362.109,-264.585,-320.718,-179.474,-0.295,19.251,0]
 
+
+
+
 class Job(threading.Thread):
     def __init__(self, *args, **kwargs):
         super(Job, self).__init__(*args, **kwargs)
@@ -465,12 +466,13 @@ class Job(threading.Thread):
         self.__running.set()      # 将running设置为True
 
     def run(self):
+
         # set speed
         SPEED_XYZ = (10, 150, 500)
         SPEED_R_XYZE = (10, 50, 100)
 
         #speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
-        global speed
+        global speed, message
         #speed = SPEED_XYZ[2]
 
 
@@ -674,16 +676,12 @@ class Job(threading.Thread):
                     ## counter information
                     print("Robot counter step: ", counter)
                     message = "1"
-                    # message = input("Enter a message to send to Arduino: ")
-                    ser.write(message.encode())
-                    print("nilai message= ", message)
                     break
 
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
-        #a hold off in case we switch to teach/play mode
+    #     # a hold off in case we switch to teach/play mode
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
-        #Close the serial port connection
-        ser.close()
+    #
     #
     def pause(self):
         self.__flag.clear()     # 设置为False, 让线程阻塞
@@ -725,16 +723,31 @@ def update_plot():
 # Create windows for video stream and plot
 # cv2.namedWindow('Video Stream')
 # cv2.namedWindow('Data Analysis')
+# Function for Thread 1
+def thread_conveyor():
+    print("Thread conveyor started")
+    # arduino initial connection
+    ser = serial.Serial('/dev/ttyUSB0', 9600)  # Replace 'COM3' with your port name
 
+    while True:
+        print("Thread 1 is running")
+        #t.sleep(1)
+        #message = input("Enter a message to send to Arduino: ")
+        ser.write(message.encode())
+        print("nilai message= ", message)
+        line = ser.readline().decode('latin-1').rstrip()
+        print(line)
+    ser.close()
 
 if __name__ == '__main__':
     server = Job()
     server.start()
+    thread_1 = threading.Thread(target=thread_conveyor)
+    thread_1.start()
     # MAIN PRORGAM:
     # ===== camera installation =====
     fpsReader = cvzone.FPS()
-    cap = cv2.VideoCapture(1)
-    #cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(2)
     cap.set(3, 640)  # width
     cap.set(4, 480)  # height
 
@@ -841,7 +854,6 @@ if __name__ == '__main__':
                             #print("2. Human Distance ", disHR)
                             xRobPos = 550
                             #print("===========================================")
-
 
                             eye_dist = round(eye_dist, 2)
                             #D = min(eye_dist, disHR)
@@ -1054,7 +1066,7 @@ if __name__ == '__main__':
             print("SUCCESS RECORD ", interval, " !!!")
             print("SUCCESS RECORD counter", counter, " !!!")
             # Load the saved plot image
-            plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
+            plot_img = cv2.imread('../temp_plot.png', cv2.IMREAD_UNCHANGED)
 
             # Resize the plot image to match the video frame size
             plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))
@@ -1066,7 +1078,7 @@ if __name__ == '__main__':
             cv2.imshow('Video Stream', img)
 
             # Display the plot in the 'Live Plot' window
-            cv2.imshow('Real time HR Distance vs Robot Velocity', plot_img[:, :, :3])
+            cv2.imshow('Real time HR Distance vs Robot Velocity Plot', plot_img[:, :, :3])
             # Update Display
             #cv2.imshow("Image", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -1,4 +1,5 @@
 #================== Library Declaration ============================
+import math
 import time as t
 import threading
 from datetime import datetime
@@ -22,10 +23,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from pandas.errors import EmptyDataError
 from matplotlib.animation import FuncAnimation
-import csv
 
-#arduino communication library
-import serial
+import csv
 
 Sp, Spfull, SpminVal, SpSafeVal, SpPFLVal = 0, 0, 0, 0, 0
 # =================function SSM =============================
@@ -157,7 +156,7 @@ def move_distance(post1, post2):
     rz_coor = post2[5] - post1[5]
     re_coor = post2[6] - post1[6]
 
-    dist = mt.sqrt(mt.pow((post2[0] - post1[0]), 2) + mt.pow((post2[1] - post1[1]), 2) + mt.pow((post2[2] - post1[2]), 2))
+    dist = math.sqrt(math.pow((post2[0] - post1[0]), 2) + math.pow((post2[1] - post1[1]), 2) + math.pow((post2[2] - post1[2]), 2))
 
     move_coor = (int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))
     return move_coor, int(dist)
@@ -226,7 +225,7 @@ def on_reset_alarm():
 D = 0
 VrPaper = 1000
 Vr = 1500
-Vr_PFL = 400
+Vr_PFL = 1500
 Vh_max = 1600
 Vh_min = 0
 Tr = 0.1
@@ -313,7 +312,7 @@ end_time = datetime.now()
 elapsed_time = 0
 milliseconds = 0
 #calibration = 1200
-write_file = "400-Productivity-"+str(start)+".csv"
+write_file = "Productivity-"+str(start)+".csv"
 mode_collab = 0
 
 #SSM original data
@@ -321,11 +320,6 @@ VrOriSSM = 0
 mode_SSMori = 0
 
 counter = 0
-# message = "1"
-# # arduino initial connection
-# ser = serial.Serial('/dev/ttyUSB0', 9600)  # Replace 'COM3' with your port name
-
-
 # ===== Yaskawa Connect Robot =====
 # robot connection
 #robot = FS100('192.168.255.1')
@@ -470,15 +464,13 @@ class Job(threading.Thread):
         self.__running.set()      # 将running设置为True
 
     def run(self):
-        t.sleep(7.5)  # delay for initialization
-        # ser.write('1'.encode())
-        # t.sleep(1)
+
         # set speed
         SPEED_XYZ = (10, 150, 500)
         SPEED_R_XYZE = (10, 50, 100)
 
         #speed_class = FS100.MOVE_SPEED_CLASS_MILLIMETER
-        global speed, message
+        global speed
         #speed = SPEED_XYZ[2]
 
 
@@ -681,19 +673,11 @@ class Job(threading.Thread):
                     counter = counter + 1
                     ## counter information
                     print("Robot counter step: ", counter)
-                    # message = "1"
-                    #ser.write('1'.encode())
-                    # print("nilai message= ", message)
-                    # line = ser.readline().decode('latin-1').rstrip()
-                    # print(line)
-                    t.sleep(1)
                     break
 
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
     #     # a hold off in case we switch to teach/play mode
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
-                # Close the serial port connection
-        #ser.close()
     #
     #
     def pause(self):
@@ -736,31 +720,15 @@ def update_plot():
 # Create windows for video stream and plot
 # cv2.namedWindow('Video Stream')
 # cv2.namedWindow('Data Analysis')
-# Function for Thread 1
-# def thread_conveyor():
-#     print("Thread conveyor started")
-#
-#
-#     while True:
-#         print("Thread 1 is running")
-#         #t.sleep(1)
-#         #message = input("Enter a message to send to Arduino: ")
-#         ser.write(message.encode())
-#         print("nilai message= ", message)
-#         line = ser.readline().decode('latin-1').rstrip()
-#         print(line)
-#     ser.close()
+
 
 if __name__ == '__main__':
-    # ser.close()
     server = Job()
     server.start()
-    # thread_1 = threading.Thread(target=thread_conveyor)
-    # thread_1.start()
     # MAIN PRORGAM:
     # ===== camera installation =====
     fpsReader = cvzone.FPS()
-    cap = cv2.VideoCapture(2)
+    cap = cv2.VideoCapture(0)
     cap.set(3, 640)  # width
     cap.set(4, 480)  # height
 
@@ -867,6 +835,7 @@ if __name__ == '__main__':
                             #print("2. Human Distance ", disHR)
                             xRobPos = 550
                             #print("===========================================")
+
 
                             eye_dist = round(eye_dist, 2)
                             #D = min(eye_dist, disHR)
