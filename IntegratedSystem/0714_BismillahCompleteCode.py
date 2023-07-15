@@ -178,6 +178,8 @@ def rob_command(post1):
     robot_command = [(int(x_coor), int(y_coor), int(z_coor), int(rx_coor), int(ry_coor), int(rz_coor), int(re_coor))]
     #robot_command = (int(x_coor), int(y_coor), int(z_coor), 0, 0, 0, 0)
     return robot_command
+
+
 #===== new Function to complete Research
 def calculate_velocity(distance, time):
     """
@@ -733,16 +735,15 @@ if __name__ == '__main__':
 
             cv2.rectangle(img, (0, 0), (width, 70), (10, 10, 10), -1)
             elapsed_time = round(t.time() - stopwatch_time, 3)
+            if bboxInfo:
+                idrSh, xrSh, yrSh, zrSh = lmList[11]
+                idlSh, xlSh, ylSh, zlSh = lmList[12]
+                # print("===== asli =====")
+                # print("Id data ", idrSh, "right shoulder x=", xrSh, ", right shoulder y=", yrSh)
+                # print("Id data ", idlSh, "left shoulder x=", xrSh, ", left shoulder y=", yrSh)
+                chestDistance = round(mt.sqrt((xrSh - xlSh) ** 2 + (yrSh - ylSh) ** 2), 3)
 
             if faces:
-                if bboxInfo:
-                    idrSh, xrSh, yrSh, zrSh = lmList[11]
-                    idlSh, xlSh, ylSh, zlSh = lmList[12]
-                    # print("===== asli =====")
-                    # print("Id data ", idrSh, "right shoulder x=", xrSh, ", right shoulder y=", yrSh)
-                    # print("Id data ", idlSh, "left shoulder x=", xrSh, ", left shoulder y=", yrSh)
-                    chestDistance = round(mt.sqrt((xrSh - xlSh) ** 2 + (yrSh - ylSh) ** 2), 3)
-
                 # skeleton detection
                 face = faces[0]
                 # print(faces[0])
@@ -970,7 +971,7 @@ if __name__ == '__main__':
 
             XnRobEnd = [robotPos[0], robotPos[1], robotPos[2]]
 
-            distance_traveled = mt.sqrt((XnRobEnd[0]-XnRob[0])**2 + (XnRobEnd[2]-XnRob[2])**2 + (XnRobEnd[2]-XnRob[2])**2)
+            distance_traveled = mt.sqrt((XnRobEnd[0]-XnRob[0])**2 + (XnRobEnd[1]-XnRob[1])**2 + (XnRobEnd[2]-XnRob[2])**2)
             time_diff_ms = get_time_difference_ms(start_time, end_time)
             time_diff_s = time_diff_ms / 1000  # converting milliseconds to seconds
             velocity = calculate_velocity(distance_traveled, time_diff_s)
