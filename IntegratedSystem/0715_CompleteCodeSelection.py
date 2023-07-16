@@ -694,7 +694,7 @@ if __name__ == '__main__':
 
                     #D = eye_dist
                     D = min(d, real_measurement)
-                    print("Jarak dari Loop", D)
+
                     data.append(D)
 
                 # Calculate the average
@@ -726,11 +726,11 @@ if __name__ == '__main__':
                 XnRob = [robotPos[0], robotPos[1], robotPos[2]]
 
                 # Distance Calibration results can be integrated here
-                offset = 300
+                offset = 60
                 # D = (D + offset) - xRobPos
                 D = (D - offset) - robotPos[0]
                 D = round(D, 3)
-
+                print("Jarak calibration ", D)
                 if D < 0:
                     D = 0
                 else:
