@@ -464,7 +464,7 @@ import matplotlib.pyplot as plt
 start_time = datetime.now()
 start = t.strftime("%Y%m%d-%H%M%S")
 milliseconds = 0
-write_file = "NewProductivity-"+str(start)+".csv"
+write_file = "PreviousCode-"+str(start)+".csv"
 d = 0
 
 def SpMax(Vr_Max, Vh_Max, Tr, Ts, ac, C, Zd, Zr):
@@ -738,48 +738,30 @@ if __name__ == '__main__':
                 cvzone.putTextRect(img, f'Depth: {D} mm', (face[10][0] - 100, face[10][1] - 50), scale=1.5)
 
                 # logical SSM send robot
-                if D <= SpminVal:
+        #============ Previous Method Comparison ===========================
+                if D <= 307.7:
                     server.pause()
-                    Vr = 0
-                    speed = 0
-                    print("Robot harus berhenti", Vr)
-                    mode_collab = 0
+                    VrPaper = 0
+                    speed = int(remap(VrPaper, 0, 1500, 0, 800))
+                    #print("Robot harus berhenti", VrPaper)
 
-                elif D > SpminVal and D <= SpSafeVal:
+                elif D > 307.7 and D <= 740.3:
                     server.resume()
-                    # print("Robot speed reduction")
-                    Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
-                    Vr = round(Vr, 2)
-                    speed = int(remap(Vr, 0, 1500, 0, 800))
-                    print("Robot working on collaboration mode")
-                    mode_collab = 1
+                    VrPaper = 375
+                    speed = int(remap(VrPaper, 0, 1500, 0, 800))
+                    #print("change value speed safe: ", VrPaper)
 
 
-                elif D > SpSafeVal and D <= SpPFLVal:
+                elif D > 740.3 and D <= 1490.3:
                     server.resume()
-                    print("Robot speed reduction")
-                    # print("Robot speed reduction")
-                    mode_collab = 2
-                    Vr = Vr_PFL
-                    Vr = round(Vr, 2)
-                    speed = int(remap(Vr, 0, 1500, 0, 800))
-
-
-                elif D > SpPFLVal and D <= Spfull:
-                    server.resume()
-                    Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
-                    Vr = round(Vr, 2)
-                    speed = int(remap(Vr, 0, 1500, 0, 800))
-                    # print("change value speed Reduce: ", Vr)
-                    mode_collab = 3
-
+                    VrPaper = 750
+                    speed = int(remap(VrPaper, 0, 1500, 0, 800))
+                    #print("change value speed PFL: ", VrPaper)
                 else:
                     server.resume()
-                    mode_collab = 4
-                    # print("Robot bekerja maximal")
-                    # mode_collab = 1
-                    Vr = RobotVrmax
-                    speed = int(remap(Vr, 0, 1500, 0, 800))
+                    VrPaper = 1500
+                    speed = int(remap(VrPaper, 0, 1500, 0, 800))
+                    #print("change value speed maximum: ", VrPaper)
 
             interval = interval + 1
 
