@@ -111,26 +111,26 @@ status = {}
 x, y, z, rx, ry, rz, re = 0, 0, 0, 0, 0, 0, 0
 delay_rob = 0.1
 # # ===== Movement Position List =====
-p1 = [723.086, 54.302, 379.545, -167.291, -80.048, -8.599, 0]
-p2 = [730.100, 72.261, 345.694, -167.375, -76.904, -7.293, 0]
-p3 = [735.083, 90.800, 310.952, -167.492, -73.691, -5.964, 0]
-p4 = [737.850, 109.369, 276.195, -167.630, -70.481, -4.654, 0]
-p5 = [738.423,127.829,241.500,-167.792,-67.272,-3.361,0]
-p6 = [736.815,146.175,206.694,-167.988,-64.043,-2.067,0]
-p7 = [733.049,164.151,172.148,-168.207,-60.819,-0.792,0]
-p8 = [727.335,181.233,138.696,-168.447,-57.670,0.436,0]
-p9 = [719.535,197.959,105.147,-168.722,-54.479,1.670,0]
-p10 = [709.706,214.064,71.832,-169.027,-51.267,2.895,0]
-p11=[697.991,229.299,39.12,-169.361,-48.063,4.1,0]
-p12=[684.788,243.265,7.776,-169.72,-44.938,5.261,0]
-p13=[669.596,256.5,-23.542,-170.118,-41.748,6.428,0]
-p14=[652.79,268.577,-54.057,-170.55,-38.564,7.573,0]
-p15=[634.782,279.267,-83.232,-171.011,-35.439,8.68,0]
-p16=[615.129,288.809,-111.902,-171.514,-32.277,9.778,0]
-p17=[594.54,296.878,-139.139,-172.047,-29.172,10.833,0]
-p18=[572.501,303.646,-165.726,-172.63,-26.029,11.882,0]
-p19=[549.641,308.913,-190.971,-173.249,-22.925,12.89,0]
-p20=[525.744,312.712,-215.211,-173.919,-19.81,13.874,0]
+# p1 = [723.086, 54.302, 379.545, -167.291, -80.048, -8.599, 0]
+# p2 = [730.100, 72.261, 345.694, -167.375, -76.904, -7.293, 0]
+# p3 = [735.083, 90.800, 310.952, -167.492, -73.691, -5.964, 0]
+# p4 = [737.850, 109.369, 276.195, -167.630, -70.481, -4.654, 0]
+# p5 = [738.423,127.829,241.500,-167.792,-67.272,-3.361,0]
+# p6 = [736.815,146.175,206.694,-167.988,-64.043,-2.067,0]
+# p7 = [733.049,164.151,172.148,-168.207,-60.819,-0.792,0]
+# p8 = [727.335,181.233,138.696,-168.447,-57.670,0.436,0]
+# p9 = [719.535,197.959,105.147,-168.722,-54.479,1.670,0]
+# p10 = [709.706,214.064,71.832,-169.027,-51.267,2.895,0]
+# p11=[697.991,229.299,39.12,-169.361,-48.063,4.1,0]
+# p12=[684.788,243.265,7.776,-169.72,-44.938,5.261,0]
+# p13=[669.596,256.5,-23.542,-170.118,-41.748,6.428,0]
+# p14=[652.79,268.577,-54.057,-170.55,-38.564,7.573,0]
+# p15=[634.782,279.267,-83.232,-171.011,-35.439,8.68,0]
+# p16=[615.129,288.809,-111.902,-171.514,-32.277,9.778,0]
+# p17=[594.54,296.878,-139.139,-172.047,-29.172,10.833,0]
+# p18=[572.501,303.646,-165.726,-172.63,-26.029,11.882,0]
+# p19=[549.641,308.913,-190.971,-173.249,-22.925,12.89,0]
+# p20=[525.744,312.712,-215.211,-173.919,-19.81,13.874,0]
 p21=[501.472,314.963,-237.871,-174.625,-16.756,14.813,0]
 p22=[476.421,315.713,-259.436,-175.387,-13.694,15.722,0]
 p23=[450.526,314.917,-279.968,-176.214,-10.606,16.605,0]
@@ -229,27 +229,27 @@ p114=[362.109,-264.585,-320.718,-179.474,-0.295,19.251,0]
 p115=[362.109,-264.585,-320.718,-179.474,-0.295,19.251,0]
 
 ## ===== convert robot command =====
-post_1 = rob_command(p1)
-post_2 = rob_command(p2)
-post_3 = rob_command(p3)
-post_4 = rob_command(p4)
-post_5 = rob_command(p5)
-post_6 = rob_command(p6)
-post_7 = rob_command(p7)
-post_8 = rob_command(p8)
-post_9 = rob_command(p9)
-post_10 = rob_command(p10)
-
-post_11 = rob_command(p11)
-post_12 = rob_command(p12)
-post_13 = rob_command(p13)
-post_14 = rob_command(p14)
-post_15 = rob_command(p15)
-post_16 = rob_command(p16)
-post_17 = rob_command(p17)
-post_18 = rob_command(p18)
-post_19 = rob_command(p19)
-post_20 = rob_command(p20)
+# post_1 = rob_command(p1)
+# post_2 = rob_command(p2)
+# post_3 = rob_command(p3)
+# post_4 = rob_command(p4)
+# post_5 = rob_command(p5)
+# post_6 = rob_command(p6)
+# post_7 = rob_command(p7)
+# post_8 = rob_command(p8)
+# post_9 = rob_command(p9)
+# post_10 = rob_command(p10)
+#
+# post_11 = rob_command(p11)
+# post_12 = rob_command(p12)
+# post_13 = rob_command(p13)
+# post_14 = rob_command(p14)
+# post_15 = rob_command(p15)
+# post_16 = rob_command(p16)
+# post_17 = rob_command(p17)
+# post_18 = rob_command(p18)
+# post_19 = rob_command(p19)
+# post_20 = rob_command(p20)
 post_21 = rob_command(p21)
 post_22 = rob_command(p22)
 post_23 = rob_command(p23)
@@ -357,7 +357,6 @@ post_115 = rob_command(p115)
 
 class Job(threading.Thread):
 
-
     def __init__(self, *args, **kwargs):
         super(Job, self).__init__(*args, **kwargs)
         self.__flag = threading.Event()     # 用于暂停线程的标识
@@ -366,7 +365,7 @@ class Job(threading.Thread):
         self.__running.set()      # 将running设置为True
 
     def run(self):
-        t.sleep(3)  # delay for initialization
+        t.sleep(5)  # delay for initialization
         global speed
         # Read initial position
         if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
@@ -392,9 +391,8 @@ class Job(threading.Thread):
         pos_updater = threading.Thread(target=update_pos)
         index = 0
         tredON = False
-        #
-        postMove = [post_1, post_2, post_3, post_4, post_5, post_6, post_7, post_8, post_9, post_10,
-                    post_11, post_12, post_13, post_14, post_15, post_16, post_17, post_18, post_19, post_20,
+        #post_1, post_2, post_3, post_4, post_5, post_6, post_7, post_8, post_9, post_10, post_11, post_12, post_13, post_14, post_15, post_16, post_17, post_18, post_19, post_20,
+        postMove = [
                     post_21, post_22, post_23, post_24, post_25, post_26, post_27, post_28, post_29, post_30,
                     post_31, post_32, post_33, post_34, post_35, post_36, post_37, post_38, post_39, post_40,
                     post_41, post_42, post_43, post_44, post_45, post_46, post_47, post_48, post_49, post_50,
@@ -464,7 +462,7 @@ import matplotlib.pyplot as plt
 start_time = datetime.now()
 start = t.strftime("%Y%m%d-%H%M%S")
 milliseconds = 0
-write_file = "NewProductivity-"+str(start)+".csv"
+write_file = "1500-NewProductivity-"+str(start)+".csv"
 d = 0
 
 def SpMax(Vr_Max, Vh_Max, Tr, Ts, ac, C, Zd, Zr):
