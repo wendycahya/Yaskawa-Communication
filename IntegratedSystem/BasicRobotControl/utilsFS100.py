@@ -138,6 +138,7 @@ class FS100:
         recv_file(): Receive a file from pendant
         delete_file(): Delete a file in pendant
     """
+
     DEBUG = False
 
     UDP_PORT_ROBOT_CONTROL = 10040
@@ -355,6 +356,8 @@ class FS100:
             print("[{}] start travelling".format(now))
         elif status == FS100.TRAVEL_STATUS_END:
             print("[{}] end travelling".format(now))
+            alhamdulillah = 1
+            print(alhamdulillah)
         elif status == FS100.TRAVEL_STATUS_ERROR:
             print("[{}] failed travelling, err={}".format(now, hex(vehicle.errno)))
         else:
