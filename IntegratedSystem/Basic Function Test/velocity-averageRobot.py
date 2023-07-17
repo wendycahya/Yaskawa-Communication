@@ -24,10 +24,10 @@ def get_time_difference_ms(start_time, end_time):
 
 # Example usage
 start_datetime = datetime.now() # Example starting datetime
-time.sleep(10)
+time.sleep(5)
 end_datetime = datetime.now()
 
-distance_traveled = 10 # in meters
+distance_traveled = 10 # in mm
 
 time_diff_ms = get_time_difference_ms(start_datetime, end_datetime)
 time_diff_s = time_diff_ms / 1000  # converting milliseconds to seconds

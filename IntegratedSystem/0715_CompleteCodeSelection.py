@@ -720,7 +720,6 @@ if __name__ == '__main__':
 
                 robotPos = convert_mm(x, y, z, rx, ry, rz, re)
                 start_time = datetime.now()
-                milliseconds = start_time.microsecond // 1000
                 XnRob = [robotPos[0], robotPos[1], robotPos[2]]
 
                 # Distance Calibration results can be integrated here
