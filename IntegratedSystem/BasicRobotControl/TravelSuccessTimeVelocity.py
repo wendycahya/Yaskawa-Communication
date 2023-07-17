@@ -159,7 +159,6 @@ def get_time_difference_ms(start_time, end_time):
     return time_diff_ms
 
 class Job(threading.Thread):
-
     def __init__(self, *args, **kwargs):
         super(Job, self).__init__(*args, **kwargs)
         self.__flag = threading.Event()     # 用于暂停线程的标识

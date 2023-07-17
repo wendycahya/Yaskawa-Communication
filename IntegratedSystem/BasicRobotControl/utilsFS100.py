@@ -356,8 +356,7 @@ class FS100:
             print("[{}] start travelling".format(now))
         elif status == FS100.TRAVEL_STATUS_END:
             print("[{}] end travelling".format(now))
-            alhamdulillah = 1
-            print(alhamdulillah)
+            print("alhamdulillah")
         elif status == FS100.TRAVEL_STATUS_ERROR:
             print("[{}] failed travelling, err={}".format(now, hex(vehicle.errno)))
         else:

@@ -194,8 +194,10 @@ class Job(threading.Thread):
         #
         global counter
 
-        robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_2)
-        t.sleep(est_time)
+        robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_2, wait=True)
+        robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_3, wait=True)
+        robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_4, wait=True)
+        robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,  FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_5, wait=True)
 
         if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
             x, y, z, rx, ry, rz, re = pos_info['pos']

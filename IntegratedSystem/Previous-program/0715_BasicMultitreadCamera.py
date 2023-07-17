@@ -360,7 +360,7 @@ if __name__ == '__main__':
 
             output.write(str(start_time.strftime("%H:%M:%S")) + ',' + str(elapsed_time) + ',' + str(D) + ',' + str(Vr) + '\n')
             # Load the saved plot image
-            plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
+            plot_img = cv2.imread('../temp_plot.png', cv2.IMREAD_UNCHANGED)
 
             # Resize the plot image to match the video frame size
             plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))
