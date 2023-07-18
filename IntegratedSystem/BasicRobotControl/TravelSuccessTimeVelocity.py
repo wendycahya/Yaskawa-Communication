@@ -4,13 +4,14 @@ from datetime import datetime
 import time as t
 import math as mt
 
+import random
+import csv
+
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+
 # ===== Robot Function =====
-def calculate_movement_distance(position1, position2):
-    # position1 and position2 should be tuples or lists representing the end effector positions (x, y, z)
-
-    distance = mt.sqrt(sum((position2[i] - position1[i])**2 for i in range(len(position1))))
-    return distance
-
 def remap(value, from_low, from_high, to_low, to_high):
     # Clamp the value within the from range
     clamped_value = max(from_low, min(value, from_high))
@@ -103,16 +104,59 @@ def on_reset_alarm():
     # reflect the ui
     is_alarmed()
 
+#===== new Function to complete Research
+def calculate_velocity(distance, time):
+    """
+    Calculates the velocity given the distance and time.
+    :param distance: The distance traveled by the robot (in meters).
+    :param time: The time taken by the robot to cover the distance (in seconds).
+    :return: The velocity of the robot (in meters per second).
+    """
+    velocity = distance / time
+    return velocity
+
+def get_time_difference_ms(start_time, end_time):
+    """
+    Calculates the time difference in milliseconds between two datetime objects.
+    :param start_time: The starting datetime.
+    :param end_time: The ending datetime.
+    :return: The time difference in milliseconds.
+    """
+    time_diff = end_time - start_time
+    time_diff_ms = time_diff.total_seconds() * 1000
+    return time_diff_ms
+
 # Initialize the robot model
 robot = FS100('172.16.0.1')
 speed = 0
 counter = 0
 stop_sign = threading.Semaphore()
+stopwatch_time = t.time()
+#=== Draw Real-time graph show ===
+# Create a figure and axes for live plotting
+fig, ax = plt.subplots()
+ax2 = ax.twinx()
+# Create an empty list to store data for plotting
+#dataD = []
+dataVR = []
+
+# Function to update the plot
+def update_plot():
+    ax.clear()
+    #ax.plot(dataD, 'b-')
+    ax2.plot(dataVR, 'r--')
+    # ax2.plot(dataX, 'r')
+    # ax2.plot(dataY, 'g')
+    # ax2.plot(dataZ, 'b')
+    plt.axis('on')  # Turn off axis labels and ticks
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Distance (mm)")
+    ax2.set_ylabel("Speed (mm/s)")
+    plt.tight_layout()  # Adjust the plot to remove any padding
+    plt.savefig('temp_plot.png')  # Save the plot as an image
 
 
 #====================ROBOT POSITION==========================
-start = datetime.now()
-previous = datetime.now()
 
  # Initialize the robot model
 pos_info = {}
@@ -129,8 +173,10 @@ p3 = [353.427, -98.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
 p4 = [353.427, 2.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
 p5 = [353.427, 102.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
 p6 = [353.427, 202.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
+p6 = [353.427, 302.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
+
 ## ===== convert robot command =====
-post_1 = rob_command(p1)
+#post_1 = rob_command(p1)
 post_2 = rob_command(p2)
 post_3 = rob_command(p3)
 post_4 = rob_command(p4)
@@ -167,39 +213,16 @@ class Job(threading.Thread):
         self.__running.set()      # 将running设置为True
 
     def run(self):
+        t.sleep(5)  # delay for initialization
         global speed
         # Read initial position
-        if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-            x, y, z, rx, ry, rz, re = pos_info['pos']
-            pointHome = [x, y, z, rx, ry, rz, re]
-            straaa = "CURRENT POSITION\n" + \
-                     "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-                     "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-                                                                                        x // 1000, x % 1000,
-                                                                                        rx // 10000,
-                                                                                        rx % 10000) + \
-                     "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-                         y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-                     "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-                         z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-                     "                            Re   {:4d}.{:04d} deg.\n".format(
-                         re // 10000, re % 10000)
-        print(straaa)
-        robotPos = convert_mm(x, y, z, rx, ry, rz, re)
+
         if FS100.ERROR_SUCCESS == robot.get_status(status):
             if not status['servo_on']:
                 robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
         #
-
-        # reading position next and now
-        est_distance = calculate_movement_distance(p1, robotPos)
-        est_time = est_distance / speed + 1.5
-
-        print("estimate time traveled code", round(est_time, 3))
-        print("speed: ", speed, "distance: ", est_distance)
         # # ===== list movement task ========
         pos_updater = threading.Thread(target=update_pos)
-        index = 0
         tredON = False
         #post_1, post_2, post_3, post_4, post_5, post_6, post_7, post_8, post_9, post_10, post_11, post_12, post_13, post_14, post_15, post_16, post_17, post_18, post_19, post_20,
         #
@@ -208,159 +231,24 @@ class Job(threading.Thread):
         # if status == FS100.TRAVEL_STATUS_START:
         #     start = datetime.now()
         # print("nilai x yang masuk ", index, "sebesar ", i)
-        start = datetime.now()
-        robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_2)
-        t.sleep(1)  # robot may not update the status
-        if status == FS100.TRAVEL_STATUS_END:
-            print("Robot Selesai Loh bisa segera dieksekusi")
-        # if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-        #     x, y, z, rx, ry, rz, re = pos_info['pos']
-        #     pointHome = [x, y, z, rx, ry, rz, re]
-        #     straaa = "CURRENT POSITION\n" + \
-        #              "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-        #              "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-        #                                                                                 x // 1000, x % 1000,
-        #                                                                                 rx // 10000,
-        #                                                                                 rx % 10000) + \
-        #              "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-        #                  y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-        #              "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-        #                  z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-        #              "                            Re   {:4d}.{:04d} deg.\n".format(
-        #                  re // 10000, re % 10000)
-        # print(straaa)
-        # robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-        # est_distance = calculate_movement_distance(p2, robotPos)
-        # end = datetime.now()
-        # est_time = est_distance / speed + 1.5
-        # print("estimate time traveled code", round(est_time, 3))
-        # print("speed: ", speed, "distance: ", est_distance)
-        #
-        # time_diff_ms = get_time_difference_ms(start, end)
-        # time_diff_s = time_diff_ms / 1000  # converting milliseconds to seconds
-        #
-        # velocity = calculate_velocity(est_distance, time_diff_s)
-        # print(f"The robot start is {start} s.\n")
-        # print(f"The robot end is {end} s.\n")
-        # print(f"The velocity of the robot is {velocity} mm/s.")
-        #
-        # robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_2)
-        # t.sleep(est_time)  # robot may not update the status
-        #
-        # if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-        #     x, y, z, rx, ry, rz, re = pos_info['pos']
-        #     pointHome = [x, y, z, rx, ry, rz, re]
-        #     straaa = "CURRENT POSITION\n" + \
-        #              "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-        #              "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-        #                                                                                 x // 1000, x % 1000,
-        #                                                                                 rx // 10000,
-        #                                                                                 rx % 10000) + \
-        #              "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-        #                  y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-        #              "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-        #                  z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-        #              "                            Re   {:4d}.{:04d} deg.\n".format(
-        #                  re // 10000, re % 10000)
-        # print(straaa)
-        # robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-        # est_distance = calculate_movement_distance(p3, robotPos)
-        # est_time = est_distance / speed + 1.5
-        # print("estimate time traveled code", round(est_time, 3))
-        # print("speed: ", speed, "distance: ", est_distance)
-        #
-        # robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
-        #            FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_3)
-        # t.sleep(est_time)  # robot may not update the status
-        #
-        # if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-        #     x, y, z, rx, ry, rz, re = pos_info['pos']
-        #     pointHome = [x, y, z, rx, ry, rz, re]
-        #     straaa = "CURRENT POSITION\n" + \
-        #              "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-        #              "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-        #                                                                                 x // 1000, x % 1000,
-        #                                                                                 rx // 10000,
-        #                                                                                 rx % 10000) + \
-        #              "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-        #                  y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-        #              "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-        #                  z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-        #              "                            Re   {:4d}.{:04d} deg.\n".format(
-        #                  re // 10000, re % 10000)
-        # print(straaa)
-        # robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-        # est_distance = calculate_movement_distance(p4, robotPos)
-        # est_time = est_distance / speed + 1.5
-        # print("estimate time traveled code", round(est_time, 3))
-        # print("speed: ", speed, "distance: ", est_distance)
-        #
-        #
-        # robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
-        #            FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_4)
-        # t.sleep(est_time)  # robot may not update the status
-        #
-        # if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-        #     x, y, z, rx, ry, rz, re = pos_info['pos']
-        #     pointHome = [x, y, z, rx, ry, rz, re]
-        #     straaa = "CURRENT POSITION\n" + \
-        #              "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-        #              "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-        #                                                                                 x // 1000, x % 1000,
-        #                                                                                 rx // 10000,
-        #                                                                                 rx % 10000) + \
-        #              "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-        #                  y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-        #              "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-        #                  z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-        #              "                            Re   {:4d}.{:04d} deg.\n".format(
-        #                  re // 10000, re % 10000)
-        # print(straaa)
-        # robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-        # est_distance = calculate_movement_distance(p5, robotPos)
-        # est_time = est_distance / speed + 1.5
-        # print("estimate time traveled code", round(est_time, 3))
-        # print("speed: ", speed, "distance: ", est_distance)
-        #
-        # robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
-        #            FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_5)
-        # t.sleep(est_time)  # robot may not update the status
-        #
-        # if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-        #     x, y, z, rx, ry, rz, re = pos_info['pos']
-        #     pointHome = [x, y, z, rx, ry, rz, re]
-        #     straaa = "CURRENT POSITION\n" + \
-        #              "COORDINATE {:12s} TOOL:{:02d}\n".format('ROBOT', pos_info['tool_no']) + \
-        #              "R{} :X     {:4d}.{:03d} mm       Rx   {:4d}.{:04d} deg.\n".format(robot_no,
-        #                                                                                 x // 1000, x % 1000,
-        #                                                                                 rx // 10000,
-        #                                                                                 rx % 10000) + \
-        #              "    Y     {:4d}.{:03d} mm       Ry   {:4d}.{:04d} deg.\n".format(
-        #                  y // 1000, y % 1000, ry // 10000, ry % 10000) + \
-        #              "    Z     {:4d}.{:03d} mm       Rz   {:4d}.{:04d} deg.\n".format(
-        #                  z // 1000, z % 1000, rz // 10000, rz % 10000) + \
-        #              "                            Re   {:4d}.{:04d} deg.\n".format(
-        #                  re // 10000, re % 10000)
-        # print(straaa)
-        # robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-        # est_distance = calculate_movement_distance(p6, robotPos)
-        # est_time = est_distance / speed + 1.5
-        # print("estimate time traveled code", round(est_time, 3))
-        # print("speed: ", speed, "distance: ", est_distance)
-        #
-        # robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
-        #            FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, post_6)
-        # t.sleep(est_time)  # robot may not update the status
+        #post_1,
+        postMove = [post_2, post_3, post_4, post_5, post_6]
+        while self.__running.isSet():
 
+            for i in postMove:
+                self.__flag.wait()
+                # read robot start time
+                robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
+                           FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, i, wait=True)
 
-        index = index + 1
-        # print("Finished step ", index)
-        #             #exception
-        # if i == post_2:
-        #     counter = counter + 1
-        #     ## counter information
-        #     print("Robot counter step: ", counter)
-        #     break
+                # t.sleep(0.20)  # robot may not update the status
+                # print("Finished step ", index)
+                #             #exception
+                if i == post_6:
+                    counter = counter + 1
+                    ## counter information
+                    print("Robot counter step: ", counter)
+                    break
 
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
             # a hold off in case we switch to teach/play mode
@@ -376,7 +264,74 @@ class Job(threading.Thread):
         self.__flag.set()       # 将线程从暂停状态恢复, 如何已经暂停的话
         self.__running.clear()        # 设置为False
 
+distance_traveled, time_diff_ms, time_diff_s, velocity = 0, 0, 0, 0
+start = t.strftime("%Y%m%d-%H%M%S")
+write_file = "VelocityAnalysis-"+str(start)+".csv"
 if __name__ == '__main__':
     server = Job()
     server.start()
-    speed = 500
+    cap = cv2.VideoCapture(2)
+    cap.set(3, 640)  # width
+    cap.set(4, 480)  # height
+    with open(write_file, "wt", encoding="utf-8") as output:
+        while True:
+            success, img = cap.read()
+            height, width, channels = img.shape
+
+            speed = 1500
+            elapsed_time = round(t.time() - stopwatch_time, 3)
+            data = []  # List to store the input data
+            while len(data) < 25:
+                start_time = datetime.now()
+                if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                    x, y, z, rx, ry, rz, re = pos_info['pos']
+                robotPos = convert_mm(x, y, z, rx, ry, rz, re)
+                X_first = [robotPos[0], robotPos[1], robotPos[2]]
+                print("Lokasi pertama: ", X_first)
+                # Measure the time taken
+
+                # t.sleep(5)  # Simulate some time delay during the movement
+                if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                    x, y, z, rx, ry, rz, re = pos_info['pos']
+                robotPos = convert_mm(x, y, z, rx, ry, rz, re)
+                X_second = [robotPos[0], robotPos[1], robotPos[2]]
+                print("Lokasi kedua: ", X_second)
+                end_time = datetime.now()
+                distance_traveled = mt.sqrt(
+                    (X_second[0] - X_first[0]) ** 2 + (X_second[1] - X_first[1]) ** 2 + (X_second[2] - X_first[2]) ** 2)
+                print("Distance Traveled ", distance_traveled)
+                time_diff_ms = get_time_difference_ms(start_time, end_time)
+                print(time_diff_s)
+                time_diff_s = time_diff_ms / 1000  # converting milliseconds to seconds
+                velocity = calculate_velocity(distance_traveled, time_diff_s)
+                print("Total velocity: ", velocity)
+
+                data.append(velocity)
+                # Calculate the average
+            velocity = sum(data) / len(data)
+
+            dataVR.append(velocity)
+
+            # Update the plot
+            update_plot()
+
+            output.write(str(end_time.strftime("%H:%M:%S")) + ',' + str(elapsed_time) + ',' + str(velocity) + '\n')
+            # Load the saved plot image
+            plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
+
+            # Resize the plot image to match the video frame size
+            plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))
+
+            # Display the video frame in the 'Video Stream' window
+            cv2.imshow('Video Stream', img)
+
+            # Display the plot in the 'Live Plot' window
+            cv2.imshow('HR Distance and Robot Velocity', plot_img[:, :, :3])
+
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
+
