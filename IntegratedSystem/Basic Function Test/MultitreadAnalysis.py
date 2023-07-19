@@ -1,4 +1,3 @@
-from utilsFS100 import FS100
 import threading
 from datetime import datetime
 import time as t
@@ -91,19 +90,6 @@ def update_pos():
         # let button up take effect
         t.sleep(0.02)
 
-def is_alarmed():
-    alarmed = True
-    status = {}
-    if FS100.ERROR_SUCCESS == robot.get_status(status):
-        alarmed = status['alarming']
-    return alarmed
-
-def on_reset_alarm():
-    robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
-    t.sleep(0.1)
-    # reflect the ui
-    is_alarmed()
-
 #===== new Function to complete Research
 def calculate_velocity(distance, time):
     """
@@ -126,8 +112,6 @@ def get_time_difference_ms(start_time, end_time):
     time_diff_ms = time_diff.total_seconds() * 1000
     return time_diff_ms
 
-# Initialize the robot model
-robot = FS100('172.16.0.1')
 speed = 0
 counter = 0
 stop_sign = threading.Semaphore()
@@ -204,6 +188,35 @@ def get_time_difference_ms(start_time, end_time):
     time_diff_ms = time_diff.total_seconds() * 1000
     return time_diff_ms
 
+distance_traveled, time_diff_ms, time_diff_s, velocity = 0, 0, 0, 0
+
+
+def velocity_thread(velocity, data):
+    data = []  # List to store the input data
+    while len(data) < 25:
+        start_time = datetime.now()
+        a = random.random()
+        X_first = [a, a, a]
+        print("Lokasi pertama: ", X_first)
+        # Measure the time taken
+
+        t.sleep(3)  # Simulate some time delay during the movement
+        X_second = [a, a, a]
+        print("Lokasi kedua: ", X_second)
+        end_time = datetime.now()
+        distance_traveled = mt.sqrt(
+            (X_second[0] - X_first[0]) ** 2 + (X_second[1] - X_first[1]) ** 2 + (X_second[2] - X_first[2]) ** 2)
+        print("Distance Traveled ", distance_traveled)
+        time_diff_ms = get_time_difference_ms(start_time, end_time)
+        print(time_diff_s)
+        time_diff_s = time_diff_ms / 1000  # converting milliseconds to seconds
+        velocity = calculate_velocity(distance_traveled, time_diff_s)
+        print("Total velocity: ", velocity)
+        data.append(velocity)
+
+
+
+
 class Job(threading.Thread):
     def __init__(self, *args, **kwargs):
         super(Job, self).__init__(*args, **kwargs)
@@ -216,10 +229,6 @@ class Job(threading.Thread):
         t.sleep(5)  # delay for initialization
         global speed
         # Read initial position
-
-        if FS100.ERROR_SUCCESS == robot.get_status(status):
-            if not status['servo_on']:
-                robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
         #
         # # ===== list movement task ========
         pos_updater = threading.Thread(target=update_pos)
@@ -238,8 +247,7 @@ class Job(threading.Thread):
             for i in postMove:
                 self.__flag.wait()
                 # read robot start time
-                robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
-                           FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, i, wait=True)
+                print("Robot move on ", i)
 
                 # t.sleep(0.20)  # robot may not update the status
                 # print("Finished step ", index)
@@ -250,9 +258,6 @@ class Job(threading.Thread):
                     print("Robot counter step: ", counter)
                     break
 
-        robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
-            # a hold off in case we switch to teach/play mode
-        robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
 
     def pause(self):
         self.__flag.clear()     # 设置为False, 让线程阻塞
@@ -264,13 +269,18 @@ class Job(threading.Thread):
         self.__flag.set()       # 将线程从暂停状态恢复, 如何已经暂停的话
         self.__running.clear()        # 设置为False
 
-distance_traveled, time_diff_ms, time_diff_s, velocity = 0, 0, 0, 0
+
 start = t.strftime("%Y%m%d-%H%M%S")
 write_file = "VelocityAnalysis-"+str(start)+".csv"
 
 if __name__ == '__main__':
     server = Job()
     server.start()
+    velocity = 0
+    data = []
+    serverVelocity = threading.Thread(target=velocity_thread, args=(velocity, data))
+    serverVelocity.start()
+
     cap = cv2.VideoCapture(2)
     cap.set(3, 640)  # width
     cap.set(4, 480)  # height
@@ -281,41 +291,13 @@ if __name__ == '__main__':
 
             speed = 1500
             elapsed_time = round(t.time() - stopwatch_time, 3)
-            data = []  # List to store the input data
-            while len(data) < 25:
-                start_time = datetime.now()
-                if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-                    x, y, z, rx, ry, rz, re = pos_info['pos']
-                robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-                X_first = [robotPos[0], robotPos[1], robotPos[2]]
-                print("Lokasi pertama: ", X_first)
-                # Measure the time taken
 
-                # t.sleep(5)  # Simulate some time delay during the movement
-                if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-                    x, y, z, rx, ry, rz, re = pos_info['pos']
-                robotPos = convert_mm(x, y, z, rx, ry, rz, re)
-                X_second = [robotPos[0], robotPos[1], robotPos[2]]
-                print("Lokasi kedua: ", X_second)
-                end_time = datetime.now()
-                distance_traveled = mt.sqrt(
-                    (X_second[0] - X_first[0]) ** 2 + (X_second[1] - X_first[1]) ** 2 + (X_second[2] - X_first[2]) ** 2)
-                print("Distance Traveled ", distance_traveled)
-                time_diff_ms = get_time_difference_ms(start_time, end_time)
-                print(time_diff_s)
-                time_diff_s = time_diff_ms / 1000  # converting milliseconds to seconds
-                velocity = calculate_velocity(distance_traveled, time_diff_s)
-                print("Total velocity: ", velocity)
-
-                data.append(velocity)
-                # Calculate the average
             velocity = sum(data) / len(data)
-
             dataVR.append(velocity)
 
             # Update the plot
             update_plot()
-
+            end_time = datetime.now()
             output.write(str(end_time.strftime("%H:%M:%S")) + ',' + str(elapsed_time) + ',' + str(velocity) + '\n')
             # Load the saved plot image
             plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
