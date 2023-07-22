@@ -1,4 +1,4 @@
-from fs100 import FS100
+#================= Library Declaration =======================
 import os
 import keyboard
 from utilsFS100 import FS100
@@ -62,9 +62,8 @@ def Vr_SSM2(D, Tr, Ts, ac, C, Zd, Zr):
 start_time = datetime.now()
 start = t.strftime("%Y%m%d-%H%M%S")
 milliseconds = 0
-write_file = "TestSpeedGraph-"+str(start)+".csv"
+write_file = "VelocityGraph-"+str(start)+".csv"
 d = 0
-
 
 D = 0
 VrPaper = 1000
@@ -163,7 +162,7 @@ speedUpdate = 0
 # Global variables to control the pause and resume state
 paused = False
 
-#=== Draw Real-time graph show ===
+#=========================== Draw Real-time graph show ========================
 fig, ax = plt.subplots()
 ax2 = ax.twinx()
 # Create an empty list to store data for plotting
@@ -209,9 +208,7 @@ def get_time_difference_ms(start_time, end_time):
     time_diff_ms = time_diff.total_seconds() * 1000
     return time_diff_ms
 
-
-
-
+#====================================== Camera Detection ====================================
 class CustomThread(threading.Thread):
     def __init__(self, name):
         super().__init__(name=name)
@@ -295,15 +292,14 @@ class CustomThread(threading.Thread):
 
                     # logical SSM send robot
                     if D <= SpminVal:
-                        paused = True
+                        pause_event.set()  # Pause the while loop
                         Vr = 0
                         speedUpdate = 0
                         # print("Robot harus berhenti", Vr)
                         mode_collab = 0
 
                     elif D > SpminVal and D <= SpSafeVal:
-                        # server.resume()
-                        paused = False
+                        pause_event.clear()  # Resume the while loop
                         resume_event.set()
                         # print("Robot speed reduction")
                         Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
@@ -312,12 +308,9 @@ class CustomThread(threading.Thread):
                         # print("Robot working on collaboration mode")
                         mode_collab = 1
 
-
                     elif D > SpSafeVal and D <= SpPFLVal:
-                        # server.resume()
-                        paused = False
+                        pause_event.clear()  # Resume the while loop
                         resume_event.set()
-                        # print("Robot speed reduction")
                         # print("Robot speed reduction")
                         mode_collab = 2
                         Vr = Vr_PFL
@@ -326,8 +319,7 @@ class CustomThread(threading.Thread):
 
 
                     elif D > SpPFLVal and D <= Spfull:
-                        # server.resume()
-                        paused = False
+                        pause_event.clear()  # Resume the while loop
                         resume_event.set()
                         Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
                         Vr = round(Vr, 2)
@@ -336,23 +328,16 @@ class CustomThread(threading.Thread):
                         mode_collab = 3
 
                     else:
-                        # server.resume()
-                        paused = False
+                        pause_event.clear()  # Resume the while loop
                         resume_event.set()
-                        mode_collab = 4
-                        # print("Robot bekerja maximal")
-                        # mode_collab = 1
                         Vr = RobotVrmax
+                        mode_collab = 4
                         speedUpdate = int(remap(Vr, 0, 1500, 0, 1500))
                         # print("change value speed maximum: ", VrPaper)
 
-                # dataVel = []
-                # velocity = velocity_group(dataVel)
-                # velocity_group()
-                # print("Velocity ", velocity)
+
                 dataD.append(D)
-                # with velocity_avg_lock:
-                #     print("Other thread using velocity_avg:", velocity_avg)
+
                 dataVR.append(velocity_avg)
                 dataTime.append(elapsed_time)
                 # Update the plot
@@ -410,33 +395,38 @@ def rob_command(post1):
     #robot_command = (int(x_coor), int(y_coor), int(z_coor), 0, 0, 0, 0)
     return robot_command
 
-def update_pos():
-    while stop_sign.acquire(blocking=False):
-        stop_sign.release()
-        # let button up take effect
-        t.sleep(0.02)
-
-def is_alarmed():
-    alarmed = True
-    status = {}
-    if FS100.ERROR_SUCCESS == robot.get_status(status):
-        alarmed = status['alarming']
-    return alarmed
-
-def on_reset_alarm():
-    robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
-    t.sleep(0.1)
-    # reflect the ui
-    is_alarmed()
+# def update_pos():
+#     while stop_sign.acquire(blocking=False):
+#         stop_sign.release()
+#         # let button up take effect
+#         t.sleep(0.02)
+#
+# def is_alarmed():
+#     alarmed = True
+#     status = {}
+#     if FS100.ERROR_SUCCESS == robot.get_status(status):
+#         alarmed = status['alarming']
+#     return alarmed
+#
+# def on_reset_alarm():
+#     robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
+#     t.sleep(0.1)
+#     # reflect the ui
+#     is_alarmed()
 
 # robot connection
 #robot = FS100('192.168.255.1')
-p1 = [353.427, -298.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
-p2 = [353.427, -198.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
-p3 = [353.427, -98.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
-p4 = [353.427, 2.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
-p5 = [353.427, 102.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
-p6 = [353.427, 202.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
+p1=[353.426, -299.669, -308.575, 179.9869, -5.5662, -25.9376, 0]
+p2=[354.469, -207.837, -308.435, 179.1151, -4.1320, -24.4397, 0]
+p3=[353.436, -94.476, -308.571, 178.7970, -4.2889,  -24.5672, 0]
+p4=[353.436, 10.878, -308.570, 178.7971, -4.2899, -24.5655, 0]
+p5=[353.432, 108.075, -308.570, 178.7968, -4.2906, -24.5681, 0]
+p6=[353.421, 206.070, -308.569, 178.7961, -4.2913, -24.5686, 0]
+p7=[353.429, 298.076, -308.571, 178.7984, -4.2911, -24.5633, 0]
+p8=[353.434, 207.680, -308.571, 178.7989, -4.2909, -24.5601, 0]
+p9=[353.437, 107.280, -308.571, 178.7991, -4.2906, -24.5602, 0]
+p10=[353.445, 5.277, -308.572, 178.7995, -4.2895, -24.5614, 0]
+p11=[353.624, -99.674, -308.568, 178.8014, -4.2916, -24.5612, 0]
 
 ## ===== convert robot command =====
 #post_1 = rob_command(p1)
@@ -445,7 +435,13 @@ post_3 = rob_command(p3)
 post_4 = rob_command(p4)
 post_5 = rob_command(p5)
 post_6 = rob_command(p6)
-post_counter = rob_command(p2)
+
+post_7 = rob_command(p7)
+post_8 = rob_command(p8)
+post_9 = rob_command(p9)
+post_10 = rob_command(p10)
+post_11 = rob_command(p11)
+
 
 robot = FS100('172.16.0.1')
 stop_sign = threading.Semaphore()
@@ -456,36 +452,42 @@ status = {}
 status_move = {}
 counter = 0
 
-postMove = [post_2, post_3, post_4, post_5, post_6]
-#post_5, post_4, post_3, post_counter
 
+
+
+# Function to pause the thread
+pause_event = threading.Event()
+resume_event = threading.Event()
 
 def robot_working():
-    global counter, paused, resume_event
+    global counter
     t.sleep(3)
     if FS100.ERROR_SUCCESS == robot.get_status(status):
         if not status['servo_on']:
             robot.switch_power(FS100.POWER_TYPE_SERVO, FS100.POWER_SWITCH_ON)
 
+    postMove = [post_2, post_3, post_4, post_5, post_6, post_7, post_8, post_9, post_10, post_11]
     while True:
-        while paused:  # Pause the thread if 'paused' is True
-            #print("Thread paused...")
-            resume_event.wait()
-            #print("Thread resumed...")
         for i in postMove:
-            #print(speedUpdate)
+            print(speedUpdate)
+            while pause_event.is_set():  # Pause the loop if 'paused' is True
+                print("Loop paused...")
+            #wait_thread()
             robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
                        FS100.MOVE_SPEED_CLASS_MILLIMETER, speedUpdate, i, wait=True)
 
-            if i == post_6:
+            if i == post_11:
                 counter = counter + 1
                 ## counter information
-                #print("Robot counter step: ", counter)
+                print("Robot counter step: ", counter)
                 break
 
-            robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
+    #robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
+
+    robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
 
 velocity_avg = 0
+
 class VelocityThread(threading.Thread):
     def __init__(self, name):
         super().__init__(name=name)
@@ -574,44 +576,61 @@ class VelocityCalculator:
 
     def run(self):
         global velocity_avg
+        dataVel = []
         while True:
-            if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
-                x, y, z, rx, ry, rz, re = pos_info['pos']
-            robotPosA = convert_mm(x, y, z, rx, ry, rz, re)
+            while len(dataVel) < 20:
+                if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                    x, y, z, rx, ry, rz, re = pos_info['pos']
+                robotPosA = convert_mm(x, y, z, rx, ry, rz, re)
 
-            x = robotPosA[0]
-            y = robotPosA[1]
-            z = robotPosA[2]
+                x = robotPosA[0]
+                y = robotPosA[1]
+                z = robotPosA[2]
 
-            # Calculate velocity
-            vx, vy, vz = self.update_position(x, y, z)
+                # Calculate velocity
+                vx, vy, vz = self.update_position(x, y, z)
 
-            if vx is not None and vy is not None and vz is not None:
-                # Calculate the magnitude of velocity
-                magnitude_velocity = self.calculate_magnitude_velocity(vx, vy, vz)
-                print(f"Time: {t.time()}, X: {x}, Y: {y}, Z: {z}")
-                print(f"Velocity: Vx: {vx}, Vy: {vy}, Vz: {vz}")
-                print(f"Magnitude Velocity: {magnitude_velocity}")
-                velocity_avg = magnitude_velocity
-            else:
-                # Print when there is not enough data to calculate velocity
-                print(f"Time: {t.time()}, X: {x}, Y: {y}, Z: {z}")
-                print("Not enough data points to calculate velocity.")
+                if vx is not None and vy is not None and vz is not None:
+                    # Calculate the magnitude of velocity
+                    magnitude_velocity = self.calculate_magnitude_velocity(vx, vy, vz)
+                    #print(f"Time: {t.time()}, X: {x}, Y: {y}, Z: {z}")
+                    #print(f"Velocity: Vx: {vx}, Vy: {vy}, Vz: {vz}")
+                    #print(f"Magnitude Velocity: {magnitude_velocity}")
+                    dataVel.append(magnitude_velocity)
+                else:
+                    # Print when there is not enough data to calculate velocity
+                    #print(f"Time: {t.time()}, X: {x}, Y: {y}, Z: {z}")
+                    print("Not enough data points to calculate velocity.")
 
-            t.sleep(0.5)  # Simulate time passing (in a real application, you'd get the position from your data source)
+
+            velocity_avg = sum(dataVel) / len(dataVel)
 
 #===================Main Program Thread Execution======================================
 
 #ThreadCamera-input
-thread1 = CustomThread(name="Thread 1")
-thread1.start()
 
-resume_event = threading.Event()
-# Set the event to allow the thread to start
-resume_event.set()
+
+# resume_event = threading.Event()
+# # Set the event to allow the thread to start
+# resume_event.set()
 # Start the thread that runs the loop
-thread2 = threading.Thread(target=robot_working)
-thread2.start()
 
-thread3 = threading.Thread(target=VelocityCalculator)
-thread3.start()
+
+
+# thread3 = threading.Thread(target=VelocityCalculator)
+# thread3.start()
+# Function to run the VelocityCalculator in a separate thread
+def velocity_calculator_thread():
+    velocity_calculator.run()
+
+if __name__ == '__main__':
+    thread1 = CustomThread(name="Thread 1")
+    thread1.start()
+    thread2 = threading.Thread(target=robot_working)
+    thread2.start()
+    velocity_calculator = VelocityCalculator()
+    velocity_calculator_thread = threading.Thread(target=velocity_calculator_thread)
+    # Start the thread for the VelocityCalculator
+    velocity_calculator_thread.start()
+    while True:
+        print("Alhamdulillah yok bisa yok", velocity_avg)
