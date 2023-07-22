@@ -164,7 +164,7 @@ robot_no = 1
 status = {}
 x, y, z, rx, ry, rz, re = 0, 0, 0, 0, 0, 0, 0
 delay_rob = 0.1
-speed = 0
+speed = 1500
 
 # # ===== Movement Position List =====
 p1 = [353.427, -298.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
@@ -204,6 +204,10 @@ def get_time_difference_ms(start_time, end_time):
     time_diff_ms = time_diff.total_seconds() * 1000
     return time_diff_ms
 
+
+
+
+
 class Job(threading.Thread):
     def __init__(self, *args, **kwargs):
         super(Job, self).__init__(*args, **kwargs)
@@ -233,25 +237,28 @@ class Job(threading.Thread):
         # print("nilai x yang masuk ", index, "sebesar ", i)
         #post_1,
         postMove = [post_2, post_3, post_4, post_5, post_6]
-        while self.__running.isSet():
+        # while self.__running.isSet():
+        #     for i in postMove:
+        #         self.__flag.wait()
+        #         # read robot start time
+        #         robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
+        #                    FS100.MOVE_SPEED_CLASS_MILLIMETER, 1500, i, wait=True)
+        #
+        #         # t.sleep(0.20)  # robot may not update the status
+        #         # print("Finished step ", index)
+        #         #             #exception
+        #         if i == post_6:
+        #             counter = counter + 1
+        #             ## counter information
+        #             print("Robot counter step: ", counter)
+        #             break
+        robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, FS100.MOVE_SPEED_CLASS_MILLIMETER, 1500, post_2, wait=True)
+        robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, FS100.MOVE_SPEED_CLASS_MILLIMETER, 1500, post_3, wait=True)
+        robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, FS100.MOVE_SPEED_CLASS_MILLIMETER, 1500, post_4, wait=True)
 
-            for i in postMove:
-                self.__flag.wait()
-                # read robot start time
-                robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
-                           FS100.MOVE_SPEED_CLASS_MILLIMETER, speed, i, wait=True)
+        robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT, FS100.MOVE_SPEED_CLASS_MILLIMETER, 1500, post_5, wait=True)
+        # a hold off in case we switch to teach/play mode
 
-                # t.sleep(0.20)  # robot may not update the status
-                # print("Finished step ", index)
-                #             #exception
-                if i == post_6:
-                    counter = counter + 1
-                    ## counter information
-                    print("Robot counter step: ", counter)
-                    break
-
-        robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
-            # a hold off in case we switch to teach/play mode
         robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
 
     def pause(self):
@@ -278,8 +285,8 @@ if __name__ == '__main__':
         while True:
             success, img = cap.read()
             height, width, channels = img.shape
-
-            speed = 1500
+            #
+            # speed = 1500
             elapsed_time = round(t.time() - stopwatch_time, 3)
             data = []  # List to store the input data
             while len(data) < 25:

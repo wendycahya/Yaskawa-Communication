@@ -198,7 +198,7 @@ with open(write_file, "wt", encoding="utf-8") as output:
                 mode_collab = 0
                 Vr = 1
                 # jacoRobot.setSpeed(Vr, vrot)
-                t.sleep(0.5)
+                # t.sleep(0.5)
 
             elif D > SpminVal and D <= SpSafeVal:
                 print("Robot working on collaboration mode")
@@ -206,7 +206,7 @@ with open(write_file, "wt", encoding="utf-8") as output:
                 Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
                 Vr = round(Vr, 2)
                 # jacoRobot.setSpeed(Vr, vrot)
-                t.sleep(0.5)
+                # t.sleep(0.5)
 
             elif D > SpSafeVal and D <= SpPFLVal:
                 print("Robot speed reduction")
@@ -214,14 +214,14 @@ with open(write_file, "wt", encoding="utf-8") as output:
                 Vr = Vr_PFL
                 Vr = round(Vr, 2)
                 # jacoRobot.setSpeed(Vr, vrot)
-                t.sleep(0.5)
+                # t.sleep(0.5)
 
             elif D > SpPFLVal and D <= Spfull:
                 mode_collab = 3
                 Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
                 Vr = round(Vr, 2)
                 # jacoRobot.setSpeed(Vr, vrot)
-                t.sleep(0.5)
+                # t.sleep(0.5)
 
             else:
                 print("Robot bekerja maximal")

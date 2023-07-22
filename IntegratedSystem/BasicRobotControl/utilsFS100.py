@@ -365,6 +365,7 @@ class FS100:
 
     def move(self, cb_status, move_type, coordinate, speed_class, speed, pos, form=0, extended_form=0, robot_no=1,
              station_no=0, tool_no=0, user_coor_no=0, wait=False):
+
         """Make robot move to one or more specified position(s)
 
         Args:
