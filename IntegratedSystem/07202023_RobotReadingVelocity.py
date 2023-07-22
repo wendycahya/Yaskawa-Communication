@@ -168,13 +168,15 @@ ax2 = ax.twinx()
 # Create an empty list to store data for plotting
 dataD = []
 dataVR = []
+dataSPD = []
 dataTime = []
 
 # Function to update the plot
 def update_plot():
     ax.clear()
     ax.plot(dataTime, dataD, 'b-', label='Distance')
-    ax2.plot(dataTime, dataVR, 'r--', label='Speed')
+    ax2.plot(dataTime, dataVR, 'r--', label='Velocity')
+    ax2.plot(dataTime, dataSPD, 'g-.', label='Speed Command')
     plt.axis('on')  # Turn off axis labels and ticks
     # Add legends to the plot
     # ax.legend(loc='upper left')
@@ -335,9 +337,9 @@ class CustomThread(threading.Thread):
                         speedUpdate = int(remap(Vr, 0, 1500, 0, 1500))
                         # print("change value speed maximum: ", VrPaper)
 
-
+                realtimeSPD = speedUpdate / 10
                 dataD.append(D)
-
+                dataSPD.append(realtimeSPD)
                 dataVR.append(velocity_avg)
                 dataTime.append(elapsed_time)
                 # Update the plot
@@ -395,27 +397,7 @@ def rob_command(post1):
     #robot_command = (int(x_coor), int(y_coor), int(z_coor), 0, 0, 0, 0)
     return robot_command
 
-# def update_pos():
-#     while stop_sign.acquire(blocking=False):
-#         stop_sign.release()
-#         # let button up take effect
-#         t.sleep(0.02)
-#
-# def is_alarmed():
-#     alarmed = True
-#     status = {}
-#     if FS100.ERROR_SUCCESS == robot.get_status(status):
-#         alarmed = status['alarming']
-#     return alarmed
-#
-# def on_reset_alarm():
-#     robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
-#     t.sleep(0.1)
-#     # reflect the ui
-#     is_alarmed()
 
-# robot connection
-#robot = FS100('192.168.255.1')
 p1=[353.426, -299.669, -308.575, 179.9869, -5.5662, -25.9376, 0]
 p2=[354.469, -207.837, -308.435, 179.1151, -4.1320, -24.4397, 0]
 p3=[353.436, -94.476, -308.571, 178.7970, -4.2889,  -24.5672, 0]
@@ -442,7 +424,8 @@ post_9 = rob_command(p9)
 post_10 = rob_command(p10)
 post_11 = rob_command(p11)
 
-
+# robot connection
+#robot = FS100('192.168.255.1')
 robot = FS100('172.16.0.1')
 stop_sign = threading.Semaphore()
 
@@ -451,9 +434,6 @@ robot_no = 1
 status = {}
 status_move = {}
 counter = 0
-
-
-
 
 # Function to pause the thread
 pause_event = threading.Event()
@@ -576,8 +556,8 @@ class VelocityCalculator:
 
     def run(self):
         global velocity_avg
-        dataVel = []
         while True:
+            dataVel = []
             while len(dataVel) < 20:
                 if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
                     x, y, z, rx, ry, rz, re = pos_info['pos']
