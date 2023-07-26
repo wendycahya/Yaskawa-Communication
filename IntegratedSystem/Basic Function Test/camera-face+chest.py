@@ -75,7 +75,7 @@ with open(write_file, "wt", encoding="utf-8") as output:
 
             real_measurement = round((Achest * (chestDistance ** 2)) + (Bchest * chestDistance) + Cchest, 2)
             D = min(d, real_measurement)
-            cvzone.putTextRect(img, f'Depth: {D} mm', (face[10][0] - 100, face[10][1] - 50), scale=1.5)
+            #cvzone.putTextRect(img, f'Depth: {D} mm', (face[10][0] - 100, face[10][1] - 50), scale=1.5)
             start_time = datetime.now()
             milliseconds = start_time.microsecond // 1000
 

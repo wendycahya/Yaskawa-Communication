@@ -117,10 +117,9 @@ p3 = [353.427, -98.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
 p4 = [353.427, 2.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
 p5 = [353.427, 102.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
 p6 = [353.427, 202.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
-p6 = [353.427, 302.333, -307.424, -180.0132, -4.4338, -24.0585, 0.0000]
 
 ## ===== convert robot command =====
-post_1 = rob_command(p1)
+#post_1 = rob_command(p1)
 post_2 = rob_command(p2)
 post_3 = rob_command(p3)
 post_4 = rob_command(p4)
@@ -152,7 +151,6 @@ class Job(threading.Thread):
         tredON = False
         #post_1, post_2, post_3, post_4, post_5, post_6, post_7, post_8, post_9, post_10, post_11, post_12, post_13, post_14, post_15, post_16, post_17, post_18, post_19, post_20,
         postMove = [post_2, post_3, post_4, post_5, post_6]
-        #postMove = [post_1]
         global counter
 
         while self.__running.isSet():
@@ -206,7 +204,7 @@ import matplotlib.pyplot as plt
 start_time = datetime.now()
 start = t.strftime("%Y%m%d-%H%M%S")
 milliseconds = 0
-write_file = "TestSpeedGraph-"+str(start)+".csv"
+write_file = "1500-NewProductivity-"+str(start)+".csv"
 d = 0
 
 def SpMax(Vr_Max, Vh_Max, Tr, Ts, ac, C, Zd, Zr):
@@ -331,24 +329,24 @@ milliseconds = 0
 
 #=== Draw Real-time graph show ===
 fig, ax = plt.subplots()
-#ax2 = ax.twinx()
+ax2 = ax.twinx()
 # Create an empty list to store data for plotting
 dataD = []
 dataVR = []
-#dataTime = []
+dataTime = []
 
 # Function to update the plot
 def update_plot():
     ax.clear()
-    ax.plot(dataD, dataVR, 'r--')
-    #ax2.plot(dataTime, dataVR, 'r--')
+    ax.plot(dataTime, dataD, 'b-')
+    ax2.plot(dataTime, dataVR, 'r--')
     # ax2.plot(dataX, 'r')
     # ax2.plot(dataY, 'g')
     # ax2.plot(dataZ, 'b')
     plt.axis('on')  # Turn off axis labels and ticks
-    ax.set_xlabel("Distance (mm)")
-    ax.set_ylabel("Velocity (mm/s)")
-    #ax2.set_ylabel("Speed (mm/s)")
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Distance (mm)")
+    ax2.set_ylabel("Speed (mm/s)")
     plt.tight_layout()  # Adjust the plot to remove any padding
     plt.savefig('temp_plot.png')  # Save the plot as an image
 
@@ -365,7 +363,7 @@ Spfull = SpMax(vrmax, Vr, Tr, Ts, ac, C_SSM, Zd, Zr)
 SpminVal = Spmin(C_SSM, Zd, Zr)
 
 def velocity_group(data):
-    while len(data) < 10:
+    while len(data) < 25:
         start_time = datetime.now()
         if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
             x, y, z, rx, ry, rz, re = pos_info['pos']
@@ -521,20 +519,21 @@ if __name__ == '__main__':
             # new_data = random.randint(0, 100)
 
             dataVel = []
-            velocity = velocity_group(dataVel) * 10
+            velocity = velocity_group(dataVel)
             dataD.append(D)
             dataVR.append(velocity)
-            #dataTime.append(elapsed_time)
+            dataTime.append(elapsed_time)
             # Update the plot
             update_plot()
 
             robotPos = convert_mm(x, y, z, rx, ry, rz, re)
             output.write(str(end_time.strftime("%H:%M:%S")) + ',' + str(elapsed_time) + ',' + str(D) + ',' + str(speed) + ',' +
-                         str(counter) + ',' + str(round(velocity, 3)) + ',' + str(robotPos[0]) + ',' + str(robotPos[1]) + ',' + str(robotPos[2]) + '\n')
+                         str(counter) + ',' + str(round(velocity, 3)) + ',' + str(robotPos[0]) + ',' + str(robotPos[1]) + ',' + str(
+                    robotPos[2]) + '\n')
             print("SUCCESS RECORD ", interval, " !!!")
             print("SUCCESS RECORD counter", counter, " !!!")
             # Load the saved plot image
-            plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
+            plot_img = cv2.imread('../temp_plot.png', cv2.IMREAD_UNCHANGED)
 
             # Resize the plot image to match the video frame size
             plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))

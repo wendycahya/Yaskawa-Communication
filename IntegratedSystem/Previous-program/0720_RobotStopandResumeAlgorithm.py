@@ -1,5 +1,6 @@
 #================= Library Declaration =======================
 import os
+import keyboard
 from utilsFS100 import FS100
 import threading
 
@@ -61,7 +62,7 @@ def Vr_SSM2(D, Tr, Ts, ac, C, Zd, Zr):
 start_time = datetime.now()
 start = t.strftime("%Y%m%d-%H%M%S")
 milliseconds = 0
-write_file = "VelocityGraph-"+str(start)+".csv"
+write_file = "TestSpeedGraph-"+str(start)+".csv"
 d = 0
 
 D = 0
@@ -80,6 +81,13 @@ Zr = 1
 #velocity human
 Vh = 1600
 robotPos = [0, 0, 0, 0, 0, 0]
+XnRob = [0, 0, 0]
+XnRobEnd = [0, 0, 0]
+XnRob_last = [0, 0, 0]
+velXR, velYR, velZR = [0, 0, 0]
+interval = 0
+VrSSM = 0
+VrSSM2 = 0
 
 #Robot Velocity
 vrchest = 400
@@ -96,7 +104,9 @@ RobotVrmax = 1500
 real_measurement = 0
 error = 0
 chestDistance = 0
-
+# Achest = 0.04629
+# Bchest = -24.60386
+# Cchest = 3870.58679
 Achest = 0.04628882081739653
 Bchest = -24.603862891449737
 Cchest = 3870.586790291231
@@ -104,8 +114,10 @@ Cchest = 3870.586790291231
 #information
 start = datetime.now()
 stopwatch_time = t.time()
+start_time = datetime.now()
 end_time = datetime.now()
 elapsed_time = 0
+milliseconds = 0
 
 distance_traveled, time_diff_ms, time_diff_s, velocity = 0, 0, 0, 0
 
@@ -156,15 +168,13 @@ ax2 = ax.twinx()
 # Create an empty list to store data for plotting
 dataD = []
 dataVR = []
-dataSPD = []
 dataTime = []
 
 # Function to update the plot
 def update_plot():
     ax.clear()
     ax.plot(dataTime, dataD, 'b-', label='Distance')
-    ax2.plot(dataTime, dataVR, 'r--', label='Velocity')
-    #ax2.plot(dataTime, dataSPD, 'g-.', label='Speed Command')
+    #ax2.plot(dataTime, dataVR, 'r--', label='Speed')
     plt.axis('on')  # Turn off axis labels and ticks
     # Add legends to the plot
     # ax.legend(loc='upper left')
@@ -176,6 +186,27 @@ def update_plot():
     plt.tight_layout()  # Adjust the plot to remove any padding
     plt.savefig('temp_plot.png')  # Save the plot as an image
 
+#===== new Function to complete Research
+def calculate_velocity(distance, time):
+    """
+    Calculates the velocity given the distance and time.
+    :param distance: The distance traveled by the robot (in meters).
+    :param time: The time taken by the robot to cover the distance (in seconds).
+    :return: The velocity of the robot (in meters per second).
+    """
+    velocity = distance / time
+    return velocity
+
+def get_time_difference_ms(start_time, end_time):
+    """
+    Calculates the time difference in milliseconds between two datetime objects.
+    :param start_time: The starting datetime.
+    :param end_time: The ending datetime.
+    :return: The time difference in milliseconds.
+    """
+    time_diff = end_time - start_time
+    time_diff_ms = time_diff.total_seconds() * 1000
+    return time_diff_ms
 
 #====================================== Camera Detection ====================================
 class CustomThread(threading.Thread):
@@ -304,23 +335,27 @@ class CustomThread(threading.Thread):
                         speedUpdate = int(remap(Vr, 0, 1500, 0, 1500))
                         # print("change value speed maximum: ", VrPaper)
 
-                realtimeSPD = speedUpdate / 10
+                # dataVel = []
+                # velocity = velocity_group(dataVel)
+                # velocity_group()
+                # print("Velocity ", velocity)
                 dataD.append(D)
-                #dataSPD.append(realtimeSPD)
-                dataVR.append(velocity_avg)
+                # with velocity_avg_lock:
+                #     print("Other thread using velocity_avg:", velocity_avg)
+                #dataVR.append(velocity_avg)
                 dataTime.append(elapsed_time)
                 # Update the plot
                 update_plot()
                 #
                 output.write(
                     str(end_time.strftime("%H:%M:%S")) + ',' + str(elapsed_time) + ',' + str(D) + ',' + str(
-                        realtimeSPD) + ',' +
-                    str(counter) + ',' + str(round(velocity_avg, 3)) + ',' + str(robotPos[0]) + ',' + str(
+                        speedUpdate) + ',' +
+                    str(counter) + ',' + str(round(velocity, 3)) + ',' + str(robotPos[0]) + ',' + str(
                         robotPos[1]) + ',' + str(robotPos[2]) + '\n')
                 # print("SUCCESS RECORD ", interval, " !!!")
                 # print("SUCCESS RECORD counter", counter, " !!!")
-                # # Load the saved  plot image
-                plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
+                # # Load the saved plot image
+                plot_img = cv2.imread('../temp_plot.png', cv2.IMREAD_UNCHANGED)
                 #
                 # # Resize the plot image to match the video frame size
                 plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))
@@ -364,7 +399,27 @@ def rob_command(post1):
     #robot_command = (int(x_coor), int(y_coor), int(z_coor), 0, 0, 0, 0)
     return robot_command
 
+# def update_pos():
+#     while stop_sign.acquire(blocking=False):
+#         stop_sign.release()
+#         # let button up take effect
+#         t.sleep(0.02)
+#
+# def is_alarmed():
+#     alarmed = True
+#     status = {}
+#     if FS100.ERROR_SUCCESS == robot.get_status(status):
+#         alarmed = status['alarming']
+#     return alarmed
+#
+# def on_reset_alarm():
+#     robot.reset_alarm(FS100.RESET_ALARM_TYPE_ALARM)
+#     t.sleep(0.1)
+#     # reflect the ui
+#     is_alarmed()
 
+# robot connection
+#robot = FS100('192.168.255.1')
 p1=[353.426, -299.669, -308.575, 179.9869, -5.5662, -25.9376, 0]
 p2=[354.469, -207.837, -308.435, 179.1151, -4.1320, -24.4397, 0]
 p3=[353.436, -94.476, -308.571, 178.7970, -4.2889,  -24.5672, 0]
@@ -391,8 +446,7 @@ post_9 = rob_command(p9)
 post_10 = rob_command(p10)
 post_11 = rob_command(p11)
 
-# robot connection
-#robot = FS100('192.168.255.1')
+
 robot = FS100('172.16.0.1')
 stop_sign = threading.Semaphore()
 
@@ -401,6 +455,9 @@ robot_no = 1
 status = {}
 status_move = {}
 counter = 0
+
+
+
 
 # Function to pause the thread
 pause_event = threading.Event()
@@ -415,10 +472,11 @@ def robot_working():
 
     postMove = [post_2, post_3, post_4, post_5, post_6, post_7, post_8, post_9, post_10, post_11]
     while True:
+        while pause_event.is_set():  # Pause the loop if 'paused' is True
+            print("Loop paused...")
+
         for i in postMove:
             print(speedUpdate)
-            while pause_event.is_set():  # Pause the loop if 'paused' is True
-                print("Loop paused...")
             #wait_thread()
             robot.move(None, FS100.MOVE_TYPE_JOINT_ABSOLUTE_POS, FS100.MOVE_COORDINATE_SYSTEM_ROBOT,
                        FS100.MOVE_SPEED_CLASS_MILLIMETER, speedUpdate, i, wait=True)
@@ -429,9 +487,53 @@ def robot_working():
                 print("Robot counter step: ", counter)
                 break
 
+    #robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_ON)
+
     robot.switch_power(FS100.POWER_TYPE_HOLD, FS100.POWER_SWITCH_OFF)
 
 velocity_avg = 0
+
+class VelocityThread(threading.Thread):
+    def __init__(self, name):
+        super().__init__(name=name)
+        self.is_paused = False
+        self.is_stopped = False
+        self.pause_event = threading.Event()
+        self.stop_event = threading.Event()
+
+    def run(self):
+        global velocity_avg
+        while True:
+            data = []
+            while len(data) < 1:
+                # print("velocity data: ", data)
+                start_time = datetime.now()
+                if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                    x, y, z, rx, ry, rz, re = pos_info['pos']
+                robotPosA = convert_mm(x, y, z, rx, ry, rz, re)
+                X_first = [robotPosA[0], robotPosA[1], robotPosA[2]]
+                # print("Lokasi pertama: ", X_first)
+                # Measure the time taken
+
+                t.sleep(1)  # Simulate some time delay during the movement
+                if FS100.ERROR_SUCCESS == robot.read_position(pos_info, robot_no):
+                    x, y, z, rx, ry, rz, re = pos_info['pos']
+                robotPosB = convert_mm(x, y, z, rx, ry, rz, re)
+                X_second = [robotPosB[0], robotPosB[1], robotPosB[2]]
+                # print("Lokasi kedua: ", X_second)
+                end_time = datetime.now()
+                distance_traveled = mt.sqrt(
+                    (X_second[0] - X_first[0]) ** 2 + (X_second[1] - X_first[1]) ** 2 + (X_second[2] - X_first[2]) ** 2)
+                print("Distance Traveled ", distance_traveled)
+                time_diff_ms = get_time_difference_ms(start_time, end_time)
+                time_diff_s = time_diff_ms / 1000  # converting milliseconds to seconds
+                # print(time_diff_s)
+                velocity = calculate_velocity(distance_traveled, time_diff_s)
+                # print("Total velocity: ", velocity)
+                data.append(velocity)
+
+            velocity_avg = sum(data) / len(data)
+            print("Nilai velocity Average ", velocity_avg)
 
 class VelocityCalculator:
     def __init__(self):
@@ -494,28 +596,36 @@ class VelocityCalculator:
             if vx is not None and vy is not None and vz is not None:
                 # Calculate the magnitude of velocity
                 magnitude_velocity = self.calculate_magnitude_velocity(vx, vy, vz)
-                #print(f"Time: {t.time()}, X: {x}, Y: {y}, Z: {z}")
-                #print(f"Velocity: Vx: {vx}, Vy: {vy}, Vz: {vz}")
-                #print(f"Magnitude Velocity: {magnitude_velocity}")
+                print(f"Time: {t.time()}, X: {x}, Y: {y}, Z: {z}")
+                print(f"Velocity: Vx: {vx}, Vy: {vy}, Vz: {vz}")
+                print(f"Magnitude Velocity: {magnitude_velocity}")
                 velocity_avg = magnitude_velocity
             else:
                 # Print when there is not enough data to calculate velocity
-                #print(f"Time: {t.time()}, X: {x}, Y: {y}, Z: {z}")
+                print(f"Time: {t.time()}, X: {x}, Y: {y}, Z: {z}")
                 print("Not enough data points to calculate velocity.")
-            t.sleep(0.5)
+
+            t.sleep(0.5)  # Simulate time passing (in a real application, you'd get the position from your data source)
 
 #===================Main Program Thread Execution======================================
-def velocity_calculator_thread():
-    velocity_calculator.run()
+
+#ThreadCamera-input
+
+
+# resume_event = threading.Event()
+# # Set the event to allow the thread to start
+# resume_event.set()
+# Start the thread that runs the loop
+
+
+
+# thread3 = threading.Thread(target=VelocityCalculator)
+# thread3.start()
 
 if __name__ == '__main__':
     thread1 = CustomThread(name="Thread 1")
     thread1.start()
     thread2 = threading.Thread(target=robot_working)
     thread2.start()
-    velocity_calculator = VelocityCalculator()
-    velocity_calculator_thread = threading.Thread(target=velocity_calculator_thread)
-    # Start the thread for the VelocityCalculator
-    velocity_calculator_thread.start()
     while True:
-        print("Alhamdulillah yok bisa yok", velocity_avg)
+        print("Program Sedang Beroperasi nih")

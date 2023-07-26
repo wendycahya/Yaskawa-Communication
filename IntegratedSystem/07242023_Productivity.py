@@ -61,7 +61,7 @@ def Vr_SSM2(D, Tr, Ts, ac, C, Zd, Zr):
 start_time = datetime.now()
 start = t.strftime("%Y%m%d-%H%M%S")
 milliseconds = 0
-write_file = "VelocityGraph-"+str(start)+".csv"
+write_file = "CloseProposedProductivity-"+str(start)+".csv"
 d = 0
 
 D = 0
@@ -164,7 +164,7 @@ def update_plot():
     ax.clear()
     ax.plot(dataTime, dataD, 'b-', label='Distance')
     ax2.plot(dataTime, dataVR, 'r--', label='Velocity')
-    #ax2.plot(dataTime, dataSPD, 'g-.', label='Speed Command')
+    ax2.plot(dataTime, dataSPD, 'g-.', label='Speed Command')
     plt.axis('on')  # Turn off axis labels and ticks
     # Add legends to the plot
     # ax.legend(loc='upper left')
@@ -273,7 +273,7 @@ class CustomThread(threading.Thread):
                         # print("Robot speed reduction")
                         Vr = Vr_SSM2(D, Tr, Ts, ac, C_SSM, Zd, Zr)
                         Vr = round(Vr, 2)
-                        speedUpdate = int(remap(Vr, 0, 1500, 0, 1500))
+                        speedUpdate = int(remap(Vr, 0, 1500, 0, 1000))
                         # print("Robot working on collaboration mode")
                         mode_collab = 1
 
@@ -284,7 +284,7 @@ class CustomThread(threading.Thread):
                         mode_collab = 2
                         Vr = Vr_PFL
                         Vr = round(Vr, 2)
-                        speedUpdate = int(remap(Vr, 0, 1500, 0, 1500))
+                        speedUpdate = int(remap(Vr, 0, 1500, 0, 1000))
 
 
                     elif D > SpPFLVal and D <= Spfull:
@@ -292,7 +292,7 @@ class CustomThread(threading.Thread):
                         resume_event.set()
                         Vr = Vr_SSM(D, Vh, Tr, Ts, ac, C_SSM, Zd, Zr, Vr_PFL)
                         Vr = round(Vr, 2)
-                        speedUpdate = int(remap(Vr, 0, 1500, 0, 1500))
+                        speedUpdate = int(remap(Vr, 0, 1500, 0, 1000))
                         # print("change value speed Reduce: ", Vr)
                         mode_collab = 3
 
@@ -301,29 +301,29 @@ class CustomThread(threading.Thread):
                         resume_event.set()
                         Vr = RobotVrmax
                         mode_collab = 4
-                        speedUpdate = int(remap(Vr, 0, 1500, 0, 1500))
+                        speedUpdate = int(remap(Vr, 0, 1500, 0, 1000))
                         # print("change value speed maximum: ", VrPaper)
 
-                realtimeSPD = speedUpdate / 10
-                dataD.append(D)
-                #dataSPD.append(realtimeSPD)
-                dataVR.append(velocity_avg)
-                dataTime.append(elapsed_time)
-                # Update the plot
-                update_plot()
+                # realtimeSPD = speedUpdate / 10
+                # dataD.append(D)
+                # dataSPD.append(realtimeSPD)
+                # #dataVR.append(velocity_avg)
+                # dataTime.append(elapsed_time)
+                # # Update the plot
+                # update_plot()
                 #
                 output.write(
                     str(end_time.strftime("%H:%M:%S")) + ',' + str(elapsed_time) + ',' + str(D) + ',' + str(
-                        realtimeSPD) + ',' +
+                        speedUpdate) + ',' +
                     str(counter) + ',' + str(round(velocity_avg, 3)) + ',' + str(robotPos[0]) + ',' + str(
                         robotPos[1]) + ',' + str(robotPos[2]) + '\n')
                 # print("SUCCESS RECORD ", interval, " !!!")
                 # print("SUCCESS RECORD counter", counter, " !!!")
-                # # Load the saved  plot image
-                plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
+                # # Load the saved plot image
+                #plot_img = cv2.imread('temp_plot.png', cv2.IMREAD_UNCHANGED)
                 #
                 # # Resize the plot image to match the video frame size
-                plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))
+                #plot_img = cv2.resize(plot_img, (img.shape[1], img.shape[0]))
                 cv2.putText(img, "{} s".format(elapsed_time), (10, 30), cv2.FONT_HERSHEY_PLAIN,
                             2, (15, 225, 215), 2)
                 cv2.putText(img, "counter {}".format(counter), (10, 60), cv2.FONT_HERSHEY_PLAIN,
@@ -332,7 +332,7 @@ class CustomThread(threading.Thread):
                 cv2.imshow('Video Stream', img)
 
                 # Display the plot in the 'Live Plot' window
-                cv2.imshow('HR Distance and Robot Velocity', plot_img[:, :, :3])
+                #cv2.imshow('HR Distance and Robot Velocity', plot_img[:, :, :3])
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
