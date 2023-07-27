@@ -22,7 +22,7 @@ if __name__ == '__main__':
             m_IMU.write2csv(data, log_file)
             
             
-            print(data['euler'], end="\r")  #print 'euler'. It can be replaced with 'id', 'timestamp', 'acc', 'gyr', 'mag', 'quat'.
+            #print(data['euler'], end="\r")  #print 'euler'. It can be replaced with 'id', 'timestamp', 'acc', 'gyr', 'mag', 'quat'.
             #print(data, end="\r") #print all          
 
         except KeyboardInterrupt:

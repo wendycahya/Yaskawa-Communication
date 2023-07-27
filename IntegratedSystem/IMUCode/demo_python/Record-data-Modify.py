@@ -22,7 +22,7 @@ from anrot_module import *
 # global variables
 MAX_MEAS = 200  # max number of readings in the session, so that we don't create an infinite loop
 AVG_MEAS = 25  # for each reading, take this many measurements and average them
-FILENAME = os.path.join(os.getcwd(), '../accelerometer-calibration/acceldataIMU.txt')  # output file
+FILENAME = os.path.join(os.getcwd(), 'acceldataIMU.txt')  # output file
 
 
 class SerialPort:
